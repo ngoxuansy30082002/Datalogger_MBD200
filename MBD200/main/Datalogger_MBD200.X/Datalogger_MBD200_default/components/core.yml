@@ -15,7 +15,18 @@ dependency:
 customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
 data:
   attachments: {}
-  elementPosition: {}
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: core
+          x: '380'
+          y: '10'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
   symbols:
     BSP_PIN_15_MODE:
       attributes:
@@ -2824,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807223101'
+            value: '807218997'
           type: Dynamic
         type: Values
       type: Hex
@@ -3779,7 +3790,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -3823,7 +3834,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -4326,7 +4337,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -4473,6 +4484,1054 @@ data:
           type: User
         type: Values
       type: Integer
+    EVIC_4_ENABLE_GENERATE:
+      attributes:
+        id: EVIC_4_ENABLE_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_HANDLER_LOCK:
+      attributes:
+        id: EVIC_4_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_SUBPRIORITY_GENERATE:
+      attributes:
+        id: EVIC_4_SUBPRIORITY_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_ENABLE_LOCK:
+      attributes:
+        id: EVIC_1_ENABLE_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_SUBPRIORITY_LOCK:
+      attributes:
+        id: EVIC_4_SUBPRIORITY_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_PRIORITY_GENERATE:
+      attributes:
+        id: EVIC_1_PRIORITY_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_PRIORITY_LOCK:
+      attributes:
+        id: EVIC_1_PRIORITY_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_SUBPRIORITY_GENERATE:
+      attributes:
+        id: EVIC_1_SUBPRIORITY_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_ENABLE_GENERATE:
+      attributes:
+        id: EVIC_1_ENABLE_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_ENABLE_LOCK:
+      attributes:
+        id: EVIC_4_ENABLE_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_HANDLER_LOCK:
+      attributes:
+        id: EVIC_1_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_PRIORITY_1ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_1ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_2ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_2ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_3ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_3ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_4ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_4ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_5ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_5ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_6ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_6ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_PRIORITY_7ATTRIBUTE:
+      attributes:
+        id: EVIC_PRIORITY_7ATTRIBUTE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SRS
+          type: Dynamic
+        type: Values
+      type: Combo
+    EVIC_SRS_ENABLE:
+      attributes:
+        id: EVIC_SRS_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_1_SUBPRIORITY_LOCK:
+      attributes:
+        id: EVIC_1_SUBPRIORITY_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_PRIORITY_LOCK:
+      attributes:
+        id: EVIC_4_PRIORITY_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_4_PRIORITY_GENERATE:
+      attributes:
+        id: EVIC_4_PRIORITY_GENERATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    PMD6_REG_VALUE:
+      attributes:
+        id: PMD6_REG_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '8585217'
+          type: Dynamic
+        type: Values
+      type: Hex
+    ETH_CLOCK_ENABLE:
+      attributes:
+        id: ETH_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CONFIG_FMIIEN:
+      attributes:
+        id: CONFIG_FMIIEN
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: 'OFF'
+          type: Dynamic
+        type: Values
+      type: Combo
+    CONFIG_FETHIO:
+      attributes:
+        id: CONFIG_FETHIO
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: 'ON'
+          type: Dynamic
+        type: Values
+      type: Combo
+    ETHERNET_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: ETHERNET_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_153_ENABLE:
+      attributes:
+        id: EVIC_153_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    ETHERNET_INTERRUPT_ENABLE:
+      attributes:
+        id: ETHERNET_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_153_HANDLER_LOCK:
+      attributes:
+        id: EVIC_153_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    ETHERNET_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: ETHERNET_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_153_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_153_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: ETHERNET_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    ETHERNET_INTERRUPT_HANDLER:
+      attributes:
+        id: ETHERNET_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: drvPic32mEthmac
+            value: ETHERNET_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    CACHE_PIC32MZ_H:
+      attributes:
+        id: CACHE_PIC32MZ_H
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DEVICE_CACHE_H:
+      attributes:
+        id: DEVICE_CACHE_H
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DATA_CACHE_ENABLE:
+      attributes:
+        id: DATA_CACHE_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CACHE_SYSTEM_DEF_H:
+      attributes:
+        id: CACHE_SYSTEM_DEF_H
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    CACHE_HEADER_H:
+      attributes:
+        id: CACHE_HEADER_H
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    CACHE_SOURCE_PIC32MZ_C:
+      attributes:
+        id: CACHE_SOURCE_PIC32MZ_C
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    CACHE_SOURCE_PIC32MZ_S:
+      attributes:
+        id: CACHE_SOURCE_PIC32MZ_S
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    INSTRUCTION_CACHE_ENABLE:
+      attributes:
+        id: INSTRUCTION_CACHE_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CACHE_LOCAL_H:
+      attributes:
+        id: CACHE_LOCAL_H
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    USE_CACHE_MAINTENANCE:
+      attributes:
+        id: USE_CACHE_MAINTENANCE
+      children:
+      - children:
+        - attributes:
+            id: sys_fs
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_CLOCK_ENABLE:
+      attributes:
+        id: UART4_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART4_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_170_ENABLE:
+      attributes:
+        id: EVIC_170_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: UART4_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART4_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_171_ENABLE:
+      attributes:
+        id: EVIC_171_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART4_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART4_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_172_ENABLE:
+      attributes:
+        id: EVIC_172_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART4_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_170_HANDLER_LOCK:
+      attributes:
+        id: EVIC_170_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART4_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_171_HANDLER_LOCK:
+      attributes:
+        id: EVIC_171_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART4_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_172_HANDLER_LOCK:
+      attributes:
+        id: EVIC_172_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART4_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART4_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_170_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_170_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART4_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART4_FAULT_INTERRUPT_HANDLER:
+      attributes:
+        id: UART4_FAULT_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: UART4_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_171_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_171_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART4_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART4_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART4_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: UART4_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_172_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_172_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART4_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART4_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART4_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: UART4_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    CORE_TIMER_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: CORE_TIMER_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_0_ENABLE:
+      attributes:
+        id: EVIC_0_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CORE_TIMER_INTERRUPT_ENABLE:
+      attributes:
+        id: CORE_TIMER_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_0_HANDLER_LOCK:
+      attributes:
+        id: EVIC_0_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    CORE_TIMER_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: CORE_TIMER_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_0_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_0_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: CORE_TIMER_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    CORE_TIMER_INTERRUPT_HANDLER:
+      attributes:
+        id: CORE_TIMER_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core_timer
+            value: CORE_TIMER_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI5_CLOCK_ENABLE:
+      attributes:
+        id: SPI5_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI5_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_176_ENABLE:
+      attributes:
+        id: EVIC_176_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI5_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI5_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_177_ENABLE:
+      attributes:
+        id: EVIC_177_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI5_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI5_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_178_ENABLE:
+      attributes:
+        id: EVIC_178_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI5_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_176_HANDLER_LOCK:
+      attributes:
+        id: EVIC_176_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI5_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_177_HANDLER_LOCK:
+      attributes:
+        id: EVIC_177_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI5_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_178_HANDLER_LOCK:
+      attributes:
+        id: EVIC_178_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI5_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI5_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_177_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_177_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI5_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI5_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI5_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: SPI5_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_178_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_178_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI5_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI5_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI5_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi5
+            value: SPI5_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMA_CH_NEEDED_FOR_SPI5_Receive:
+      attributes:
+        id: DMA_CH_NEEDED_FOR_SPI5_Receive
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA_CH_NEEDED_FOR_SPI5_Transmit:
+      attributes:
+        id: DMA_CH_NEEDED_FOR_SPI5_Transmit
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
   userData:
     children:
     - attributes:

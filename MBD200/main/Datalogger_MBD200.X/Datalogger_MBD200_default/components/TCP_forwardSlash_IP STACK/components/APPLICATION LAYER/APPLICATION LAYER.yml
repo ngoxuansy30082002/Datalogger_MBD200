@@ -1,0 +1,20 @@
+configVersion: 1.0.0
+componentName: APPLICATION LAYER
+coreVersion: 5.8.4
+device: PIC32MZ2048EFM100
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyGroupModule
+  name: APPLICATION LAYER
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: core
+  type: package
+  version: v3.16.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols: {}
+  userData: {}

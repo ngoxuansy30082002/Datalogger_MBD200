@@ -48,6 +48,7 @@
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
+#include "configuration.h"
 #include "interrupts.h"
 #include "definitions.h"
 
@@ -66,6 +67,7 @@
 // Section: System Interrupt Vector declarations
 // *****************************************************************************
 // *****************************************************************************
+void CORE_TIMER_Handler (void);
 void TIMER_3_Handler (void);
 void INPUT_CAPTURE_4_Handler (void);
 void INPUT_CAPTURE_6_Handler (void);
@@ -74,6 +76,12 @@ void UART2_RX_Handler (void);
 void UART2_TX_Handler (void);
 void I2C2_BUS_Handler (void);
 void I2C2_MASTER_Handler (void);
+void ETHERNET_Handler (void);
+void UART4_FAULT_Handler (void);
+void UART4_RX_Handler (void);
+void UART4_TX_Handler (void);
+void SPI5_RX_Handler (void);
+void SPI5_TX_Handler (void);
 
 
 // *****************************************************************************
@@ -81,6 +89,11 @@ void I2C2_MASTER_Handler (void);
 // Section: System Interrupt Vector definitions
 // *****************************************************************************
 // *****************************************************************************
+void __attribute__((used)) __ISR(_CORE_TIMER_VECTOR, ipl1SRS) CORE_TIMER_Handler (void)
+{
+    CORE_TIMER_InterruptHandler();
+}
+
 void __attribute__((used)) __ISR(_TIMER_3_VECTOR, ipl1SRS) TIMER_3_Handler (void)
 {
     TIMER_3_InterruptHandler();
@@ -119,6 +132,36 @@ void __attribute__((used)) __ISR(_I2C2_BUS_VECTOR, ipl1SRS) I2C2_BUS_Handler (vo
 void __attribute__((used)) __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handler (void)
 {
     I2C2_MASTER_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_ETHERNET_VECTOR, ipl1SRS) ETHERNET_Handler (void)
+{
+    ETHERNET_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_UART4_FAULT_VECTOR, ipl1SRS) UART4_FAULT_Handler (void)
+{
+    UART4_FAULT_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_UART4_RX_VECTOR, ipl1SRS) UART4_RX_Handler (void)
+{
+    UART4_RX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_UART4_TX_VECTOR, ipl1SRS) UART4_TX_Handler (void)
+{
+    UART4_TX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI5_RX_VECTOR, ipl1SRS) SPI5_RX_Handler (void)
+{
+    SPI5_RX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI5_TX_VECTOR, ipl1SRS) SPI5_TX_Handler (void)
+{
+    SPI5_TX_InterruptHandler();
 }
 
 

@@ -56,6 +56,7 @@ void EVIC_Initialize( void )
     INTCONSET = _INTCON_MVEC_MASK;
 
     /* Set up priority and subpriority of enabled interrupts */
+    IPC0SET = 0x4U | 0x0U;  /* CORE_TIMER:  Priority 1 / Subpriority 0 */
     IPC3SET = 0x40000U | 0x0U;  /* TIMER_3:  Priority 1 / Subpriority 0 */
     IPC5SET = 0x400U | 0x0U;  /* INPUT_CAPTURE_4:  Priority 1 / Subpriority 0 */
     IPC7SET = 0x40000U | 0x0U;  /* INPUT_CAPTURE_6:  Priority 1 / Subpriority 0 */
@@ -64,6 +65,12 @@ void EVIC_Initialize( void )
     IPC36SET = 0x4000000U | 0x0U;  /* UART2_TX:  Priority 1 / Subpriority 0 */
     IPC37SET = 0x4U | 0x0U;  /* I2C2_BUS:  Priority 1 / Subpriority 0 */
     IPC37SET = 0x40000U | 0x0U;  /* I2C2_MASTER:  Priority 1 / Subpriority 0 */
+    IPC38SET = 0x400U | 0x0U;  /* ETHERNET:  Priority 1 / Subpriority 0 */
+    IPC42SET = 0x40000U | 0x0U;  /* UART4_FAULT:  Priority 1 / Subpriority 0 */
+    IPC42SET = 0x4000000U | 0x0U;  /* UART4_RX:  Priority 1 / Subpriority 0 */
+    IPC43SET = 0x4U | 0x0U;  /* UART4_TX:  Priority 1 / Subpriority 0 */
+    IPC44SET = 0x400U | 0x0U;  /* SPI5_RX:  Priority 1 / Subpriority 0 */
+    IPC44SET = 0x40000U | 0x0U;  /* SPI5_TX:  Priority 1 / Subpriority 0 */
 
 
 

@@ -23,7 +23,7 @@ data:
       - attributes:
           id: i2c2
           x: '5'
-          y: '39'
+          y: '312'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

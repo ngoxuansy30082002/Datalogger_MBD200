@@ -56,6 +56,7 @@
 // Section: Handler Routines
 // *****************************************************************************
 // *****************************************************************************
+void CORE_TIMER_InterruptHandler( void );
 void TIMER_3_InterruptHandler( void );
 void INPUT_CAPTURE_4_InterruptHandler( void );
 void INPUT_CAPTURE_6_InterruptHandler( void );
@@ -64,6 +65,12 @@ void UART2_RX_InterruptHandler( void );
 void UART2_TX_InterruptHandler( void );
 void I2C2_BUS_InterruptHandler( void );
 void I2C2_MASTER_InterruptHandler( void );
+void ETHERNET_InterruptHandler( void );
+void UART4_FAULT_InterruptHandler( void );
+void UART4_RX_InterruptHandler( void );
+void UART4_TX_InterruptHandler( void );
+void SPI5_RX_InterruptHandler( void );
+void SPI5_TX_InterruptHandler( void );
 
 
 

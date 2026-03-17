@@ -1,0 +1,42 @@
+configVersion: 1.0.0
+componentName: net_Pres
+coreVersion: 5.8.4
+device: PIC32MZ2048EFM100
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: net_Pres
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.4
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols:
+    NET_PRES_SUPPORT_DATAGRAM:
+      attributes:
+        id: NET_PRES_SUPPORT_DATAGRAM
+      children:
+      - children:
+        - attributes:
+            id: net_Pres
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    NET_PRES_SUPPORT_STREAM:
+      attributes:
+        id: NET_PRES_SUPPORT_STREAM
+      children:
+      - children:
+        - attributes:
+            id: net_Pres
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+  userData: {}
