@@ -1,0 +1,142 @@
+configVersion: 1.0.0
+componentName: uart4
+coreVersion: 5.8.4
+device: PIC32MZ2048EFM100
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: uart4
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: csp
+  type: package
+  version: v3.24.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: UART4_UART
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: sys_console_0
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: sys_console_UART_dependency
+            type: String
+          type: Attributes
+        type: DirectCapability
+      type: Attachments
+    type: uart4
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: uart4
+          x: '320'
+          y: '356'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    BRG_VALUE:
+      attributes:
+        id: BRG_VALUE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: '216'
+          type: Dynamic
+        type: Values
+      type: Integer
+    UART_BRGH:
+      attributes:
+        id: UART_BRGH
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: KeyValueSet
+    UART_HEADER:
+      attributes:
+        id: UART_HEADER
+      children:
+      - children:
+        - attributes:
+            id: source
+          children:
+          - type: Value
+            value: ../peripheral/uart_00734/templates/plib_uart_ring_buffer.h.ftl
+          type: String
+        type: Attributes
+      type: File
+    UART_INTERRUPT_MODE_ENABLE:
+      attributes:
+        id: UART_INTERRUPT_MODE_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART_OPERATING_MODE:
+      attributes:
+        id: UART_OPERATING_MODE
+      children:
+      - children:
+        - attributes:
+            id: readOnly
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            id: uart4
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: KeyValueSet
+    UART_RING_BUFFER_MODE_ENABLE:
+      attributes:
+        id: UART_RING_BUFFER_MODE_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart4
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART_SOURCE:
+      attributes:
+        id: UART_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: source
+          children:
+          - type: Value
+            value: ../peripheral/uart_00734/templates/plib_uart_ring_buffer.c.ftl
+          type: String
+        type: Attributes
+      type: File
+  userData: {}
