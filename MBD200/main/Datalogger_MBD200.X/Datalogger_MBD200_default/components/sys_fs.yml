@@ -44,8 +44,8 @@ data:
     - children:
       - attributes:
           id: sys_fs
-          x: '480'
-          y: '511'
+          x: '576'
+          y: '509'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

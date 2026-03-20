@@ -303,7 +303,7 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rtc/rtc.h</itemPath>
+        <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h</itemPath>
       </logicalFolder>
       <logicalFolder name="system" displayName="system" projectFiles="true">
         <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -463,9 +463,10 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfio.h</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/openssl/compat_types.h</itemPath>
       </logicalFolder>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/generic_types.h</itemPath>
       <itemPath>../src/app.h</itemPath>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.h</itemPath>
+      <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/boot_config.h</itemPath>
+      <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/generic_types.h</itemPath>
+      <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rule_engine.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -482,10 +483,10 @@
                              displayName="APPLICATION LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipFtpc.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDns.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipAnnounce.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipSntp.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipFtpc.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDhcp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipHttpNet.yml</itemPath>
                 </logicalFolder>
@@ -503,9 +504,9 @@
                              displayName="DATA LINK LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvPic32mEthmac.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvMiim.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/tcpipNetConfig.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvPic32mEthmac.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvExtPhyLan8740.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/DATA LINK LAYER.yml</itemPath>
@@ -514,9 +515,9 @@
                              displayName="NETWORK LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipArp.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIPv4.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIcmp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIPv4.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipArp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/NETWORK LAYER.yml</itemPath>
               </logicalFolder>
@@ -532,37 +533,37 @@
                              displayName="TRANSPORT LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipUdp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipTcp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipUdp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/TRANSPORT LAYER.yml</itemPath>
               </logicalFolder>
             </logicalFolder>
             <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/TCP_forwardSlash_IP STACK.yml</itemPath>
           </logicalFolder>
-          <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/lib_crypto.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/dfp.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/spi5.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_console_0.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_wolfcrypt.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/tcpipNetConfig_0.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/HarmonyCore.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/spi5.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/dfp.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/tcpipNetConfig_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_wolfcrypt.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_console_0.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/core.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_memory.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
         </logicalFolder>
         <itemPath>Datalogger_MBD200_default/mcc-config.mc4</itemPath>
       </logicalFolder>
@@ -744,7 +745,7 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rtc/rtc.c</itemPath>
+        <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</itemPath>
       </logicalFolder>
       <logicalFolder name="wolfcrypt" displayName="wolfcrypt" projectFiles="true">
         <logicalFolder name="port" displayName="port" projectFiles="true">
@@ -861,11 +862,13 @@
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.c</itemPath>
+      <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/boot_config.c</itemPath>
+      <itemPath>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rule_engine.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src</Elem>
+    <Elem>C:/Users/ASUS PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -875,9 +878,9 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.60</languageToolchainVersion>
+        <languageToolchainVersion>5.00</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -913,7 +916,6 @@
       <C32>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -993,7 +995,6 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -1039,7 +1040,6 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
