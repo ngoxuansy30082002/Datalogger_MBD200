@@ -68,6 +68,14 @@
 #define OFFSET_POSITION_MBRTU           8
 
 
+#define TICK_NOW() SYS_TMR_TickCountGet()
+
+#define MS_TO_TICK(ms) \
+    ((SYS_TMR_TickCounterFrequencyGet() / 1000ul) * (ms))
+
+#define IS_TIMEOUT(startTick, intervalMs) \
+    ((TICK_NOW() - (startTick)) >= (MS_TO_TICK(intervalMs)))
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -95,6 +103,20 @@ extern "C" {
         SENSOR_ANALOG,
         SENSOR_INPUT_CAPTURE,
     } SENSOR_TYPE;
+
+    typedef enum {
+        ADC_NONE = 0,
+        ADC_0_10V,
+        ADC_4_20mA,
+    } ADC_TYPE;
+
+    typedef enum {
+        OPERATOR_NONE = 0,
+        OPERATOR_ADDITION,
+        OPERATOR_SUBTRACTION,
+        OPERATOR_MULTIPLICATION,
+        OPERATOR_DIVISION,
+    } OPERATOR;
 
     typedef enum {
         FROM_NONE = 0,
@@ -129,6 +151,20 @@ extern "C" {
     } CTRL_OUT_TYPE;
 
     typedef enum {
+        SCALE_NONE = 0,
+        SCALE_LINEAR,
+        SCALE_SQRT
+    } SENSOR_SCALE_TYPE;
+
+    typedef enum {
+        DATA_RAW = 0,
+        DATA_UINT,
+        DATA_INT,
+        DATA_FLOAT,
+    } SENSOR_DATA_TYPE;
+
+    typedef enum {
+        UNKNOWN = -1,
         GOOD = 0,
         CALIBRATION,
         BAD
@@ -263,25 +299,25 @@ extern "C" {
             bool enable;
             uint8_t slaveAddress;
             uint8_t function;
-            uint16_t addrRegister;
+            uint16_t regAddress;
             uint8_t quantity;
-            uint8_t dataType;
+            SENSOR_DATA_TYPE rawDataType;
             bool bigEndian;
 
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
 
-            uint8_t scaleType;
-            uint8_t scaledDataType;
+            SENSOR_SCALE_TYPE scaleType;
+            SENSOR_DATA_TYPE scaleDataType;
             float scaleValue;
 
-            uint8_t adcType;
+            ADC_TYPE adcType;
             float adcLow;
             float adcHigh;
-            float adcOffsetPre;
-            float adcOffsetSub;
-            uint8_t adcTypePre;
-            uint8_t adcTypeSub;
+            float offsetPreVal;
+            float offsetSubVal;
+            OPERATOR offSetPreOperator;
+            OPERATOR offsetSubOperator;
         }
         entry[MAX_BUFFER_TAG];
 
@@ -296,18 +332,17 @@ extern "C" {
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
 
-            uint8_t scaleType;
-            uint8_t scaledDataType;
+            SENSOR_SCALE_TYPE scaleType;
+            SENSOR_DATA_TYPE scaleDataType;
             float scaleValue;
 
-            uint8_t adcType;
+            ADC_TYPE adcType;
             float adcLow;
             float adcHigh;
-            float adcOffsetPre;
-            float adcOffsetSub;
-            uint8_t adcTypePre;
-            uint8_t adcTypeSub;
-
+            float offsetPreVal;
+            float offsetSubVal;
+            OPERATOR offSetPreOperator;
+            OPERATOR offsetSubOperator;
         }
         entry[MAX_ANALOG_CHANNEL];
     }
@@ -337,11 +372,11 @@ extern "C" {
     }
     DEVICE_INFO;
 
-    extern APP_CONFIG appCfg;
-    extern ANALOG analogCfg;
-    extern DEVICE_INFO deviceInfo;
-    extern MODBUS_RTU_TAG mbrtuCfg;
-    extern INPUT_CAPTURE inCaptureCfg;
+    extern APP_CONFIG gAppCfg;
+    extern ANALOG gAnalogCfg;
+    extern DEVICE_INFO gDeviceInfo;
+    extern MODBUS_RTU_TAG gMbrtuCfg;
+    extern INPUT_CAPTURE gInCaptureCfg;
 
     extern int lenLog;
     extern char logs[100];

@@ -44,8 +44,8 @@ data:
     - children:
       - attributes:
           id: uart4
-          x: '320'
-          y: '356'
+          x: '379'
+          y: '351'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

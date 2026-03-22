@@ -3,16 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/config/default/config.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rule_engine.c</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/config/default/configuration.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/boot_config.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/generic_types.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/app.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/main.c</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/rule_engine.h</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/app.c</file>
-            <file>file:/C:/Users/ASUS%20PC/Desktop/MBD200/Datalogger_MBD200/MBD200/main/src/boot_config.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/config/default/definitions.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_app.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/generic_types.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/main.c</file>
         </group>
     </open-files>
 </project-private>

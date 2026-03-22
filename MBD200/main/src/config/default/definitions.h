@@ -88,7 +88,11 @@
 #include "system/console/src/sys_console_uart_definitions.h"
 
 #include "generic_types.h"
+#include "utils/helpers.h"
+#include "utils/iqueue.h"
 #include "rtc/rtc.h"
+#include "modbus_rtu/master.h"
+#include "rule_engine/rule_engine.h"
 #include "app.h"
 
 

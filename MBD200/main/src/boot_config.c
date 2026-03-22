@@ -1,6 +1,6 @@
 #include "boot_config.h"
 
-APP_CONFIG appCfg;
+APP_CONFIG gAppCfg;
 //APP_ANALOG glbAppAnlg;
 //APP_CONFIG_DEVICE glbAppDev;
 ////APP_CONFIG_ASSETS glbAppAsset;

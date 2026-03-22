@@ -119,7 +119,7 @@ void RTC_Tasks() {
             rtcDt.sysTime.hour = _bcd2bin(_rxBuffer[ISL1208_REG_HR] & 0x3F);
             rtcDt.sysTime.day = _bcd2bin(_rxBuffer[ISL1208_REG_DT] & 0x3F);
             rtcDt.sysTime.month = _bcd2bin(_rxBuffer[ISL1208_REG_MO] & 0x1F);
-            rtcDt.sysTime.year = _bcd2bin(_rxBuffer[ISL1208_REG_YR]) + ((uint16_t) appCfg.time.yearNumber * 100);
+            rtcDt.sysTime.year = _bcd2bin(_rxBuffer[ISL1208_REG_YR]) + ((uint16_t) gAppCfg.time.yearNumber * 100);
             rtcDt.sysTime.dayOfWeek = _bcd2bin(_rxBuffer[ISL1208_REG_DW] & 0x07);
             SYS_CONSOLE_PRINT("%s - %s\t %04u-%02u-%02uT%02u:%02u:%02u\r\n",
                     __TAG__, __func__,
