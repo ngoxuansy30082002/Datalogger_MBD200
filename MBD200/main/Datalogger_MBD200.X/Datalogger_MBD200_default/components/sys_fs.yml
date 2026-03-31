@@ -44,7 +44,7 @@ data:
     - children:
       - attributes:
           id: sys_fs
-          x: '576'
+          x: '724'
           y: '509'
         type: ElementPosition
       type: ElementPositions

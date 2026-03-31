@@ -2,17 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/config/default/definitions.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_app.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/generic_types.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/main.c</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

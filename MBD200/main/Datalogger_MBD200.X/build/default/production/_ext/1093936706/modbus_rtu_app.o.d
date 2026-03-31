@@ -39,6 +39,7 @@ build/default/production/_ext/1093936706/modbus_rtu_app.o: \
  ../src/config/default/peripheral/coretimer/plib_coretimer.h \
  ../src/config/default/peripheral/uart/plib_uart4.h \
  ../src/config/default/peripheral/uart/plib_uart_common.h \
+ ../src/config/default/peripheral/uart/plib_uart1.h \
  ../src/config/default/peripheral/uart/plib_uart2.h \
  ../src/config/default/peripheral/tmr/plib_tmr3.h \
  ../src/config/default/peripheral/tmr/plib_tmr_common.h \
@@ -104,7 +105,8 @@ build/default/production/_ext/1093936706/modbus_rtu_app.o: \
  ../src/config/default/system/console/src/sys_console_uart_definitions.h \
  ../src/generic_types.h ../src/config/default/library/tcpip/tcpip.h \
  ../src/utils/helpers.h ../src/utils/iqueue.h ../src/rtc/rtc.h \
- ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h ../src/app.h
+ ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
+ ../src/sim/core/sim_driver.h ../src/app.h
 
 D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_app.h:
 
@@ -185,6 +187,8 @@ D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.
 ../src/config/default/peripheral/uart/plib_uart4.h:
 
 ../src/config/default/peripheral/uart/plib_uart_common.h:
+
+../src/config/default/peripheral/uart/plib_uart1.h:
 
 ../src/config/default/peripheral/uart/plib_uart2.h:
 
@@ -325,5 +329,7 @@ D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.
 ../src/modbus_rtu/master.h:
 
 ../src/rule_engine/rule_engine.h:
+
+../src/sim/core/sim_driver.h:
 
 ../src/app.h:

@@ -57,6 +57,7 @@
 #include "system/time/sys_time.h"
 #include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/uart/plib_uart4.h"
+#include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/tmr/plib_tmr3.h"
 #include "library/tcpip/tcpip.h"
@@ -93,6 +94,7 @@
 #include "rtc/rtc.h"
 #include "modbus_rtu/master.h"
 #include "rule_engine/rule_engine.h"
+#include "sim/core/sim_driver.h"
 #include "app.h"
 
 

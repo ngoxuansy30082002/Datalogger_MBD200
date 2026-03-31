@@ -60,8 +60,8 @@ data:
     - children:
       - attributes:
           id: TCP/IP STACK
-          x: '753'
-          y: '219'
+          x: '728'
+          y: '222'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

@@ -36,6 +36,7 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
  ../src/config/default/peripheral/coretimer/plib_coretimer.h \
  ../src/config/default/peripheral/uart/plib_uart4.h \
  ../src/config/default/peripheral/uart/plib_uart_common.h \
+ ../src/config/default/peripheral/uart/plib_uart1.h \
  ../src/config/default/peripheral/uart/plib_uart2.h \
  ../src/config/default/peripheral/tmr/plib_tmr3.h \
  ../src/config/default/peripheral/tmr/plib_tmr_common.h \
@@ -101,7 +102,8 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
  ../src/config/default/system/console/src/sys_console_uart_definitions.h \
  ../src/generic_types.h ../src/config/default/library/tcpip/tcpip.h \
  ../src/utils/helpers.h ../src/utils/iqueue.h ../src/rtc/rtc.h \
- ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h ../src/app.h
+ ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
+ ../src/sim/core/sim_driver.h ../src/app.h
 
 ../src/config/default/definitions.h:
 
@@ -178,6 +180,8 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
 ../src/config/default/peripheral/uart/plib_uart4.h:
 
 ../src/config/default/peripheral/uart/plib_uart_common.h:
+
+../src/config/default/peripheral/uart/plib_uart1.h:
 
 ../src/config/default/peripheral/uart/plib_uart2.h:
 
@@ -318,5 +322,7 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
 ../src/modbus_rtu/master.h:
 
 ../src/rule_engine/rule_engine.h:
+
+../src/sim/core/sim_driver.h:
 
 ../src/app.h:

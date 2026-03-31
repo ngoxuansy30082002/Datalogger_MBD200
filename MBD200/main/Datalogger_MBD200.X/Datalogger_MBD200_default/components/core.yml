@@ -2835,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807218997'
+            value: '807218996'
           type: Dynamic
         type: Values
       type: Hex
@@ -3856,7 +3856,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -5532,6 +5532,248 @@ data:
           type: Dynamic
         type: Values
       type: Boolean
+    UART1_CLOCK_ENABLE:
+      attributes:
+        id: UART1_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART1_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_112_ENABLE:
+      attributes:
+        id: EVIC_112_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: UART1_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART1_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_113_ENABLE:
+      attributes:
+        id: EVIC_113_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART1_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART1_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_114_ENABLE:
+      attributes:
+        id: EVIC_114_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART1_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_112_HANDLER_LOCK:
+      attributes:
+        id: EVIC_112_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART1_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_113_HANDLER_LOCK:
+      attributes:
+        id: EVIC_113_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART1_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_114_HANDLER_LOCK:
+      attributes:
+        id: EVIC_114_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART1_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART1_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_112_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_112_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART1_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART1_FAULT_INTERRUPT_HANDLER:
+      attributes:
+        id: UART1_FAULT_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: UART1_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_113_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_113_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART1_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART1_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART1_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: UART1_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_114_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_114_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART1_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART1_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART1_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart1
+            value: UART1_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
   userData:
     children:
     - attributes:
