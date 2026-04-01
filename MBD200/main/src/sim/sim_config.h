@@ -9,6 +9,7 @@
 #define	SIM_CONFIG_H
 
 #define SIM_TRANSFER_BUFF_SIZE          4096
+#define SIM_TRANSFER_GAP_TIME           100 //ms
 
 #ifdef	__cplusplus
 extern "C" {
