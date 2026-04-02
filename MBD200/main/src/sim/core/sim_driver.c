@@ -32,7 +32,7 @@ static void _uartByteIncoming(UART_EVENT event, uintptr_t context) {
 }
 
 void SIMDriver_Initialize(void) {
-    _simPlib.readCallbackRegister(, _uartByteIncoming, (uintptr_t) NULL);
+    _simPlib.readCallbackRegister(_uartByteIncoming, (uintptr_t) NULL);
     _simPlib.readThresholdSet(1);
     _simPlib.readNotifyEnable(true, true);
 }

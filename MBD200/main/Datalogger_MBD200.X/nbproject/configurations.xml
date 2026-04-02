@@ -510,12 +510,12 @@
                              displayName="APPLICATION LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDns.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDhcp.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipAnnounce.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipSntp.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipFtpc.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipHttpNet.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipAnnounce.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDhcp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipSntp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDns.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipFtpc.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/APPLICATION LAYER.yml</itemPath>
               </logicalFolder>
@@ -532,8 +532,8 @@
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvPic32mEthmac.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvMiim.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/tcpipNetConfig.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvMiim.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvExtPhyLan8740.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/DATA LINK LAYER.yml</itemPath>
@@ -542,8 +542,8 @@
                              displayName="NETWORK LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIPv4.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIcmp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIPv4.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipArp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/NETWORK LAYER.yml</itemPath>
@@ -560,38 +560,38 @@
                              displayName="TRANSPORT LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipUdp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipTcp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipUdp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/TRANSPORT LAYER.yml</itemPath>
               </logicalFolder>
             </logicalFolder>
             <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/TCP_forwardSlash_IP STACK.yml</itemPath>
           </logicalFolder>
-          <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_crypto.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/dfp.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart1.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/tcpipNetConfig_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/core.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/dfp.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/tcpipNetConfig_0.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/lib_wolfcrypt.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_console_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_crypto.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/HarmonyCore.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/spi5.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/core.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_memory.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart1.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/HarmonyCore.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/spi5.yml</itemPath>
         </logicalFolder>
         <itemPath>Datalogger_MBD200_default/mcc-config.mc4</itemPath>
       </logicalFolder>
@@ -931,7 +931,7 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>5.00</languageToolchainVersion>
         <platform>3</platform>
