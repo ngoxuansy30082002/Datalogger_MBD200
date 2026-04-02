@@ -66,6 +66,7 @@ modules:
 - uart1
 - uart2
 - uart4
+- uart6
 generatedFileHashHistoryMap:
 - file: ..\src\app.c
   hash: 632c78c323cb9f8c6359f20337440c08f8461eb4b0304552b6a3cfd5c4052620
@@ -74,13 +75,13 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\config.h
   hash: 97d048aca9fc536435fb697f0f2a72f52d90d14b9f2ac52dc55b627c4850848e
 - file: ..\src\config\default\configuration.h
-  hash: 72e276a5e88186a94ac79aafe5f55fcd9c109fcb938ad08dd3811c23e0945e4e
+  hash: 3050e82a6ee763766c5862c3ed08fa051b85813356b504554e811a692604c088
 - file: ..\src\config\default\crypto\crypto.h
   hash: 63bc6589b6538aeb76bc00351d3b99016c8357699c9403067f79a7f43461d208
 - file: ..\src\config\default\crypto\src\crypto.c
   hash: 4c1b271685e092105d8271ee0615ac36c95abbea944b3e3c8e5bc194da00c014
 - file: ..\src\config\default\definitions.h
-  hash: cb8ea2aa208b1462bc7ec32c3414f4d72a680e82b578cdf65d03748b49479f6f
+  hash: 19b831567cd4e64943d1f2847be0aa22cb3beb8dac354a65a75bc7a712adaf6b
 - file: ..\src\config\default\device.h
   hash: 4d4341a6f9628cea0bf73f980b639f7cb81089e55a60ad7e434be2a71e477442
 - file: ..\src\config\default\device_cache.h
@@ -156,11 +157,11 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\exceptions.c
   hash: 8c1843dacd6aec28ef12be3d763763a268e0facd02d4f1e7d67e21a8d73061d1
 - file: ..\src\config\default\initialization.c
-  hash: 5c0032757250aa5dc537e8ea81b60e8ea8f986776cf35e2819c3b2015375ac43
+  hash: 8e022f1ef2c47cc0f3326bd0c70498a814d50ee05e1db4cfd663190de6881cad
 - file: ..\src\config\default\interrupts.c
-  hash: 33c45fb669f6d5e9b1247361c60810c37b2380f40a58146c2536c0ee70ce39f4
+  hash: d70e604dc44fb83b83666a03f31a532872043bf0656e033336c3da69f34f8420
 - file: ..\src\config\default\interrupts.h
-  hash: ab75dde3e1ce7513d1d30e636aa9fcbd014db18397c02aed8294562ae42d6407
+  hash: 82ccb74b1504729848b9ca5c7d07127cbd112f4c4f7b280f07ed2494b9b114a3
 - file: ..\src\config\default\library\tcpip\arp.h
   hash: 450ad6b0a80ffdcf33eab32bf8f662318da13ad5df0896a845cc28a490ff83a6
 - file: ..\src\config\default\library\tcpip\berkeley_api.h
@@ -478,7 +479,7 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\peripheral\cache\plib_cache_pic32mz.h
   hash: e401b896c670e8d0e1714eafc2b93a12b1fe6592783951e2353471bb4ced58e8
 - file: ..\src\config\default\peripheral\clk\plib_clk.c
-  hash: 08b93269b3c3a630e6a5822b9687e2c5307e66d5ee80eb8996f56cce7ecb4775
+  hash: 6684d718ba3150bcabb6fee0452f0cbe47ba8b159aaae182d822efe9f6a916c4
 - file: ..\src\config\default\peripheral\clk\plib_clk.h
   hash: 35384f2e13e59b7190bf77f6996baf3ea2377ec42df94979a6f793326def5255
 - file: ..\src\config\default\peripheral\coretimer\plib_coretimer.c
@@ -486,7 +487,7 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\peripheral\coretimer\plib_coretimer.h
   hash: d88929a1d7d6d0428c517cb789359c574c42d52c3c8a04bb267990255ad81706
 - file: ..\src\config\default\peripheral\evic\plib_evic.c
-  hash: 9c6bd2d86d4141e353c1cc060925b1969201debebbbba93be6836750a19a79bb
+  hash: 775e1f6b3e3d7499c05847628909c2fb8a56729591a58164e87c5d198e703acd
 - file: ..\src\config\default\peripheral\evic\plib_evic.h
   hash: b01293537ca162350d3b590ffb1c74ccea9aa5e5ad7fc2b7d0654ed4120c29a9
 - file: ..\src\config\default\peripheral\gpio\plib_gpio.c
@@ -537,6 +538,10 @@ generatedFileHashHistoryMap:
   hash: 7018a113ed4e3b0e3da1802b4d4c06aa5250c165e233358776524dc47ec050a2
 - file: ..\src\config\default\peripheral\uart\plib_uart4.h
   hash: fe7966e08297ce303e9cf791174a8d0fc6413c127a27eebeba824892fadb558a
+- file: ..\src\config\default\peripheral\uart\plib_uart6.c
+  hash: e106583af40234e59ef32429a8aea1c1ef3ce6d14e2ee82d1d4c056f4d107a23
+- file: ..\src\config\default\peripheral\uart\plib_uart6.h
+  hash: 40d84d92442efda8eb207164d3e2c990de83709f7337846c1dee898f059a02de
 - file: ..\src\config\default\peripheral\uart\plib_uart_common.h
   hash: b87295faadae4157d5880e22970f89094f2b51e1866930040a90ba49c6b29797
 - file: ..\src\config\default\stdio\xc32_monitor.c
@@ -682,7 +687,7 @@ generatedFileHashHistoryMap:
 - file: ..\src\third_party\wolfssl\wolfssl\ssl.h
   hash: b6cee369df5f05f6342c58c6e7a487a690ab4fb426939307c916f099f1e36bf2
 - file: ..\src\third_party\wolfssl\wolfssl\test.h
-  hash: 3aa389c814cfeb24e5091c79701a77349bc6df8e9f7f6ac75ec737de632b0fe1
+  hash: 637b8cda7daf9eefc2ed15572d1eb079d7cdb83959e79df2510eda88ea009606
 - file: ..\src\third_party\wolfssl\wolfssl\version.h
   hash: 2cbadfef245b8234c5177ab1407a192e7bbc847b4d8c5337c1ac65b3bbc9bd60
 - file: ..\src\third_party\wolfssl\wolfssl\wolfcrypt\aes.h

@@ -250,6 +250,28 @@ extern "C" {
 #define TCPIP_HTTP_NET_CONSOLE_CMD           		false
 
 
+/******************************************************************************/
+/*wolfSSL TLS Layer Configuration*/
+/******************************************************************************/
+
+#define WOLFSSL_ALT_NAMES
+#define WOLFSSL_DER_LOAD
+#define KEEP_OUR_CERT
+#define KEEP_PEER_CERT
+#define HAVE_CRL_IO
+#define HAVE_IO_TIMEOUT
+#define TFM_NO_ASM
+#define WOLFSSL_NO_ASM
+#define SIZEOF_LONG_LONG 8
+#define WOLFSSL_USER_IO
+#define NO_WRITEV
+#define MICROCHIP_TCPIP
+#define WOLFSSL_DTLS
+#define NO_PWDBASED
+#define NO_ERROR_STRINGS
+#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
+#define NO_OLD_TLS
+
 /*** TCPIP MAC Configuration ***/
 #define TCPIP_EMAC_TX_DESCRIPTORS				    8
 #define TCPIP_EMAC_RX_DESCRIPTORS				    8
@@ -293,28 +315,6 @@ extern "C" {
 
 #define DRV_ETHMAC_MULTI_CLIENT        			false
 
-
-/******************************************************************************/
-/*wolfSSL TLS Layer Configuration*/
-/******************************************************************************/
-
-#define WOLFSSL_ALT_NAMES
-#define WOLFSSL_DER_LOAD
-#define KEEP_OUR_CERT
-#define KEEP_PEER_CERT
-#define HAVE_CRL_IO
-#define HAVE_IO_TIMEOUT
-#define TFM_NO_ASM
-#define WOLFSSL_NO_ASM
-#define SIZEOF_LONG_LONG 8
-#define WOLFSSL_USER_IO
-#define NO_WRITEV
-#define MICROCHIP_TCPIP
-#define WOLFSSL_DTLS
-#define NO_PWDBASED
-#define NO_ERROR_STRINGS
-#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
-#define NO_OLD_TLS
 
 
 /*** TCP Configuration ***/

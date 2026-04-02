@@ -43,6 +43,8 @@ int main ( void )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
+        UART6_Write("Hello TeraTerm\r\n", 16);
+
     }
 
     /* Execution should not come here during normal operation */

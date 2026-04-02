@@ -26,22 +26,33 @@ build/default/production/_ext/1562494517/rtc.o: \
  ../src/config/default/osal/osal.h \
  ../src/config/default/osal/osal_definitions.h \
  ../src/config/default/osal/osal_impl_basic.h \
+ ../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h \
+ ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
  ../src/config/default/driver/ethmac/drv_ethmac.h \
  ../src/config/default/driver/ethphy/drv_ethphy.h \
  ../src/config/default/library/tcpip/tcpip_ethernet.h \
  ../src/config/default/library/tcpip/tcpip_mac.h \
  ../src/config/default/library/tcpip/tcpip_mac_object.h \
- ../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h \
- ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
  ../src/config/default/system/time/sys_time.h \
  ../src/config/default/system/time/sys_time_definitions.h \
+ ../src/config/default/peripheral/uart/plib_uart6.h \
+ ../src/config/default/peripheral/uart/plib_uart_common.h \
  ../src/config/default/peripheral/coretimer/plib_coretimer.h \
  ../src/config/default/peripheral/uart/plib_uart4.h \
- ../src/config/default/peripheral/uart/plib_uart_common.h \
  ../src/config/default/peripheral/uart/plib_uart1.h \
  ../src/config/default/peripheral/uart/plib_uart2.h \
  ../src/config/default/peripheral/tmr/plib_tmr3.h \
  ../src/config/default/peripheral/tmr/plib_tmr_common.h \
+ ../src/config/default/system/int/sys_int.h \
+ ../src/config/default/system/ports/sys_ports.h \
+ ../src/config/default/system/ports/sys_ports_mapping.h \
+ ../src/config/default/peripheral/gpio/plib_gpio.h \
+ ../src/config/default/system/cache/sys_cache.h \
+ ../src/config/default/osal/osal.h \
+ ../src/config/default/system/debug/sys_debug.h \
+ ../src/config/default/system/console/sys_console.h \
+ ../src/config/default/driver/driver.h \
+ ../src/config/default/system/console/src/sys_console_local.h \
  ../src/config/default/library/tcpip/tcpip.h \
  ../src/config/default/library/tcpip/tcpip_common_ports.h \
  ../src/config/default/library/tcpip/tcpip_manager.h \
@@ -67,16 +78,6 @@ build/default/production/_ext/1562494517/rtc.o: \
  ../src/config/default/system/time/sys_time.h \
  ../src/config/default/system/time/sys_time_definitions.h \
  ../src/config/default/system/sys_random_h2_adapter.h \
- ../src/config/default/system/int/sys_int.h \
- ../src/config/default/system/ports/sys_ports.h \
- ../src/config/default/system/ports/sys_ports_mapping.h \
- ../src/config/default/peripheral/gpio/plib_gpio.h \
- ../src/config/default/system/cache/sys_cache.h \
- ../src/config/default/osal/osal.h \
- ../src/config/default/system/debug/sys_debug.h \
- ../src/config/default/system/console/sys_console.h \
- ../src/config/default/driver/driver.h \
- ../src/config/default/system/console/src/sys_console_local.h \
  ../src/config/default/peripheral/clk/plib_clk.h \
  ../src/config/default/peripheral/gpio/plib_gpio.h \
  ../src/config/default/peripheral/cache/plib_cache.h \
@@ -133,22 +134,33 @@ D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h:
 ../src/config/default/osal/osal.h:
 ../src/config/default/osal/osal_definitions.h:
 ../src/config/default/osal/osal_impl_basic.h:
+../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h:
+../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h:
 ../src/config/default/driver/ethmac/drv_ethmac.h:
 ../src/config/default/driver/ethphy/drv_ethphy.h:
 ../src/config/default/library/tcpip/tcpip_ethernet.h:
 ../src/config/default/library/tcpip/tcpip_mac.h:
 ../src/config/default/library/tcpip/tcpip_mac_object.h:
-../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h:
-../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h:
 ../src/config/default/system/time/sys_time.h:
 ../src/config/default/system/time/sys_time_definitions.h:
+../src/config/default/peripheral/uart/plib_uart6.h:
+../src/config/default/peripheral/uart/plib_uart_common.h:
 ../src/config/default/peripheral/coretimer/plib_coretimer.h:
 ../src/config/default/peripheral/uart/plib_uart4.h:
-../src/config/default/peripheral/uart/plib_uart_common.h:
 ../src/config/default/peripheral/uart/plib_uart1.h:
 ../src/config/default/peripheral/uart/plib_uart2.h:
 ../src/config/default/peripheral/tmr/plib_tmr3.h:
 ../src/config/default/peripheral/tmr/plib_tmr_common.h:
+../src/config/default/system/int/sys_int.h:
+../src/config/default/system/ports/sys_ports.h:
+../src/config/default/system/ports/sys_ports_mapping.h:
+../src/config/default/peripheral/gpio/plib_gpio.h:
+../src/config/default/system/cache/sys_cache.h:
+../src/config/default/osal/osal.h:
+../src/config/default/system/debug/sys_debug.h:
+../src/config/default/system/console/sys_console.h:
+../src/config/default/driver/driver.h:
+../src/config/default/system/console/src/sys_console_local.h:
 ../src/config/default/library/tcpip/tcpip.h:
 ../src/config/default/library/tcpip/tcpip_common_ports.h:
 ../src/config/default/library/tcpip/tcpip_manager.h:
@@ -174,16 +186,6 @@ D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h:
 ../src/config/default/system/time/sys_time.h:
 ../src/config/default/system/time/sys_time_definitions.h:
 ../src/config/default/system/sys_random_h2_adapter.h:
-../src/config/default/system/int/sys_int.h:
-../src/config/default/system/ports/sys_ports.h:
-../src/config/default/system/ports/sys_ports_mapping.h:
-../src/config/default/peripheral/gpio/plib_gpio.h:
-../src/config/default/system/cache/sys_cache.h:
-../src/config/default/osal/osal.h:
-../src/config/default/system/debug/sys_debug.h:
-../src/config/default/system/console/sys_console.h:
-../src/config/default/driver/driver.h:
-../src/config/default/system/console/src/sys_console_local.h:
 ../src/config/default/peripheral/clk/plib_clk.h:
 ../src/config/default/peripheral/gpio/plib_gpio.h:
 ../src/config/default/peripheral/cache/plib_cache.h:

@@ -2835,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807218996'
+            value: '807218964'
           type: Dynamic
         type: Values
       type: Hex
@@ -3911,7 +3911,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -5771,6 +5771,248 @@ data:
         - attributes:
             id: uart1
             value: UART1_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART6_CLOCK_ENABLE:
+      attributes:
+        id: UART6_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART6_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_188_ENABLE:
+      attributes:
+        id: EVIC_188_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: UART6_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART6_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_189_ENABLE:
+      attributes:
+        id: EVIC_189_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART6_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: UART6_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_190_ENABLE:
+      attributes:
+        id: EVIC_190_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: UART6_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_188_HANDLER_LOCK:
+      attributes:
+        id: EVIC_188_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART6_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_189_HANDLER_LOCK:
+      attributes:
+        id: EVIC_189_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART6_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_190_HANDLER_LOCK:
+      attributes:
+        id: EVIC_190_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    UART6_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: UART6_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_188_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_188_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART6_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART6_FAULT_INTERRUPT_HANDLER:
+      attributes:
+        id: UART6_FAULT_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: UART6_FAULT_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_189_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_189_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART6_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART6_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART6_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: UART6_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_190_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_190_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: UART6_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    UART6_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: UART6_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: uart6
+            value: UART6_TX_InterruptHandler
           type: Dynamic
         type: Values
       type: String

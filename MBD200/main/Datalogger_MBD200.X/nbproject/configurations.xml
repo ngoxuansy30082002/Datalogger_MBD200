@@ -244,6 +244,7 @@
               <itemPath>../src/config/default/peripheral/uart/plib_uart2.h</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart4.h</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart1.h</itemPath>
+              <itemPath>../src/config/default/peripheral/uart/plib_uart6.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="system" displayName="system" projectFiles="true">
@@ -577,6 +578,7 @@
           <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
@@ -735,6 +737,7 @@
               <itemPath>../src/config/default/peripheral/uart/plib_uart2.c</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart4.c</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart1.c</itemPath>
+              <itemPath>../src/config/default/peripheral/uart/plib_uart6.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="stdio" displayName="stdio" projectFiles="true">

@@ -781,6 +781,8 @@ void SYS_Initialize ( void* data )
 
 	SPI5_Initialize();
 
+	UART6_Initialize();
+
     CORETIMER_Initialize();
 	UART4_Initialize();
 
