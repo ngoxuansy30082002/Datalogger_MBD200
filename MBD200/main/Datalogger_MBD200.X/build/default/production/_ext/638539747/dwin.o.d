@@ -1,6 +1,6 @@
-build/default/production/_ext/1678542971/helpers.o: \
- D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/helpers.c \
- D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/helpers.h \
+build/default/production/_ext/638539747/dwin.o: \
+ D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.c \
+ D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.h \
  ../src/config/default/definitions.h \
  ../src/config/default/crypto/crypto.h \
  ../src/config/default/peripheral/icap/plib_icap6.h \
@@ -108,7 +108,7 @@ build/default/production/_ext/1678542971/helpers.o: \
  ../src/dwin.h ../src/modbus_rtu/master.h \
  ../src/rule_engine/rule_engine.h ../src/sim/core/sim_driver.h \
  ../src/app.h
-D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/helpers.h:
+D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.h:
 ../src/config/default/definitions.h:
 ../src/config/default/crypto/crypto.h:
 ../src/config/default/peripheral/icap/plib_icap6.h:

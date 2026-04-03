@@ -105,8 +105,9 @@ build/default/production/_ext/1098430622/master.o: \
  ../src/config/default/system/console/src/sys_console_uart_definitions.h \
  ../src/generic_types.h ../src/config/default/library/tcpip/tcpip.h \
  ../src/utils/helpers.h ../src/utils/iqueue.h ../src/rtc/rtc.h \
- ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
- ../src/sim/core/sim_driver.h ../src/app.h \
+ ../src/dwin.h ../src/modbus_rtu/master.h \
+ ../src/rule_engine/rule_engine.h ../src/sim/core/sim_driver.h \
+ ../src/app.h \
  D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h \
  D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h
 D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.h:
@@ -218,6 +219,7 @@ D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/maste
 ../src/utils/helpers.h:
 ../src/utils/iqueue.h:
 ../src/rtc/rtc.h:
+../src/dwin.h:
 ../src/modbus_rtu/master.h:
 ../src/rule_engine/rule_engine.h:
 ../src/sim/core/sim_driver.h:

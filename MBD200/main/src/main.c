@@ -38,12 +38,13 @@ int main ( void )
 {
     /* Initialize all modules */
     SYS_Initialize ( NULL );
-
+    int16_t do_am = 50;    
+    DWIN_WriteInt(0x6100, do_am);
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
-        UART6_Write("Hello TeraTerm\r\n", 16);
+
 
     }
 

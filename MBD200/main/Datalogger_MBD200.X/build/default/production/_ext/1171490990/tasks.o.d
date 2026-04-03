@@ -103,9 +103,10 @@ build/default/production/_ext/1171490990/tasks.o: \
  ../src/config/default/system/console/src/sys_console_uart_definitions.h \
  ../src/generic_types.h ../src/config/default/library/tcpip/tcpip.h \
  ../src/utils/helpers.h ../src/config/default/definitions.h \
- ../src/utils/iqueue.h ../src/rtc/rtc.h ../src/modbus_rtu/master.h \
- ../src/rule_engine/rule_engine.h ../src/sim/core/sim_driver.h \
- ../src/app.h ../src/config/default/sys_tasks.h
+ ../src/utils/iqueue.h ../src/rtc/rtc.h ../src/dwin.h \
+ ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
+ ../src/sim/core/sim_driver.h ../src/app.h \
+ ../src/config/default/sys_tasks.h
 ../src/config/default/configuration.h:
 ../src/config/default/user.h:
 ../src/config/default/device.h:
@@ -215,6 +216,7 @@ build/default/production/_ext/1171490990/tasks.o: \
 ../src/config/default/definitions.h:
 ../src/utils/iqueue.h:
 ../src/rtc/rtc.h:
+../src/dwin.h:
 ../src/modbus_rtu/master.h:
 ../src/rule_engine/rule_engine.h:
 ../src/sim/core/sim_driver.h:
