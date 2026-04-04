@@ -116,4 +116,14 @@ data:
           type: Dynamic
         type: Values
       type: Boolean
+    TCPIP_STACK_DRAM_SIZE:
+      attributes:
+        id: TCPIP_STACK_DRAM_SIZE
+      children:
+      - children:
+        - attributes:
+            value: '164000'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

@@ -520,4 +520,67 @@ data:
           type: Boolean
         type: Attributes
       type: File
+    DMA_SOURCE:
+      attributes:
+        id: DMA_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMA_MAPPING:
+      attributes:
+        id: DMA_MAPPING
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMA_DEF:
+      attributes:
+        id: DMA_DEF
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMA_HEADER:
+      attributes:
+        id: DMA_HEADER
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    ENABLE_SYS_DMA:
+      attributes:
+        id: ENABLE_SYS_DMA
+      children:
+      - children:
+        - attributes:
+            id: drv_sdspi_0
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
   userData: {}

@@ -47,6 +47,13 @@
               </logicalFolder>
               <itemPath>../src/config/default/driver/miim/drv_miim.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="sdspi" displayName="sdspi" projectFiles="true">
+              <itemPath>../src/config/default/driver/sdspi/drv_sdspi_definitions.h</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_local.h</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_plib_interface.h</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/drv_sdspi.h</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_file_system.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="sst26" displayName="sst26" projectFiles="true">
               <itemPath>../src/config/default/driver/sst26/drv_sst26.h</itemPath>
               <itemPath>../src/config/default/driver/sst26/src/drv_sst26_local.h</itemPath>
@@ -233,6 +240,7 @@
               <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.h</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -261,7 +269,22 @@
               <itemPath>../src/config/default/system/debug/sys_debug.h</itemPath>
               <itemPath>../src/config/default/system/debug/src/sys_debug_local.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="dma" displayName="dma" projectFiles="true">
+              <itemPath>../src/config/default/system/dma/sys_dma.h</itemPath>
+              <itemPath>../src/config/default/system/dma/sys_dma_mapping.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="fs" displayName="fs" projectFiles="true">
+              <logicalFolder name="fat_fs" displayName="fat_fs" projectFiles="true">
+                <logicalFolder name="file_system" displayName="file_system" projectFiles="true">
+                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ff.h</itemPath>
+                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ffconf.h</itemPath>
+                </logicalFolder>
+                <logicalFolder name="hardware_access"
+                               displayName="hardware_access"
+                               projectFiles="true">
+                  <itemPath>../src/config/default/system/fs/fat_fs/hardware_access/diskio.h</itemPath>
+                </logicalFolder>
+              </logicalFolder>
               <logicalFolder name="mpfs" displayName="mpfs" projectFiles="true">
                 <itemPath>../src/config/default/system/fs/mpfs/mpfs.h</itemPath>
                 <itemPath>../src/config/default/system/fs/mpfs/mpfs_local.h</itemPath>
@@ -270,6 +293,7 @@
               <itemPath>../src/config/default/system/fs/src/sys_fs_local.h</itemPath>
               <itemPath>../src/config/default/system/fs/sys_fs_media_manager.h</itemPath>
               <itemPath>../src/config/default/system/fs/src/sys_fs_media_manager_local.h</itemPath>
+              <itemPath>../src/config/default/system/fs/sys_fs_fat_interface.h</itemPath>
             </logicalFolder>
             <logicalFolder name="int" displayName="int" projectFiles="true">
               <itemPath>../src/config/default/system/int/sys_int.h</itemPath>
@@ -304,34 +328,46 @@
           <itemPath>../src/config/default/config.h</itemPath>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="f1" displayName="dwin" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.h</itemPath>
+      <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/hmi/dwin.h</itemPath>
       </logicalFolder>
       <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.h</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_app.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h</itemPath>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rtc/rtc.h</itemPath>
       </logicalFolder>
       <logicalFolder name="rule_engine" displayName="rule_engine" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rule_engine/rule_engine.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rule_engine/rule_engine.h</itemPath>
       </logicalFolder>
       <logicalFolder name="sim" displayName="sim" projectFiles="true">
         <logicalFolder name="core" displayName="core" projectFiles="true">
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basic.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_driver.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_net.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_basic.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_driver.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_net.h</itemPath>
         </logicalFolder>
         <logicalFolder name="service" displayName="service" projectFiles="true">
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ftp.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_http.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_mqtt.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ntp.h</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_sms.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_ftp.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_http.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_mqtt.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_ntp.h</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_sms.h</itemPath>
         </logicalFolder>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/sim_config.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/sim_config.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/sim_main.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="storage" displayName="storage" projectFiles="true">
+        <logicalFolder name="external_flash"
+                       displayName="external_flash"
+                       projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="fram" displayName="fram" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="sd_card" displayName="sd_card" projectFiles="true">
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/storage/sd_card/sd_card.h</itemPath>
+        </logicalFolder>
       </logicalFolder>
       <logicalFolder name="system" displayName="system" projectFiles="true">
         <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -339,8 +375,8 @@
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/helpers.h</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/iqueue.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.h</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/iqueue.h</itemPath>
       </logicalFolder>
       <logicalFolder name="wolfcrypt" displayName="wolfcrypt" projectFiles="true">
         <logicalFolder name="port" displayName="port" projectFiles="true">
@@ -496,8 +532,8 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/openssl/compat_types.h</itemPath>
       </logicalFolder>
       <itemPath>../src/app.h</itemPath>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.h</itemPath>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/generic_types.h</itemPath>
+      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.h</itemPath>
+      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/generic_types.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -514,12 +550,12 @@
                              displayName="APPLICATION LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipHttpNet.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipAnnounce.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDhcp.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipSntp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDns.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipDhcp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipAnnounce.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipSntp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipFtpc.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/components/tcpipHttpNet.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/APPLICATION LAYER/APPLICATION LAYER.yml</itemPath>
               </logicalFolder>
@@ -536,8 +572,8 @@
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvPic32mEthmac.yml</itemPath>
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/tcpipNetConfig.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvMiim.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/tcpipNetConfig.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/components/drvExtPhyLan8740.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/DATA LINK LAYER/DATA LINK LAYER.yml</itemPath>
@@ -546,8 +582,8 @@
                              displayName="NETWORK LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIcmp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIPv4.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipIcmp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/components/tcpipArp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/NETWORK LAYER/NETWORK LAYER.yml</itemPath>
@@ -564,39 +600,42 @@
                              displayName="TRANSPORT LAYER"
                              projectFiles="true">
                 <logicalFolder name="components" displayName="components" projectFiles="true">
-                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipTcp.yml</itemPath>
                   <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipUdp.yml</itemPath>
+                  <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/components/tcpipTcp.yml</itemPath>
                 </logicalFolder>
                 <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/components/TRANSPORT LAYER/TRANSPORT LAYER.yml</itemPath>
               </logicalFolder>
             </logicalFolder>
             <itemPath>Datalogger_MBD200_default/components/TCP_forwardSlash_IP STACK/TCP_forwardSlash_IP STACK.yml</itemPath>
           </logicalFolder>
-          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_crypto.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/core.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart6.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/dfp.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_fs.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart1.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/tcpipNetConfig_0.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_sdspi.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_wolfssl.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart4.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/spi2.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/i2c2.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/lib_wolfcrypt.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_console_0.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/drv_memory.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart1.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/icap4.yml</itemPath>
-          <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_sdspi_0.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/uart6.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_crypto.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/HarmonyCore.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/spi5.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/core_timer.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/core.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/tmr3.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/drv_memory.yml</itemPath>
         </logicalFolder>
         <itemPath>Datalogger_MBD200_default/mcc-config.mc4</itemPath>
       </logicalFolder>
@@ -656,6 +695,11 @@
                   <itemPath>../src/config/default/driver/miim/src/dynamic/drv_miim_pic32m.c</itemPath>
                 </logicalFolder>
               </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="sdspi" displayName="sdspi" projectFiles="true">
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi.c</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_plib_interface.c</itemPath>
+              <itemPath>../src/config/default/driver/sdspi/src/drv_sdspi_file_system.c</itemPath>
             </logicalFolder>
             <logicalFolder name="sst26" displayName="sst26" projectFiles="true">
               <itemPath>../src/config/default/driver/sst26/src/drv_sst26.c</itemPath>
@@ -731,6 +775,7 @@
             <logicalFolder name="spi" displayName="spi" projectFiles="true">
               <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.c</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.c</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -757,12 +802,27 @@
             <logicalFolder name="debug" displayName="debug" projectFiles="true">
               <itemPath>../src/config/default/system/debug/src/sys_debug.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="dma" displayName="dma" projectFiles="true">
+              <itemPath>../src/config/default/system/dma/sys_dma.c</itemPath>
+            </logicalFolder>
             <logicalFolder name="fs" displayName="fs" projectFiles="true">
+              <logicalFolder name="fat_fs" displayName="fat_fs" projectFiles="true">
+                <logicalFolder name="file_system" displayName="file_system" projectFiles="true">
+                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ff.c</itemPath>
+                  <itemPath>../src/config/default/system/fs/fat_fs/file_system/ffunicode.c</itemPath>
+                </logicalFolder>
+                <logicalFolder name="hardware_access"
+                               displayName="hardware_access"
+                               projectFiles="true">
+                  <itemPath>../src/config/default/system/fs/fat_fs/hardware_access/diskio.c</itemPath>
+                </logicalFolder>
+              </logicalFolder>
               <logicalFolder name="mpfs" displayName="mpfs" projectFiles="true">
                 <itemPath>../src/config/default/system/fs/mpfs/mpfs.c</itemPath>
               </logicalFolder>
               <itemPath>../src/config/default/system/fs/src/sys_fs.c</itemPath>
               <itemPath>../src/config/default/system/fs/src/sys_fs_media_manager.c</itemPath>
+              <itemPath>../src/config/default/system/fs/src/sys_fs_fat_interface.c</itemPath>
             </logicalFolder>
             <logicalFolder name="int" displayName="int" projectFiles="true">
               <itemPath>../src/config/default/system/int/src/sys_int.c</itemPath>
@@ -779,37 +839,49 @@
           <itemPath>../src/config/default/tasks.c</itemPath>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="f1" displayName="dwin" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.c</itemPath>
+      <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/hmi/dwin.c</itemPath>
       </logicalFolder>
       <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.c</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.c</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/master.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_app.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/modbus_rtu/modbus_rtu_phy.c</itemPath>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rtc/rtc.c</itemPath>
       </logicalFolder>
       <logicalFolder name="rule_engine" displayName="rule_engine" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rule_engine/rule_engine.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/rule_engine/rule_engine.c</itemPath>
       </logicalFolder>
       <logicalFolder name="sim" displayName="sim" projectFiles="true">
         <logicalFolder name="core" displayName="core" projectFiles="true">
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basic.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_driver.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_net.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_basic.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_driver.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_net.c</itemPath>
         </logicalFolder>
         <logicalFolder name="service" displayName="service" projectFiles="true">
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ftp.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_http.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_mqtt.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ntp.c</itemPath>
-          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_sms.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_ftp.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_http.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_mqtt.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_ntp.c</itemPath>
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/service/sim_sms.c</itemPath>
+        </logicalFolder>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/sim_main.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="storage" displayName="storage" projectFiles="true">
+        <logicalFolder name="external_flash"
+                       displayName="external_flash"
+                       projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="fram" displayName="fram" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="sd_card" displayName="sd_card" projectFiles="true">
+          <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/storage/sd_card/sd_card.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/helpers.c</itemPath>
-        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/utils/iqueue.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/helpers.c</itemPath>
+        <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/utils/iqueue.c</itemPath>
       </logicalFolder>
       <logicalFolder name="wolfcrypt" displayName="wolfcrypt" projectFiles="true">
         <logicalFolder name="port" displayName="port" projectFiles="true">
@@ -926,7 +998,7 @@
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
-      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.c</itemPath>
+      <itemPath>D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -940,9 +1012,9 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>snap</platformTool>
+        <platformTool>pickitbasic</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>5.00</languageToolchainVersion>
+        <languageToolchainVersion>4.60</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -1077,7 +1149,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="512"/>
+        <property key="heap-size" value="262144"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -1250,6 +1322,8 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-33ffffff"/>
+        <property key="programmerToGoFilePath"
+                  value="D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/Datalogger_MBD200.X/debug/default/Datalogger_MBD200_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.pgmentry.voltage" value="low"/>
@@ -1269,6 +1343,11 @@
         <property key="toolpack.updateoptions.packversion"
                   value="Press to select which tool pack to use"/>
       </Tool>
+      <pickitbasic>
+        <property key="memories.programmemory.ranges" value="1d000000-33ffffff"/>
+        <property key="programmerToGoFilePath"
+                  value="D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/Datalogger_MBD200.X/debug/default/Datalogger_MBD200_ptg"/>
+      </pickitbasic>
       <snap>
         <property key="ADC" value="true"/>
         <property key="AutoSelectMemRanges" value="auto"/>
@@ -1367,6 +1446,8 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-33ffffff"/>
+        <property key="programmerToGoFilePath"
+                  value="D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/Datalogger_MBD200.X/debug/default/Datalogger_MBD200_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.pgmentry.voltage" value="low"/>

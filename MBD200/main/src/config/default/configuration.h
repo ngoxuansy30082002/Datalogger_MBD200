@@ -103,12 +103,12 @@ extern "C" {
 
 /* File System Service Configuration */
 
-#define SYS_FS_MEDIA_NUMBER               (1U)
-#define SYS_FS_VOLUME_NUMBER              (1U)
+#define SYS_FS_MEDIA_NUMBER               (2U)
+#define SYS_FS_VOLUME_NUMBER              (2U)
 
 #define SYS_FS_AUTOMOUNT_ENABLE           false
 #define SYS_FS_MAX_FILES                  (24U)
-#define SYS_FS_MAX_FILE_SYSTEM_TYPE       (1U)
+#define SYS_FS_MAX_FILE_SYSTEM_TYPE       (2U)
 #define SYS_FS_MEDIA_MAX_BLOCK_SIZE       (512U)
 #define SYS_FS_MEDIA_MANAGER_BUFFER_SIZE  (2048U)
 #define SYS_FS_USE_LFN                    (1)
@@ -116,6 +116,11 @@ extern "C" {
 #define SYS_FS_CWD_STRING_LEN             (1024)
 
 
+#define SYS_FS_FAT_VERSION                "v0.15"
+#define SYS_FS_FAT_READONLY               false
+#define SYS_FS_FAT_CODE_PAGE              437
+#define SYS_FS_FAT_MAX_SS                 SYS_FS_MEDIA_MAX_BLOCK_SIZE
+#define SYS_FS_FAT_ALIGNED_BUFFER_LEN     512
 
 
 
@@ -135,8 +140,22 @@ extern "C" {
 // Section: Driver Configuration
 // *****************************************************************************
 // *****************************************************************************
+/* SDSPI Driver Instance 0 Configuration Options */
+#define DRV_SDSPI_INDEX_0                       0
+#define DRV_SDSPI_CLIENTS_NUMBER_IDX0           1
+#define DRV_SDSPI_QUEUE_SIZE_IDX0               4
+#define DRV_SDSPI_CHIP_SELECT_PIN_IDX0          SYS_PORT_PIN_RC2
+#define DRV_SDSPI_SPEED_HZ_IDX0                 10000000
+#define DRV_SDSPI_POLLING_INTERVAL_MS_IDX0      1000
+
+
+
+
 /* Memory Driver Global Configuration Options */
 #define DRV_MEMORY_INSTANCES_NUMBER          (1U)
+/* SDSPI Driver Common Configuration Options */
+#define DRV_SDSPI_INSTANCES_NUMBER              (1U)
+
 
 /* Memory Driver Instance 0 Configuration */
 #define DRV_MEMORY_INDEX_0                   0
@@ -427,7 +446,7 @@ extern "C" {
 
 /*** TCPIP Heap Configuration ***/
 #define TCPIP_STACK_USE_INTERNAL_HEAP
-#define TCPIP_STACK_DRAM_SIZE                       39250
+#define TCPIP_STACK_DRAM_SIZE                       164000
 #define TCPIP_STACK_DRAM_RUN_LIMIT                  2048
 
 #define TCPIP_STACK_MALLOC_FUNC                     malloc

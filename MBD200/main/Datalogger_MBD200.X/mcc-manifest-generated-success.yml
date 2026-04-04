@@ -2,12 +2,12 @@
 
 manifest_file_version: 1.0.0
 project: Datalogger_MBD200
-creation_date: 2026-04-02T09:58:42.853+07:00[Asia/Bangkok]
+creation_date: 2026-04-04T16:15:57.030+07:00[Asia/Bangkok]
 operating_system: Windows 11
 mcc_mode: IDE
 mcc_mode_version: v6.25
 device_name: PIC32MZ2048EFM100
-compiler: XC32 5.00
+compiler: XC32 4.60
 mcc_version: 5.6.4
 mcc_core_version: 5.8.4
 content_manager_version: 6.0.4

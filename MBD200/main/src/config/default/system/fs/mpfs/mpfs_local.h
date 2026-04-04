@@ -112,14 +112,16 @@ typedef struct
     uint8_t  dummy[10]; // Added to align the structure size to cache line size
 } MPFS_FILE_RECORD;
 
-/* File status structure (FILINFO) */
+/* File status structure when using latest FAT-FS and MPFS Together*/
 typedef struct {
     uint32_t    fsize;     /* File size */
     uint16_t    fdate;     /* Last modified date */
     uint16_t    ftime;     /* Last modified time */
     uint8_t     fattrib;   /* Attribute */
-    /* Short file name (8.3 format) */
-    char        fname[13];
+    /* Alternate file name */
+    char        altname[13];
+    /* Primary file name */
+    char        fname[SYS_FS_FILE_NAME_LEN + 1];
     /* Pointer to the LFN buffer */
     char       *lfname;
     /* Size of LFN buffer in TCHAR */

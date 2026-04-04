@@ -80,7 +80,9 @@ SYS_FS_Tasks();
 
 
     /* Maintain Device Drivers */
-    DRV_MEMORY_Tasks(sysObj.drvMemory0);
+    DRV_SDSPI_Tasks(sysObj.drvSDSPI0);
+
+DRV_MEMORY_Tasks(sysObj.drvMemory0);
 
    DRV_MIIM_OBJECT_BASE_Default.miim_Tasks(sysObj.drvMiim_0);
 

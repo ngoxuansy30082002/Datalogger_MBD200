@@ -4,14 +4,14 @@
 
 
 project: Datalogger_MBD200
-creation_date: 2026-04-02T09:58:43.041+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-04-04T16:15:57.074+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 11
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.6.4
 mcc_core_version: v5.8.4
 mplabx_version: v6.25        # if MPLAB X plugin only
 harmony_version: v5.6.4
-compiler: XC32 5.00
+compiler: XC32 4.60
 
 modules:
     - {name: "core", version: "v3.16.0"}

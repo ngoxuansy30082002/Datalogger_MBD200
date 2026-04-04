@@ -23,7 +23,7 @@ data:
       - attributes:
           id: drv_memory
           x: '547'
-          y: '430'
+          y: '437'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph

@@ -507,7 +507,7 @@ void MbrtuMaster_Tasks(void) {
                 NEXT_STATE(MBRTU_MASTER_INIT);
             }
 
-            if (IS_TIMEOUT(pollTick, phyCfg->pollInterval)) {
+            if (TIME_IS_EXPIRED(pollTick, phyCfg->pollInterval)) {
                 if (gMbrtuCfg.numTag > 0) {
                     if (gMbrtuCfg.entry[_rowIndex].enable || retry > 0) {
                         NEXT_STATE(MBRTU_MASTER_REQUEST);
@@ -571,7 +571,7 @@ void MbrtuMaster_Tasks(void) {
                 mbrtuMasterDt.led = 0;
                 retry = 0;
                 NEXT_STATE(MBRTU_MASTER_PARSE);
-            } else if (IS_TIMEOUT(timeoutTick, gAppCfg.modbusRtu.timeout)) {
+            } else if (TIME_IS_EXPIRED(timeoutTick, gAppCfg.modbusRtu.timeout)) {
                 retry++;
                 mbrtuMasterDt.led = 0;
                 if (retry >= gAppCfg.modbusRtu.retries) {

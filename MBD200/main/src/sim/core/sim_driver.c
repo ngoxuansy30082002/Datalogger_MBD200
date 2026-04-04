@@ -1,6 +1,7 @@
 #include "sim/sim_config.h"
 #include "sim_driver.h"
 
+static const char * __TAG__ = "SIMDRV";
 static const SIM_UART_PLIB _simPlib = {
     .write = (SIM_UART_WRITE) UART1_Write,
     .writePendingBytes = (SIM_UART_WRITE_PENDING_BYTE) UART1_WriteCountGet,
@@ -19,6 +20,10 @@ static const SIM_UART_PLIB _simPlib = {
     .netStatusPin = GPIO_PIN_RA15
 };
 
+static SIM_HW_INTERNAL_STATE _hwState = 0;
+static SIM_HW_STATUS _hwStatus = 0;
+static uint32_t _hwTick = 0;
+
 static SIM_DRV_STATE _bufferState = 0;
 static uint8_t _transferBuffer[SIM_TRANSFER_BUFF_SIZE] = {0};
 static SIM_DRV_STATUS _drvStatus = 0;
@@ -35,22 +40,76 @@ void SIMDriver_Initialize(void) {
     _simPlib.readCallbackRegister(_uartByteIncoming, (uintptr_t) NULL);
     _simPlib.readThresholdSet(1);
     _simPlib.readNotifyEnable(true, true);
+
+    SIMDriver_TurnOn(); // test
 }
 
 void SIMDriver_Task(void) {
     size_t available = _simPlib.readPendingBytes();
     if (available > 0) {
-        if (IS_TIMEOUT(_lastByteTick, SIM_TRANSFER_GAP_TIME)) {
-
+        if (TIME_IS_EXPIRED(_lastByteTick, SIM_TRANSFER_GAP_TIME))
             _drvStatus = SIM_DRV_STATUS_RECV_RESP;
-            return;
+
+    } else {
+        if (_drvStatus != SIM_DRV_STATUS_IDLE) {
+            if (TIME_IS_EXPIRED(_timeoutTick, _timeoutMs))
+                _drvStatus = SIM_DRV_STATUS_TIMEOUT;
+
         }
     }
+    
+    switch (_hwState) {
+        case HW_STATE_IDLE:
+            break;
 
-    if (_drvStatus == SIM_DRV_STATUS_IDLE) return;
-    if (IS_TIMEOUT(_timeoutTick, _timeoutMs))
-        _drvStatus = SIM_DRV_STATUS_TIMEOUT;
+        case HW_STATE_RESET_PULL_LOW:
+            if (TIME_IS_EXPIRED(_hwTick, 500)) {
+                GPIO_PinWrite(_simPlib.resetPin, false);
+                _hwStatus = SIM_HW_STATUS_READY;
+                _hwState = HW_STATE_IDLE;
+            }
+            break;
 
+        case HW_STATE_TURN_ON_PULL_LOW:
+            if (TIME_IS_EXPIRED(_hwTick, 2200)) {
+                GPIO_PinWrite(_simPlib.pwrPin, false);
+                _hwTick = TICK_NOW();
+                _hwState = HW_STATE_TURN_ON_WAIT_STATUS;
+            }
+            break;
+
+        case HW_STATE_TURN_ON_WAIT_STATUS:
+            if (GPIO_PinRead(_simPlib.statusPin)) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Turn on done -> HW ready\r\n", __TAG__, __func__);
+                _hwStatus = SIM_HW_STATUS_READY;
+                _hwState = HW_STATE_IDLE;
+            } else if (TIME_IS_EXPIRED(_hwTick, 5000)) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Turn on error -> HW error\r\n", __TAG__, __func__);
+                _hwStatus = SIM_HW_STATUS_ERROR;
+                _hwState = HW_STATE_IDLE;
+            }
+            break;
+
+        case HW_STATE_TURN_OFF_PULL_LOW:
+            if (TIME_IS_EXPIRED(_hwTick, 3500)) {
+                GPIO_PinWrite(_simPlib.pwrPin, false);
+                _hwTick = TICK_NOW();
+                _hwState = HW_STATE_TURN_OFF_WAIT_STATUS;
+            }
+            break;
+
+        case HW_STATE_TURN_OFF_WAIT_STATUS:
+            if (!GPIO_PinRead(_simPlib.statusPin)) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Turn off done -> HW ready\r\n", __TAG__, __func__);
+                _hwStatus = SIM_HW_STATUS_POWERDOWN;
+                _hwState = HW_STATE_IDLE;
+            } else if (TIME_IS_EXPIRED(_hwTick, 31000)) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Turn off error -> HW error\r\n", __TAG__, __func__);
+                _hwStatus = SIM_HW_STATUS_ERROR;
+                _hwState = HW_STATE_IDLE;
+            }
+            break;
+    }
 }
 
 /**
@@ -109,16 +168,39 @@ SIM_DRV_STATUS SIMDriver_GetStatus(void) {
     return _drvStatus;
 }
 
-/**
- * @brief Hard reset the SIM module using Reset Pin
- */
-void SIMDriver_Reset(void) {
-
+SIM_HW_STATUS SIMDriver_GetHWStatus(void) {
+    return _hwStatus;
 }
 
-/**
- * @brief Power on/off the module using Power Key Pin
- */
-void SIMDriver_SetPower(bool state) {
+bool SIMDriver_Reset(void) {
+    if (_hwState != HW_STATE_IDLE) return false;
 
+    _hwStatus = SIM_HW_STATUS_BUSY;
+    GPIO_PinWrite(_simPlib.resetPin, true);
+    _hwTick = TICK_NOW();
+    _hwState = HW_STATE_RESET_PULL_LOW;
+    return true;
+}
+
+bool SIMDriver_TurnOn(void) {
+    if (_hwState != HW_STATE_IDLE) return false;
+
+    _hwStatus = SIM_HW_STATUS_BUSY;
+    GPIO_PinWrite(_simPlib.resetPin, false);
+    GPIO_PinWrite(_simPlib.pwrPin, true);
+
+    _hwTick = TICK_NOW();
+    _hwState = HW_STATE_TURN_ON_PULL_LOW;
+    return true;
+}
+
+bool SIMDriver_TurnOff(void) {
+    if (_hwState != HW_STATE_IDLE) return false;
+
+    _hwStatus = SIM_HW_STATUS_BUSY;
+    GPIO_PinWrite(_simPlib.pwrPin, true);
+
+    _hwTick = TICK_NOW();
+    _hwState = HW_STATE_TURN_OFF_PULL_LOW;
+    return true;
 }

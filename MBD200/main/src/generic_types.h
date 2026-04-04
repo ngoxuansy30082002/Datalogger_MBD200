@@ -68,12 +68,37 @@
 #define OFFSET_POSITION_MBRTU           8
 
 
+#if (SYS_FS_AUTOMOUNT_ENABLE)
+#define SYS_FS_SPIFLASH_VOL                  SYS_FS_MEDIA_IDX1_DEVICE_NAME_VOLUME_IDX0
+#define SYS_FS_SPIFLASH_MOUNT_POINT          SYS_FS_MEDIA_IDX1_MOUNT_NAME_VOLUME_IDX0
+#define SYS_FS_SPIFLASH_TYPE                 MPFS2
+#define SYS_FS_SPIFLASH_TYPE_STRING          "MPFS"
+#else
+#define SYS_FS_SPIFLASH_VOL                  "/dev/mtda1"
+#define SYS_FS_SPIFLASH_MOUNT_POINT          "/mnt/webpage"
+#define SYS_FS_SPIFLASH_TYPE                 MPFS2
+#define SYS_FS_SPIFLASH_TYPE_STRING          "MPFS"
+#endif
+
+#if (SYS_FS_AUTOMOUNT_ENABLE)
+#define SYS_FS_SDCARD_VOL                  SYS_FS_MEDIA_IDX0_DEVICE_NAME_VOLUME_IDX0
+#define SYS_FS_SDCARD_MOUNT_POINT          SYS_FS_MEDIA_IDX0_MOUNT_NAME_VOLUME_IDX0
+#define SYS_FS_SDCARD_TYPE                 FAT
+#define SYS_FS_SDCARD_TYPE_STRING          "FAT"
+#else
+#define SYS_FS_SDCARD_VOL                 "/dev/mmcblka1"
+#define SYS_FS_SDCARD_MOUNT_POINT          "/mnt/SDCard"
+#define SYS_FS_SDCARD_TYPE                 FAT
+#define SYS_FS_SDCARD_TYPE_STRING          "FAT"
+#endif
+
+
 #define TICK_NOW() SYS_TMR_TickCountGet()
 
 #define MS_TO_TICK(ms) \
     ((SYS_TMR_TickCounterFrequencyGet() / 1000ul) * (ms))
 
-#define IS_TIMEOUT(startTick, intervalMs) \
+#define TIME_IS_EXPIRED(startTick, intervalMs) \
     ((TICK_NOW() - (startTick)) >= (MS_TO_TICK(intervalMs)))
 
 #ifdef	__cplusplus

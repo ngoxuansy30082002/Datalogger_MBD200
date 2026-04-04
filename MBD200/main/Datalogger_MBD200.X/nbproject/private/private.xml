@@ -3,12 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/main.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.h</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/dwin.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_driver.c</file>
-            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/config/default/definitions.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/config/default/definitions.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/storage/sd_card/sd_card.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/app.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_driver.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/storage/sd_card/sd_card.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/config/default/initialization.c</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/generic_types.h</file>
+            <file>file:/D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/sim/core/sim_basic.c</file>
         </group>
     </open-files>
 </project-private>

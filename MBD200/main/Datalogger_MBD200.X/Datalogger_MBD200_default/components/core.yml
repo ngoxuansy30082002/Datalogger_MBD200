@@ -1260,7 +1260,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '1538'
+            value: '1539'
           type: Dynamic
         type: Values
       type: Hex
@@ -2084,7 +2084,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '32768'
+            value: '0'
           type: Dynamic
         type: Values
       type: Hex
@@ -2094,7 +2094,7 @@ data:
       children:
       - children:
         - attributes:
-            value: 'True'
+            value: ''
           type: User
         type: Values
       type: String
@@ -2125,7 +2125,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '512'
+            value: '0'
           type: Dynamic
         type: Values
       type: Hex
@@ -2135,7 +2135,7 @@ data:
       children:
       - children:
         - attributes:
-            value: 'True'
+            value: ''
           type: User
         type: Values
       type: String
@@ -2282,7 +2282,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '16384'
+            value: '16388'
           type: Dynamic
         type: Values
       type: Hex
@@ -2652,7 +2652,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '20480'
+            value: '0'
           type: Dynamic
         type: Values
       type: Hex
@@ -2662,7 +2662,7 @@ data:
       children:
       - children:
         - attributes:
-            value: High
+            value: ''
           type: User
         type: Values
       type: String
@@ -2672,7 +2672,7 @@ data:
       children:
       - children:
         - attributes:
-            value: High
+            value: ''
           type: User
         type: Values
       type: String
@@ -2835,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807218964'
+            value: '807218452'
           type: Dynamic
         type: Values
       type: Hex
@@ -3944,7 +3944,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -6014,6 +6014,320 @@ data:
             id: uart6
             value: UART6_TX_InterruptHandler
           type: Dynamic
+        type: Values
+      type: String
+    XC32_HEAP_SIZE:
+      attributes:
+        id: XC32_HEAP_SIZE
+      children:
+      - children:
+        - attributes:
+            value: '262144'
+          type: User
+        type: Values
+      type: Integer
+    SYS_PORT_A_CNPD:
+      attributes:
+        id: SYS_PORT_A_CNPD
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '32768'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_67_PD:
+      attributes:
+        id: BSP_PIN_67_PD
+      children:
+      - children:
+        - attributes:
+            value: 'True'
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_D_CNPD:
+      attributes:
+        id: SYS_PORT_D_CNPD
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '512'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_68_PD:
+      attributes:
+        id: BSP_PIN_68_PD
+      children:
+      - children:
+        - attributes:
+            value: 'True'
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_7_LAT:
+      attributes:
+        id: BSP_PIN_7_LAT
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    SPI2_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI2_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_142_ENABLE:
+      attributes:
+        id: EVIC_142_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI2_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_143_ENABLE:
+      attributes:
+        id: EVIC_143_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI2_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_144_ENABLE:
+      attributes:
+        id: EVIC_144_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_142_HANDLER_LOCK:
+      attributes:
+        id: EVIC_142_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_143_HANDLER_LOCK:
+      attributes:
+        id: EVIC_143_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_144_HANDLER_LOCK:
+      attributes:
+        id: EVIC_144_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_143_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_143_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI2_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_144_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_144_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI2_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMA_CH_NEEDED_FOR_SPI2_Transmit:
+      attributes:
+        id: DMA_CH_NEEDED_FOR_SPI2_Transmit
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA_CH_NEEDED_FOR_SPI2_Receive:
+      attributes:
+        id: DMA_CH_NEEDED_FOR_SPI2_Receive
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_CLOCK_ENABLE:
+      attributes:
+        id: SPI2_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI2_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI2_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI2_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI2_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI2_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI2_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI2_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI2_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: SPI2_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI2_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI2_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi2
+            value: SPI2_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    BSP_PIN_17_DIR:
+      attributes:
+        id: BSP_PIN_17_DIR
+      children:
+      - children:
+        - attributes:
+            value: Out
+          type: User
         type: Values
       type: String
   userData:

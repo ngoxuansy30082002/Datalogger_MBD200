@@ -46,6 +46,23 @@ extern "C" {
     } SIM_UART_PLIB;
 
     typedef enum {
+        HW_STATE_IDLE = 0,
+        HW_STATE_RESET_PULL_LOW,
+        HW_STATE_TURN_ON_PULL_LOW,
+        HW_STATE_TURN_ON_WAIT_STATUS,
+        HW_STATE_TURN_OFF_PULL_LOW,
+        HW_STATE_TURN_OFF_WAIT_STATUS
+    } SIM_HW_INTERNAL_STATE;
+
+    typedef enum {
+        SIM_HW_STATUS_IDLE = 0,
+        SIM_HW_STATUS_BUSY,
+        SIM_HW_STATUS_READY,
+        SIM_HW_STATUS_POWERDOWN,
+        SIM_HW_STATUS_ERROR
+    } SIM_HW_STATUS;
+
+    typedef enum {
         SIM_DRV_IDLE = 0,
         SIM_DRV_TX_BUSY,
         SIM_DRV_RX_BUSY
@@ -57,6 +74,16 @@ extern "C" {
         SIM_DRV_STATUS_RECV_RESP, // Response received, data is in buffer
         SIM_DRV_STATUS_TIMEOUT // Time is up, no response
     } SIM_DRV_STATUS;
+
+    void SIMDriver_Initialize(void);
+    void SIMDriver_Task(void);
+    uint8_t* SIMDriver_GetBuffer(SIM_DRV_STATE state);
+    bool SIMDriver_Execute(size_t txSize, uint32_t timeout);
+    SIM_DRV_STATUS SIMDriver_GetStatus(void);
+    bool SIMDriver_Reset(void);
+    bool SIMDriver_TurnOn(void);
+    bool SIMDriver_TurnOff(void);
+    SIM_HW_STATUS SIMDriver_GetHWStatus(void);
 
 #ifdef	__cplusplus
 }

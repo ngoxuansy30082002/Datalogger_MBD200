@@ -41,6 +41,7 @@
 #include <string.h>
 #include "system/fs/src/sys_fs_media_manager_local.h"
 #include "system/fs/src/sys_fs_local.h"
+#include "system/fs/fat_fs/file_system/ff.h"
 #include "system/fs/mpfs/mpfs.h"
 #include "system/cache/sys_cache.h"
 #include "sys/kmem.h"
@@ -51,6 +52,14 @@ static const char *gSYSFSVolumeName [] = {
     "mmcblk",
     "ram",
     "mtd",
+};
+/**/
+static const uint16_t gPartitionTypeOffset [4] =
+{
+    450,
+    466,
+    482,
+    498
 };
 // *****************************************************************************
 /* Media object
@@ -124,6 +133,71 @@ static SYS_FS_MEDIA_MANAGER_OBJ gSYSFSMediaManagerObj =
 /* Defines the volume to partition translation table, used by MPFS */
 MPFS_PARTITION MPFS_VolToPart[SYS_FS_VOLUME_NUMBER];
 
+// *****************************************************************************
+/* Volume to Partition translation
+
+Summary:
+    Defines the volume to partition translation table, used by FAT FS.
+
+Description:
+    The following structure was added to enable the "multipartition"
+    feature of FAT FS. This strucre is already declared in ff.h and
+    the intention was to make as little change on ff.h
+    To use multipartition on FAT FS, we need to enable "_MULTI_PARTITION".
+    And, when we do that, the FAT FS code expects an array named "VolToPart".
+    The explanation for each element of the array is given below, and
+    this function places the elements of this array.
+
+    Lets consider a case where 2 media are attached = SD card with 4 partitions
+    and NVM with 1 partition.
+
+    PARTITION VolToPart[SYS_FS_VOLUME_NUMBER] = {
+        {0, 1},
+        {0, 2},
+        {0, 3},
+        {0, 4},
+        {1, 1}
+    };
+
+Remarks:
+    None
+*/
+PARTITION VolToPart[SYS_FS_VOLUME_NUMBER];
+
+//*****************************************************************************
+/* Function:
+    static void SYS_FS_MEDIA_T_MANAGER_UpdateVolToPart
+    (
+        uint8_t volNumber,
+        uint8_t pd,
+        uint8_t pt
+    );
+
+Summary:
+    Update the volume to partition number information.
+
+Description:
+    This function is present to enable the multipartition operation of FAT FS.
+    FAT FS uses the structure VolToPart to know the physical drive media number
+    and partition number of that media, using this structure. This function is
+    used to populate the structure.
+
+Remarks:
+    None
+*/
+static void SYS_FS_MEDIA_T_MANAGER_UpdateVolToPart
+(
+    uint8_t volNumber,
+    uint8_t pd,
+    uint8_t pt
+)
+{
+    /* Update the "VolToPart" table for multipartition support on FAT FS */
+    /* pd = Physical drive, starting from "zero". This is to be compatible with FAT FS code */
+    VolToPart[volNumber].pd = pd;
+    /* pt = partition, starting from "one". This is to be compatible with FAT FS code */
+    VolToPart[volNumber].pt = pt;
+}
 
 //*****************************************************************************
 /* MISRA C-2012 Rule 11.1, 11.8 deviated below. Deviation record ID -
@@ -199,6 +273,9 @@ static void SYS_FS_MEDIA_T_MANAGER_PopulateVolume
     uint8_t volumeNameLen = 0;
     SYS_FS_VOLUME *volumeObj = &gSYSFSMediaManagerObj.volumeObj[0];
 
+    uint8_t  partitionNum = 0;
+    uint16_t offset = 0;
+    uint8_t  *readBuffer = gSYSFSMediaManagerObj.mediaBuffer;
 
     for (volumeIndex = 0; volumeIndex < SYS_FS_VOLUME_NUMBER; volumeIndex++)
     {
@@ -232,6 +309,61 @@ static void SYS_FS_MEDIA_T_MANAGER_PopulateVolume
 
             MPFS_VolToPart[volumeIndex].pd = mediaObj->mediaIndex;
             MPFS_VolToPart[volumeIndex].pt = 0;
+        }
+        else
+        {
+            /* Register Media and Volume mapping with FAT File System */
+            /* Register the volumes to partition table only if this device has
+             * partition table entry or MBR. Skip if media contains VBR */
+            if (partitionMap != 0U)
+            {
+                if ((partitionMap & 0x01U) != 0U)
+                {
+                    partitionNum = 0;
+                    partitionMap &= ~(uint8_t)0x01U;
+                }
+                else if ((partitionMap & 0x02U) != 0U)
+                {
+                    partitionNum = 1;
+                    partitionMap &= ~(uint8_t)0x02U;
+                }
+                else if ((partitionMap & 0x04U) != 0U)
+                {
+                    partitionNum = 2;
+                    partitionMap &= ~(uint8_t)0x04U;
+                }
+                else if ((partitionMap & 0x08U) != 0U)
+                {
+                    partitionNum = 3;
+                    partitionMap &= ~(uint8_t)0x08U;
+                }
+                else
+                {
+                    /* Nothing to do */
+                }
+
+                if (fsType != 0xFFU)
+                {
+                    /* File system type offset */
+                    offset = gPartitionTypeOffset[partitionNum];
+                    volumeObj->fsType = readBuffer[offset];
+
+                    /* Number of sectors */
+                    volumeObj->numSectors = (((uint32_t)readBuffer[offset + 11UL] << 24) + ((uint32_t)readBuffer[offset + 10UL] << 16) + ((uint32_t)readBuffer[offset + 9UL] << 8) + (uint32_t)readBuffer[offset + 8U]);
+
+                    /* Start address of the volume */
+                    volumeObj->startSector = (((uint32_t)readBuffer[offset + 7UL] << 24) + ((uint32_t)readBuffer[offset + 6UL] << 16) + ((uint32_t)readBuffer[offset + 5UL] << 8) + (uint32_t)readBuffer[offset + 4U]);
+                }
+            }
+
+            if (isMBR != 0U)
+            {
+                SYS_FS_MEDIA_T_MANAGER_UpdateVolToPart (volumeIndex, mediaObj->mediaIndex, partitionNum + 1U);
+            }
+            else
+            {
+                SYS_FS_MEDIA_T_MANAGER_UpdateVolToPart (volumeIndex, mediaObj->mediaIndex, 0);
+            }
         }
         /* Update the inUse flag to indicate that the volume is now in use.*/
         volumeObj->inUse = true;
@@ -315,6 +447,51 @@ static uint8_t SYS_FS_MEDIA_T_MANAGER_FindNextMedia
     return 0xFF;
 }
 
+     /* MISRA C-2012 Rule 16.1 deviate: 1, 16.3 deviate:2 and 16.6 deviate:1.
+      Deviation record ID - H3_MISRAC_2012_R_16_1_DR_1, H3_MISRAC_2012_R_16_3_DR_1
+      & H3_MISRAC_2012_R_16_6_DR_1 */
+// *****************************************************************************
+/* Function:
+    static bool SYS_FS_MEDIA_MANAGER_IsFSFat
+    (
+        uint8_t fsType
+    );
+
+Summary:
+    Function to identify if file system type is FAT FS.
+
+Description:
+    This function identifies if the file system located on the media/partition
+    is FAT FS.
+
+Remarks:
+    None.
+***************************************************************************/
+static bool SYS_FS_MEDIA_MANAGER_IsFSFat
+(
+    uint8_t fsType
+)
+{
+    switch (fsType)
+    {
+        case 0x01: // FAT12
+        case 0x04: // FAT16
+        case 0x05: // Extended partition
+        case 0x06: // FAT16
+        case 0x07: // exFAT for future enhancement
+        case 0x0B: // FAT32
+        case 0x0C: // FAT32
+        case 0x0E: // FAT16
+        case 0x0F: // FAT16
+            {
+                return true;
+            }
+        default:
+            {
+                return false;
+            }
+    }
+}
     /* MISRAC 2012 deviation block end */
 // *****************************************************************************
 /* Function:
@@ -350,7 +527,75 @@ static uint8_t SYS_FS_MEDIA_T_MANAGER_AnalyzeFileSystem
     *numPartition = 0;
 
     /* Check for the Boot Signature */
-    if (0 == strncmp((char*)firstSector, "MPFS", 4))
+    if((firstSector[510] == 0x55U) && (firstSector[511] == 0xAAU))
+    {
+        /* Check if the first sector of the media is Volume Boot Record or the
+           Master Boot Record */
+        if((0xEBU == firstSector[0]) &&
+                ((0x3CU == firstSector[1]) || (0x58U == firstSector[1]) || (0xFEU == firstSector[1])) &&
+                (0x90U == firstSector[2]))
+        {
+            /* Volume Boot Record */
+            *numPartition = 1;
+            *isMBR = 0;
+
+            /* The extended BPB contains FAT32 in this field */
+            if ((0x46U == firstSector[82]) || (0x41U == firstSector[83]) ||
+                    (0x54U == firstSector[84]))
+            {
+                fsType = 0x0B;
+            }
+            /* The extended BPB contains FAT, FAT12 or FAT16 in these fields */
+            else if ((0x46U == firstSector[54]) || (0x41U == firstSector[55]) ||
+                    (0x54U == firstSector[56]))
+            {
+                fsType = 0x06;
+            }
+            else
+            {
+                /* Nothing to do */
+            }
+        }
+        else
+        {
+            /* The partition table in the MBR sector has room for four 16-byte
+             * entries that each specify the sectors that belong to a
+             * partition. The table is in bytes 446 through 509. An entry can
+             * begin at byte 446, 462, 478, or 494. */
+
+            /* Determine total partitions in the media */
+            *isMBR = 1;
+            if(SYS_FS_MEDIA_MANAGER_IsFSFat(firstSector[450]))
+            {
+                *partitionMap |= (uint8_t)(1UL << 0);
+                (*numPartition)++;
+            }
+            if(SYS_FS_MEDIA_MANAGER_IsFSFat(firstSector[466]))
+            {
+                *partitionMap |= (uint8_t)(1UL << 1);
+                (*numPartition)++;
+            }
+            if(SYS_FS_MEDIA_MANAGER_IsFSFat(firstSector[482]))
+            {
+                *partitionMap |= (uint8_t)(1UL << 2);
+                (*numPartition)++;
+            }
+            if(SYS_FS_MEDIA_MANAGER_IsFSFat(firstSector[498]))
+            {
+                *partitionMap |= (uint8_t)(1UL << 3);
+                (*numPartition)++;
+            }
+
+            /* Found at least one valid partition. Assign a non 0xFF value to
+             * indicate that atleast one of the partitions has a valid file
+             * system. */
+            if (*partitionMap != 0U)
+            {
+                fsType = 1;
+            }
+        }
+    }
+    else if (0 == strncmp((char*)firstSector, "MPFS", 4))
     {
         /* No partitions in MPFS, hence, go to other state */
         /* allocate a new volume to each partition */
@@ -966,7 +1211,12 @@ bool SYS_FS_MEDIA_MANAGER_VolumePropertyGet
         {
             if (strcmp((const char*)(volumeName + 5), (const char *)volumeObj->volumeName) == 0)
             {
-                if (volumeObj->fsType == (uint8_t)'M')
+                if (SYS_FS_MEDIA_MANAGER_IsFSFat (volumeObj->fsType))
+                {
+                    /* FAT File System */
+                    property->fsType = FAT;
+                }
+                else if (volumeObj->fsType == (uint8_t)'M')
                 {
                     /* MPFS File System */
                     property->fsType = MPFS2;

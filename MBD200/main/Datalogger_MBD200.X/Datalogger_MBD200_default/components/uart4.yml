@@ -139,4 +139,22 @@ data:
           type: String
         type: Attributes
       type: File
+    UART_TX_RING_BUFFER_SIZE:
+      attributes:
+        id: UART_TX_RING_BUFFER_SIZE
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: '4096'
+          type: User
+        type: Values
+      type: Integer
   userData: {}

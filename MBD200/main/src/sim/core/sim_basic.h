@@ -8,11 +8,61 @@
 #ifndef SIM_BASIC_H
 #define	SIM_BASIC_H
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "definitions.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
+    typedef int (*SIM_BASIC_CMD_BUILDER)(int state, char* buffer, size_t maxLen, const char* format);
+    typedef bool (*SIM_BASIC_CMD_PARSER)(int state, char* buffer, size_t maxLen);
 
+    typedef enum {
+        SIM_BASIC_IDLE = 0,
+        SIM_BASIC_AT,
+        SIM_BASIC_ATE0,
+        SIM_BASIC_QSIMSTAT,
+        SIM_BASIC_GSN,
+        SIM_BASIC_QDSIMCFG,
+        SIM_BASIC_QDSIM,
+        SIM_BASIC_QSIMSTAT_QUERY,
+        SIM_BASIC_QCCID,
+        SIM_BASIC_CREG,
+        SIM_BASIC_QSPN,
+        SIM_BASIC_CMGF,
+        SIM_BASIC_CSQ,
+        SIM_BASIC_READY,
+        SIM_BASIC_ERROR
+    } SIM_BASIC_STATE;
+
+    typedef struct {
+        bool inserted;
+        char imei[24];
+        char ccid[32];
+        char networkName[32];
+        int rssi;
+    } SIM_BASIC_INFO;
+
+    typedef struct {
+        const char* cmd;
+        SIM_BASIC_CMD_BUILDER builderFunc;
+        const char* respOk;
+        const char* respFail;
+        uint32_t timeoutMs;
+        uint8_t attempts;
+        SIM_BASIC_CMD_PARSER parserFunc;
+        SIM_BASIC_STATE nextStateOk;
+        SIM_BASIC_STATE nextStateFail;
+    } SIM_BASIC_CMD_SEQ;
+
+    /* CÁC HÀM CUNG C?P CHO APPLICATION LAYER */
+    void SIMBasic_Initialize(uint8_t sim_slot);
+    void SIMBasic_Process(void);
+    bool SIMBasic_IsReady(void);
 
 
 #ifdef	__cplusplus

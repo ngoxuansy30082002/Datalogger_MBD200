@@ -54,6 +54,7 @@
 #include "driver/memory/drv_memory.h"
 #include "peripheral/spi/spi_master/plib_spi5_master.h"
 #include "driver/ethmac/drv_ethmac.h"
+#include "driver/sdspi/drv_sdspi.h"
 #include "system/time/sys_time.h"
 #include "peripheral/uart/plib_uart6.h"
 #include "peripheral/coretimer/plib_coretimer.h"
@@ -61,9 +62,11 @@
 #include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/tmr/plib_tmr3.h"
+#include "peripheral/spi/spi_master/plib_spi2_master.h"
 #include "system/int/sys_int.h"
 #include "system/ports/sys_ports.h"
 #include "system/cache/sys_cache.h"
+#include "system/dma/sys_dma.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
 #include "library/tcpip/tcpip.h"
@@ -85,6 +88,10 @@
 #include "net_pres/pres/net_pres_socketapi.h"
 #include "system/fs/sys_fs.h"
 #include "system/fs/sys_fs_media_manager.h"
+#include "system/fs/sys_fs_fat_interface.h"
+#include "system/fs/fat_fs/file_system/ff.h"
+#include "system/fs/fat_fs/file_system/ffconf.h"
+#include "system/fs/fat_fs/hardware_access/diskio.h"
 #include "system/fs/mpfs/mpfs.h"
 #include "system/console/sys_console.h"
 #include "system/console/src/sys_console_uart_definitions.h"
@@ -94,10 +101,11 @@
 #include "utils/iqueue.h"
 
 #include "rtc/rtc.h"
-#include "dwin.h"
+#include "hmi/dwin.h"
 #include "modbus_rtu/master.h"
 #include "rule_engine/rule_engine.h"
-#include "sim/core/sim_driver.h"
+#include "sim/sim_main.h"
+#include "storage/sd_card/sd_card.h"
 #include "app.h"
 
 
@@ -229,6 +237,9 @@ Remarks:
 
 typedef struct
 {
+    /* SDSPI0 Driver Object */
+    SYS_MODULE_OBJ drvSDSPI0;
+
     SYS_MODULE_OBJ  sysTime;
     SYS_MODULE_OBJ  drvMemory0;
     SYS_MODULE_OBJ  sysConsole0;
