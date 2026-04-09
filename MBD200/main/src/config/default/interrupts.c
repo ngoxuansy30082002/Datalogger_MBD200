@@ -74,6 +74,8 @@ void INPUT_CAPTURE_6_Handler (void);
 void UART1_FAULT_Handler (void);
 void UART1_RX_Handler (void);
 void UART1_TX_Handler (void);
+void DMA0_Handler (void);
+void DMA1_Handler (void);
 void SPI2_RX_Handler (void);
 void SPI2_TX_Handler (void);
 void UART2_FAULT_Handler (void);
@@ -130,6 +132,16 @@ void __attribute__((used)) __ISR(_UART1_RX_VECTOR, ipl1SRS) UART1_RX_Handler (vo
 void __attribute__((used)) __ISR(_UART1_TX_VECTOR, ipl1SRS) UART1_TX_Handler (void)
 {
     UART1_TX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_DMA0_VECTOR, ipl1SRS) DMA0_Handler (void)
+{
+    DMA0_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_DMA1_VECTOR, ipl1SRS) DMA1_Handler (void)
+{
+    DMA1_InterruptHandler();
 }
 
 void __attribute__((used)) __ISR(_SPI2_RX_VECTOR, ipl1SRS) SPI2_RX_Handler (void)

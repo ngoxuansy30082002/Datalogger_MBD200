@@ -12,7 +12,13 @@
 extern "C" {
 #endif
 
-
+    typedef enum {
+        SIM_NTP_IDLE = 0,
+        SIM_NTP_SYNC, 
+        SIM_NTP_WAIT_URC, 
+        SIM_NTP_READY, 
+        SIM_NTP_ERROR
+    } SIM_NTP_STATE;
 
 
 #ifdef	__cplusplus

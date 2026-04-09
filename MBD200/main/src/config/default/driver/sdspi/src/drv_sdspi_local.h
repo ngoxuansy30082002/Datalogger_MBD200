@@ -54,6 +54,7 @@
 #include <stddef.h>
 
 #include "configuration.h"
+#include "system/dma/sys_dma.h"
 #include "driver/sdspi/drv_sdspi.h"
 #include "osal/osal.h"
 
@@ -1485,6 +1486,36 @@ typedef struct
     const uint32_t*                                 remapClockPolarity;
 
     const uint32_t*                                 remapClockPhase;
+
+    /* Transmit DMA Channel */
+    SYS_DMA_CHANNEL                                 txDMAChannel;
+
+    /* Receive DMA Channel */
+    SYS_DMA_CHANNEL                                 rxDMAChannel;
+
+    /* This is the SPI transmit register address. Used for DMA operation. */
+    void*                                           txAddress;
+
+    /* This is the SPI receive register address. Used for DMA operation. */
+    void*                                           rxAddress;
+
+    /*Pointer to the buffer where the received data needs to be copied */
+    void*                                           pReceiveData;
+
+    /*Pointer to the buffer containing data to be transmitted */
+    void*                                           pTransmitData;
+
+    /* Number of bytes pending to be written */
+    size_t                                          txPending;
+
+    /* Number of bytes to pending to be read */
+    size_t                                          rxPending;
+
+    /* Number of bytes transferred */
+    size_t                                          nBytesTransferred;
+
+    /* Buffer for transmitting/receiving dummy data */
+    uint8_t*                                        pDummyDataBuffer;
 
 
     SYS_PORT_PIN                                    chipSelectPin;

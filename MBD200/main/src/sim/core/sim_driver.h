@@ -74,7 +74,7 @@ extern "C" {
         SIM_DRV_STATUS_RECV_RESP, // Response received, data is in buffer
         SIM_DRV_STATUS_TIMEOUT // Time is up, no response
     } SIM_DRV_STATUS;
-
+       
     void SIMDriver_Initialize(void);
     void SIMDriver_Task(void);
     uint8_t* SIMDriver_GetBuffer(SIM_DRV_STATE state);

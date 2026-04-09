@@ -18,9 +18,6 @@
 extern "C" {
 #endif
 
-    typedef int (*SIM_BASIC_CMD_BUILDER)(int state, char* buffer, size_t maxLen, const char* format);
-    typedef bool (*SIM_BASIC_CMD_PARSER)(int state, char* buffer, size_t maxLen);
-
     typedef enum {
         SIM_BASIC_IDLE = 0,
         SIM_BASIC_AT,
@@ -47,23 +44,11 @@ extern "C" {
         int rssi;
     } SIM_BASIC_INFO;
 
-    typedef struct {
-        const char* cmd;
-        SIM_BASIC_CMD_BUILDER builderFunc;
-        const char* respOk;
-        const char* respFail;
-        uint32_t timeoutMs;
-        uint8_t attempts;
-        SIM_BASIC_CMD_PARSER parserFunc;
-        SIM_BASIC_STATE nextStateOk;
-        SIM_BASIC_STATE nextStateFail;
-    } SIM_BASIC_CMD_SEQ;
-
     /* CÁC HÀM CUNG C?P CHO APPLICATION LAYER */
     void SIMBasic_Initialize(uint8_t sim_slot);
     void SIMBasic_Process(void);
     bool SIMBasic_IsReady(void);
-
+    bool SIMBasic_HasError(void);
 
 #ifdef	__cplusplus
 }

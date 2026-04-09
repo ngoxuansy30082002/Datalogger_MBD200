@@ -76,6 +76,7 @@
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/cache/plib_cache.h"
 #include "peripheral/evic/plib_evic.h"
+#include "peripheral/dmac/plib_dmac.h"
 #include "driver/miim/drv_miim.h"
 #include "driver/ethphy/drv_ethphy.h"
 #include "driver/ethphy/drv_extphy_lan8740.h"

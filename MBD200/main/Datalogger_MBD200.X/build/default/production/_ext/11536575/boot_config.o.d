@@ -40,6 +40,9 @@ build/default/production/_ext/11536575/boot_config.o: \
  ../src/config/default/system/ports/sys_ports.h \
  ../src/config/default/system/ports/sys_ports_mapping.h \
  ../src/config/default/peripheral/gpio/plib_gpio.h \
+ ../src/config/default/system/dma/sys_dma.h \
+ ../src/config/default/system/dma/sys_dma_mapping.h \
+ ../src/config/default/peripheral/dmac/plib_dmac.h \
  ../src/config/default/driver/sdspi/src/drv_sdspi_local.h \
  ../src/config/default/driver/sdspi/drv_sdspi.h \
  ../src/config/default/system/time/sys_time.h \
@@ -56,7 +59,6 @@ build/default/production/_ext/11536575/boot_config.o: \
  ../src/config/default/system/ports/sys_ports.h \
  ../src/config/default/system/cache/sys_cache.h \
  ../src/config/default/system/dma/sys_dma.h \
- ../src/config/default/system/dma/sys_dma_mapping.h \
  ../src/config/default/osal/osal.h \
  ../src/config/default/system/debug/sys_debug.h \
  ../src/config/default/system/console/sys_console.h \
@@ -90,6 +92,7 @@ build/default/production/_ext/11536575/boot_config.o: \
  ../src/config/default/peripheral/gpio/plib_gpio.h \
  ../src/config/default/peripheral/cache/plib_cache.h \
  ../src/config/default/peripheral/evic/plib_evic.h \
+ ../src/config/default/peripheral/dmac/plib_dmac.h \
  ../src/config/default/driver/miim/drv_miim.h \
  ../src/config/default/driver/ethphy/drv_ethphy.h \
  ../src/config/default/driver/ethphy/drv_extphy_lan8740.h \
@@ -205,6 +208,12 @@ D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.h:
 
 ../src/config/default/peripheral/gpio/plib_gpio.h:
 
+../src/config/default/system/dma/sys_dma.h:
+
+../src/config/default/system/dma/sys_dma_mapping.h:
+
+../src/config/default/peripheral/dmac/plib_dmac.h:
+
 ../src/config/default/driver/sdspi/src/drv_sdspi_local.h:
 
 ../src/config/default/driver/sdspi/drv_sdspi.h:
@@ -236,8 +245,6 @@ D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.h:
 ../src/config/default/system/cache/sys_cache.h:
 
 ../src/config/default/system/dma/sys_dma.h:
-
-../src/config/default/system/dma/sys_dma_mapping.h:
 
 ../src/config/default/osal/osal.h:
 
@@ -304,6 +311,8 @@ D:/StudyDocs/Do_an_tot_nghiep/__src__/MBD200/main/src/boot_config.h:
 ../src/config/default/peripheral/cache/plib_cache.h:
 
 ../src/config/default/peripheral/evic/plib_evic.h:
+
+../src/config/default/peripheral/dmac/plib_dmac.h:
 
 ../src/config/default/driver/miim/drv_miim.h:
 

@@ -1,5 +1,5 @@
 /* 
- * File:   SDcard.h
+ * File:   sd_card.h
  * Author: Syxn
  *
  * Created on August 18, 2024, 8:53 PM
@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "definitions.h"
 
 #define SDCARD_FOLDER_PATH_LEN                  256
@@ -36,7 +37,7 @@ extern "C" {
         struct {
             unsigned int isMounted : 1;
             unsigned int isBusy : 1;
-            unsigned int reserved : 2;
+            unsigned int reserved : 6;
         } bits;
         uint8_t val;
     } SDCARD_FLAG;
@@ -52,9 +53,19 @@ extern "C" {
         SDCARD_OPEN_ERROR,
     } SDCARD_OPEN_STATES;
 
+    typedef enum {
+        SDCARD_SCAN_ERROR_IDLE,
+        SDCARD_SCAN_ERROR_PROCESS,
+    } SDCARD_SCAN_ERROR_FILE_STATE;
+
+    typedef enum {
+        SDCARD_REMOVE_MONTHLY_IDLE = 0,
+        SDCARD_REMOVE_MONTHLY_PROCESS,
+    } SDCARD_REMOVE_MONTHLY_STATES;
+
     typedef struct {
         SDCARD_STATUS status;
-
+        bool ledDisp;
     } SDCARD_DATA;
 
     extern SDCARD_DATA sdcardDt;
@@ -65,6 +76,8 @@ extern "C" {
     bool SDcard_WriteLog(const char* path, const char* data);
     bool SDcard_FileIsExists(const char* path);
     bool SDcard_RemoveFile(const char* path);
+    bool SDcard_isBusy();
+    bool SDcard_SetHidden(const char* path);
 
 #ifdef	__cplusplus
 }

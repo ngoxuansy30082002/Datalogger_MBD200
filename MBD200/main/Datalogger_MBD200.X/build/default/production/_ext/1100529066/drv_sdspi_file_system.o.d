@@ -21,6 +21,9 @@ build/default/production/_ext/1100529066/drv_sdspi_file_system.o: \
  ../src/config/default/system/ports/sys_ports.h \
  ../src/config/default/system/ports/sys_ports_mapping.h \
  ../src/config/default/peripheral/gpio/plib_gpio.h \
+ ../src/config/default/system/dma/sys_dma.h \
+ ../src/config/default/system/dma/sys_dma_mapping.h \
+ ../src/config/default/peripheral/dmac/plib_dmac.h \
  ../src/config/default/driver/sdspi/src/drv_sdspi_local.h \
  ../src/config/default/osal/osal.h \
  ../src/config/default/osal/osal_definitions.h \
@@ -73,6 +76,12 @@ build/default/production/_ext/1100529066/drv_sdspi_file_system.o: \
 ../src/config/default/system/ports/sys_ports_mapping.h:
 
 ../src/config/default/peripheral/gpio/plib_gpio.h:
+
+../src/config/default/system/dma/sys_dma.h:
+
+../src/config/default/system/dma/sys_dma_mapping.h:
+
+../src/config/default/peripheral/dmac/plib_dmac.h:
 
 ../src/config/default/driver/sdspi/src/drv_sdspi_local.h:
 

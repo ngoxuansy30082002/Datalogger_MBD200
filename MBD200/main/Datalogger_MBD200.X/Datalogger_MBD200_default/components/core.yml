@@ -6206,7 +6206,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
@@ -6217,7 +6217,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: 'false'
+            value: 'true'
           type: Dynamic
         type: Values
       type: Boolean
@@ -6330,6 +6330,410 @@ data:
           type: User
         type: Values
       type: String
+    DCH0_ECON_VALUE:
+      attributes:
+        id: DCH0_ECON_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '36880'
+          type: Dynamic
+        type: Values
+      type: Hex
+    DCH0_ECON_SIRQEN_VALUE:
+      attributes:
+        id: DCH0_ECON_SIRQEN_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DMAC_REQUEST_0_SOURCE_VALUE:
+      attributes:
+        id: DMAC_REQUEST_0_SOURCE_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '144'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DCH0_CON_VALUE:
+      attributes:
+        id: DCH0_CON_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Hex
+    DMA0_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: DMA0_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_134_ENABLE:
+      attributes:
+        id: EVIC_134_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA0_INTERRUPT_ENABLE:
+      attributes:
+        id: DMA0_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_134_HANDLER_LOCK:
+      attributes:
+        id: EVIC_134_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA0_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: DMA0_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_134_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_134_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: DMA0_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMA0_INTERRUPT_HANDLER:
+      attributes:
+        id: DMA0_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: DMA0_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMAC_HIGHEST_CHANNEL:
+      attributes:
+        id: DMAC_HIGHEST_CHANNEL
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '2'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DMAC_HEADER:
+      attributes:
+        id: DMAC_HEADER
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMAC_SOURCE:
+      attributes:
+        id: DMAC_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMAC_SYS_INIT:
+      attributes:
+        id: DMAC_SYS_INIT
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMAC_SYS_DEF:
+      attributes:
+        id: DMAC_SYS_DEF
+      children:
+      - children:
+        - attributes:
+            id: enabled
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      type: File
+    DMA_ENABLE:
+      attributes:
+        id: DMA_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMAC_CHAN0_ENBL:
+      attributes:
+        id: DMAC_CHAN0_ENBL
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMAC_REQUEST_0_SOURCE:
+      attributes:
+        id: DMAC_REQUEST_0_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI2_TX
+          type: Dynamic
+        type: Values
+      type: Combo
+    DMAC_REQUEST_0_PERID_LOCK:
+      attributes:
+        id: DMAC_REQUEST_0_PERID_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA_CH_FOR_SPI2_Transmit:
+      attributes:
+        id: DMA_CH_FOR_SPI2_Transmit
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DCH1_CON_VALUE:
+      attributes:
+        id: DCH1_CON_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '0'
+          type: Dynamic
+        type: Values
+      type: Hex
+    DCH1_ECON_VALUE:
+      attributes:
+        id: DCH1_ECON_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '36624'
+          type: Dynamic
+        type: Values
+      type: Hex
+    DCH1_ECON_SIRQEN_VALUE:
+      attributes:
+        id: DCH1_ECON_SIRQEN_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DMAC_REQUEST_1_SOURCE_VALUE:
+      attributes:
+        id: DMAC_REQUEST_1_SOURCE_VALUE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '143'
+          type: Dynamic
+        type: Values
+      type: Integer
+    DMA1_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: DMA1_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_135_ENABLE:
+      attributes:
+        id: EVIC_135_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA1_INTERRUPT_ENABLE:
+      attributes:
+        id: DMA1_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_135_HANDLER_LOCK:
+      attributes:
+        id: EVIC_135_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA1_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: DMA1_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_135_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_135_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: DMA1_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMA1_INTERRUPT_HANDLER:
+      attributes:
+        id: DMA1_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: DMA1_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    DMAC_CHAN1_ENBL:
+      attributes:
+        id: DMAC_CHAN1_ENBL
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMAC_REQUEST_1_SOURCE:
+      attributes:
+        id: DMAC_REQUEST_1_SOURCE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI2_RX
+          type: Dynamic
+        type: Values
+      type: Combo
+    DMAC_REQUEST_1_PERID_LOCK:
+      attributes:
+        id: DMAC_REQUEST_1_PERID_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    DMA_CH_FOR_SPI2_Receive:
+      attributes:
+        id: DMA_CH_FOR_SPI2_Receive
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '1'
+          type: Dynamic
+        type: Values
+      type: Integer
   userData:
     children:
     - attributes:

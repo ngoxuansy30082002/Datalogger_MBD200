@@ -191,6 +191,17 @@ static const DRV_SDSPI_INIT drvSDSPI0InitData =
 
     .isFsEnabled            = true,
 
+    /* DMA Channel for Transmit */
+    .txDMAChannel           = DRV_SDSPI_XMIT_DMA_CH_IDX0,
+
+    /* DMA Channel for Receive */
+    .rxDMAChannel           = DRV_SDSPI_RCV_DMA_CH_IDX0,
+
+    /* SPI Transmit Register */
+    .txAddress              = (void *)&(SPI2BUF),
+
+    /* SPI Receive Register */
+    .rxAddress              = (void *)&(SPI2BUF),
 };
 // </editor-fold>
 
@@ -905,6 +916,8 @@ void SYS_Initialize ( void* data )
     TMR3_Initialize();
 
 	SPI2_Initialize();
+
+    DMAC_Initialize();
 
     I2C2_Initialize();
 

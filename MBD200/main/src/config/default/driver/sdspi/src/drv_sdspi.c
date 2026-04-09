@@ -64,6 +64,7 @@ static CACHE_ALIGN uint8_t gDrvSDSPICsdData [DRV_SDSPI_INSTANCES_NUMBER][20];
 static CACHE_ALIGN uint8_t gDrvSDSPICidData [DRV_SDSPI_INSTANCES_NUMBER][20];
 static CACHE_ALIGN uint8_t gDrvSDSPITempCidData [DRV_SDSPI_INSTANCES_NUMBER][20];
 
+static CACHE_ALIGN uint8_t gDrvSDSPIDummyBufferDMA [DRV_SDSPI_INSTANCES_NUMBER][DMA_DUMMY_BUFFER_SIZE];
 
 static DRV_SDSPI_OBJ gDrvSDSPIObj[DRV_SDSPI_INSTANCES_NUMBER];
 
@@ -2286,6 +2287,10 @@ SYS_MODULE_OBJ DRV_SDSPI_Initialize
     dObj->remapClockPhase       = sdSPIInit->remapClockPhase;
     dObj->remapClockPolarity    = sdSPIInit->remapClockPolarity;
     dObj->remapDataBits         = sdSPIInit->remapDataBits;
+    dObj->rxDMAChannel          = sdSPIInit->rxDMAChannel;
+    dObj->txDMAChannel          = sdSPIInit->txDMAChannel;
+    dObj->txAddress             = sdSPIInit->txAddress;
+    dObj->rxAddress             = sdSPIInit->rxAddress;
 
     dObj->status                = SYS_STATUS_UNINITIALIZED;
     dObj->inUse                 = true;
@@ -2327,11 +2332,37 @@ SYS_MODULE_OBJ DRV_SDSPI_Initialize
     /* De-assert Chip Select pin to begin with */
     SYS_PORT_PinSet(dObj->chipSelectPin);
 
+    dObj->pDummyDataBuffer      = &gDrvSDSPIDummyBufferDMA[drvIndex][0];
 
 
 
-    /* Register call-back with the SPI PLIB */
-    dObj->spiPlib->callbackRegister(DRV_SDSPI_SPIPlibCallbackHandler, (uintptr_t)dObj);
+    /* Register call-backs with the DMA System Service */
+    if (dObj->txDMAChannel != SYS_DMA_CHANNEL_NONE && dObj->rxDMAChannel != SYS_DMA_CHANNEL_NONE)
+    {
+        SYS_DMA_DataWidthSetup(dObj->rxDMAChannel, SYS_DMA_WIDTH_8_BIT);
+
+        SYS_DMA_DataWidthSetup(dObj->txDMAChannel, SYS_DMA_WIDTH_8_BIT);
+
+        SYS_DMA_AddressingModeSetup(
+            dObj->rxDMAChannel,
+            SYS_DMA_SOURCE_ADDRESSING_MODE_FIXED,
+            SYS_DMA_DESTINATION_ADDRESSING_MODE_INCREMENTED
+        );
+
+        SYS_DMA_AddressingModeSetup(
+            dObj->txDMAChannel,
+            SYS_DMA_SOURCE_ADDRESSING_MODE_INCREMENTED,
+            SYS_DMA_DESTINATION_ADDRESSING_MODE_FIXED
+        );
+
+        SYS_DMA_ChannelCallbackRegister(dObj->txDMAChannel, DRV_SDSPI_TX_DMA_CallbackHandler, (uintptr_t)dObj);
+        SYS_DMA_ChannelCallbackRegister(dObj->rxDMAChannel, DRV_SDSPI_RX_DMA_CallbackHandler, (uintptr_t)dObj);
+    }
+    else
+    {
+        /* Register call-back with the SPI PLIB */
+        dObj->spiPlib->callbackRegister(DRV_SDSPI_SPIPlibCallbackHandler, (uintptr_t)dObj);
+    }
 
     /* Register with file system*/
     if (sdSPIInit->isFsEnabled == true)

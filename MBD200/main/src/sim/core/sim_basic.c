@@ -1,4 +1,4 @@
-#include "sim/sim_config.h"
+#include "sim/sim_general.h"
 #include "sim_basic.h"
 #include "sim_driver.h"
 
@@ -7,7 +7,7 @@ static const char * __TAG__ = "SIMBASIC";
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format);
 static bool _respParser(int state, char* buffer, size_t maxLen);
 
-static const SIM_BASIC_CMD_SEQ _cmdTable[] = {
+static const SIM_CMD_SEQ _cmdTable[] = {
     /* { cmd, builderFunc, respOk, respFail, timeoutMs, attempts , parserFunc, nextStateOk, nextStateFail } */
     [SIM_BASIC_IDLE] =
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_BASIC_IDLE, SIM_BASIC_IDLE},
@@ -58,10 +58,12 @@ static int _currentTxLen = 0;
 static uint8_t _attemptCount = 0;
 static uint8_t _resetCount = 0;
 
-static int _cmdBuilder(int state, char* buffer, size_t max_len, const char* format) {
+static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format) {
     switch (state) {
-        case SIM_BASIC_QDSIM: return snprintf(buffer, max_len, format, _currentSimSlot);
-        default: return snprintf(buffer, max_len, "%s", format);
+        case SIM_BASIC_QDSIM:
+            return snprintf(buffer, maxLen, format, _currentSimSlot);
+        default:
+            return snprintf(buffer, maxLen, "%s", format);
     }
 }
 
@@ -228,7 +230,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
 }
 
 static void _handleErrorOrTimeout(void) {
-    const SIM_BASIC_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
+    const SIM_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
 
     if (_attemptCount < cmdInfo->attempts - 1) {
         /* Increase retry counter and retry current command */
@@ -288,7 +290,7 @@ void SIMBasic_Process(void) {
 
     /* 1. COMMAND NOT SENT YET -> PREPARE AND SEND */
     if (!_isWaitingResp) {
-        const SIM_BASIC_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
+        const SIM_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
 
         if (!_isBuilded) {
             uint8_t* tx_buf = SIMDriver_GetBuffer(SIM_DRV_TX_BUSY);

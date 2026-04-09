@@ -114,8 +114,16 @@ data:
       children:
       - children:
         - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
             id: drv_sdspi_0
-            value: '-1'
+            value: '1'
           type: Dynamic
         type: Values
       type: Integer
@@ -125,7 +133,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '10000000'
+            value: '15000000'
           type: User
         type: Values
       type: Integer
@@ -135,8 +143,16 @@ data:
       children:
       - children:
         - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
             id: drv_sdspi_0
-            value: '-1'
+            value: '0'
           type: Dynamic
         type: Values
       type: Integer
@@ -158,5 +174,21 @@ data:
             value: 'true'
           type: Boolean
         type: Attributes
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+    DRV_SDSPI_TX_RX_DMA_EN:
+      attributes:
+        id: DRV_SDSPI_TX_RX_DMA_EN
+      children:
+      - children:
+        - attributes:
+            id: drv_sdspi_0
+            value: 'true'
+          type: Dynamic
+        type: Values
       type: Boolean
   userData: {}

@@ -1,4 +1,4 @@
-#include "sim/sim_config.h"
+#include "sim/sim_general.h"
 #include "sim_driver.h"
 
 static const char * __TAG__ = "SIMDRV";

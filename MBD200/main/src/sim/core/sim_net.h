@@ -12,7 +12,20 @@
 extern "C" {
 #endif
 
+    typedef enum {
+        SIM_NET_IDLE = 0,
+        SIM_NET_DEFINE_PDP,
+        SIM_NET_DEACTIVE_PDP,
+        SIM_NET_ACTIVE_PDP,
+        SIM_NET_CHECK_ACTIVE,
+        SIM_NET_READY,
+        SIM_NET_ERROR
+    } SIM_NET_STATE;
 
+    void SIMNet_Initialize(void);
+    void SIMNet_Process(void);
+    bool SIMNet_IsReady(void);
+    bool SIMNet_HasError(void);
 
 
 #ifdef	__cplusplus
