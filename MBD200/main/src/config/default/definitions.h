@@ -102,7 +102,7 @@
 #include "utils/iqueue.h"
 
 #include "rtc/rtc.h"
-#include "hmi/dwin.h"
+#include "hmi/hmi_dwin.h"
 #include "modbus_rtu/master.h"
 #include "rule_engine/rule_engine.h"
 #include "sim/sim_main.h"

@@ -347,3 +347,9 @@ void SIMBasic_Process(void) {
         }
     }
 }
+// -----------Info qua HMI--------------------
+SIM_BASIC_INFO* SIMBasic_GetInfo(void) {
+    extern SIM_BASIC_INFO _simInfo; 
+    return &_simInfo;
+}
+// --------------------------------

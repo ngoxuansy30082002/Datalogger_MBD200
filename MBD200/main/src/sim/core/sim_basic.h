@@ -49,7 +49,8 @@ extern "C" {
     void SIMBasic_Process(void);
     bool SIMBasic_IsReady(void);
     bool SIMBasic_HasError(void);
-
+    // Lay info qua hmi
+    SIM_BASIC_INFO* SIMBasic_GetInfo(void);
 #ifdef	__cplusplus
 }
 #endif

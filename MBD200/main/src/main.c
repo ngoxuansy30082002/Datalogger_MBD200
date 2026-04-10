@@ -33,18 +33,33 @@
 // Section: Main Entry Point
 // *****************************************************************************
 // *****************************************************************************
+static void HMI_Force_Demo_Tasks(void) {
+    static uint32_t lastTick = 0;
+    uint32_t curTick = SYS_TMR_TickCountGet();
+    uint32_t tickPerSec = SYS_TMR_TickCounterFrequencyGet();
+
+    if (curTick - lastTick >= (tickPerSec * 1)) {
+        lastTick = curTick;
+
+        HMIDwin_TriggerSend(HMI_TAG_NETWORK_SIGNAL);
+
+        HMIDwin_TriggerSend(HMI_TAG_DATETIME);
+
+    }
+}
 
 int main ( void )
 {
     /* Initialize all modules */
     SYS_Initialize ( NULL );
-    int16_t do_am = 50;    
-    DWIN_WriteInt(0x6100, do_am);
+    HMIDwin_Initialize();
+    RTC_Initialize();
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
-
+        HMIDwin_Tasks();
+        HMI_Force_Demo_Tasks();
 
     }
 

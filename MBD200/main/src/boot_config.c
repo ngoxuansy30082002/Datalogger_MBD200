@@ -1,6 +1,10 @@
 #include "boot_config.h"
 
 APP_CONFIG gAppCfg;
+ANALOG gAnalogCfg = {0};
+MODBUS_RTU_TAG gMbrtuCfg = {0};
+INPUT_CAPTURE gInCaptureCfg = {0};
+
 //APP_ANALOG glbAppAnlg;
 //APP_CONFIG_DEVICE glbAppDev;
 ////APP_CONFIG_ASSETS glbAppAsset;
