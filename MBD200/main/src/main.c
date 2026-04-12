@@ -53,7 +53,6 @@ int main ( void )
     /* Initialize all modules */
     SYS_Initialize ( NULL );
     HMIDwin_Initialize();
-    RTC_Initialize();
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */

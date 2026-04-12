@@ -60,6 +60,8 @@ void EVIC_Initialize( void )
     IPC3SET = 0x40000U | 0x0U;  /* TIMER_3:  Priority 1 / Subpriority 0 */
     IPC5SET = 0x400U | 0x0U;  /* INPUT_CAPTURE_4:  Priority 1 / Subpriority 0 */
     IPC7SET = 0x40000U | 0x0U;  /* INPUT_CAPTURE_6:  Priority 1 / Subpriority 0 */
+    IPC27SET = 0x40000U | 0x0U;  /* SPI1_RX:  Priority 1 / Subpriority 0 */
+    IPC27SET = 0x4000000U | 0x0U;  /* SPI1_TX:  Priority 1 / Subpriority 0 */
     IPC28SET = 0x4U | 0x0U;  /* UART1_FAULT:  Priority 1 / Subpriority 0 */
     IPC28SET = 0x400U | 0x0U;  /* UART1_RX:  Priority 1 / Subpriority 0 */
     IPC28SET = 0x40000U | 0x0U;  /* UART1_TX:  Priority 1 / Subpriority 0 */

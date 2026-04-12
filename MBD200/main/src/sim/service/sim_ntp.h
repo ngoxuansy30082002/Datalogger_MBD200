@@ -14,9 +14,9 @@ extern "C" {
 
     typedef enum {
         SIM_NTP_IDLE = 0,
-        SIM_NTP_SYNC, 
-        SIM_NTP_WAIT_URC, 
-        SIM_NTP_READY, 
+        SIM_NTP_SETUP_TIMEZONE,
+        SIM_NTP_SYNC_TIME,
+        SIM_NTP_READY,
         SIM_NTP_ERROR
     } SIM_NTP_STATE;
 

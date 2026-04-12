@@ -46,9 +46,9 @@ extern "C" {
 
     typedef struct {
         MBRTU_MASTER_STATES state;
-        SENSOR_STATUS status[MAX_BUFFER_TAG];
-        MBRTU_RAW_VALUE rawValue[MAX_BUFFER_TAG];
-        MBRTU_PARSED_VALUE value[MAX_BUFFER_TAG];
+        SENSOR_STATUS status[MAX_MODBUS_TAG];
+        MBRTU_RAW_VALUE rawValue[MAX_MODBUS_TAG];
+        MBRTU_PARSED_VALUE value[MAX_MODBUS_TAG];
         bool led;
         bool reInit;
     } MBRTU_MASTER_DATA;

@@ -57,7 +57,7 @@ void SIMDriver_Task(void) {
 
         }
     }
-    
+
     switch (_hwState) {
         case HW_STATE_IDLE:
             break;
@@ -80,7 +80,7 @@ void SIMDriver_Task(void) {
 
         case HW_STATE_TURN_ON_WAIT_STATUS:
             if (GPIO_PinRead(_simPlib.statusPin)) {
-                SYS_CONSOLE_PRINT("%s - %s:\t Turn on done -> HW ready\r\n", __TAG__, __func__);
+                //                SYS_CONSOLE_PRINT("%s - %s:\t Turn on done -> HW ready\r\n", __TAG__, __func__);
                 _hwStatus = SIM_HW_STATUS_READY;
                 _hwState = HW_STATE_IDLE;
             } else if (TIME_IS_EXPIRED(_hwTick, 5000)) {
@@ -100,7 +100,7 @@ void SIMDriver_Task(void) {
 
         case HW_STATE_TURN_OFF_WAIT_STATUS:
             if (!GPIO_PinRead(_simPlib.statusPin)) {
-                SYS_CONSOLE_PRINT("%s - %s:\t Turn off done -> HW ready\r\n", __TAG__, __func__);
+                //                SYS_CONSOLE_PRINT("%s - %s:\t Turn off done -> HW ready\r\n", __TAG__, __func__);
                 _hwStatus = SIM_HW_STATUS_POWERDOWN;
                 _hwState = HW_STATE_IDLE;
             } else if (TIME_IS_EXPIRED(_hwTick, 31000)) {

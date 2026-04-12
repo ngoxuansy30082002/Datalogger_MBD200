@@ -21,6 +21,7 @@ extern "C" {
     uint8_t Helpers_Make8(uint16_t var, uint8_t offset);
     uint16_t Helpers_Make16(uint8_t high, uint8_t low);
     uint8_t Helpers_HexFromChars(char high, char low);
+    uint32_t Helpers_CRC32Calculate(const uint8_t *data, size_t length);
 
 #ifdef	__cplusplus
 }

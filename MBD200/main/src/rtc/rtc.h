@@ -89,21 +89,21 @@ extern "C" {
     typedef struct {
         RTC_STATES state;
         RTC_STATES nextState;
-        TIME sysTime;
-        TIME bufferTime;
         RTC_FLAG f;
+        TIME sysTime;
     } RTC_DATA;
 
-    void RTC_Initialize(void);
-    void RTC_Tasks(void);
+    void Rtc_Initialize(void);
+    void Rtc_Task(void);
 
     extern RTC_DATA rtcDt;
 
-    void RTC_parseStringTime(const char *timeString, TIME *rtc);
-    void RTC_parseUnixTime(time_t tUnixSeconds, TIME *rtc);
-    void RTC_parseGsmNtpTime(const char *time_str, TIME *rtc);
-    TIME RTC_getNextTime(TIME currentTime, int interval);
-    bool RTC_isTimeEqual(TIME time1, TIME time2);
+    void Rtc_updateFromManual(const char *timeString);
+    void Rtc_updateFromGsmNtp(const char *timeString);
+    void Rtc_updateFromEthNtp(time_t tUnixSeconds);
+
+    TIME Rtc_getNextTime(TIME currentTime, int interval);
+    bool Rtc_isTimeEqual(TIME time1, TIME time2);
 
     static inline uint8_t _bcd2bin(uint8_t bcd) {
         return (bcd & 0x0F) + 10 * ((bcd & 0xF0) >> 4);

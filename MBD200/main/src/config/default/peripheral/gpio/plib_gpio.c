@@ -70,7 +70,7 @@ void GPIO_Initialize ( void )
     TRISBCLR = 0x100U; /* Direction Control */
     ANSELBCLR = 0xffdcU; /* Digital Mode Enable */
     /* PORTC Initialization */
-    LATC = 0x4004U; /* Initial Latch Value */
+    LATC = 0x4U; /* Initial Latch Value */
     TRISCCLR = 0x4004U; /* Direction Control */
     ANSELCCLR = 0x1cU; /* Digital Mode Enable */
     CNPUCSET = 0x8U; /* Pull-Up Enable */

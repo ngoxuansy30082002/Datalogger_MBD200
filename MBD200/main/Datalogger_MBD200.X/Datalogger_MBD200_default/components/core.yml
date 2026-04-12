@@ -2282,7 +2282,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '16388'
+            value: '4'
           type: Dynamic
         type: Values
       type: Hex
@@ -2292,7 +2292,7 @@ data:
       children:
       - children:
         - attributes:
-            value: High
+            value: ''
           type: User
         type: Values
       type: String
@@ -2835,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807218452'
+            value: '807218196'
           type: Dynamic
         type: Values
       type: Hex
@@ -3845,7 +3845,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -6734,6 +6734,226 @@ data:
           type: Dynamic
         type: Values
       type: Integer
+    SPI1_CLOCK_ENABLE:
+      attributes:
+        id: SPI1_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI1_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_109_ENABLE:
+      attributes:
+        id: EVIC_109_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI1_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI1_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_110_ENABLE:
+      attributes:
+        id: EVIC_110_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI1_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI1_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_111_ENABLE:
+      attributes:
+        id: EVIC_111_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI1_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_109_HANDLER_LOCK:
+      attributes:
+        id: EVIC_109_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI1_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_110_HANDLER_LOCK:
+      attributes:
+        id: EVIC_110_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI1_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_111_HANDLER_LOCK:
+      attributes:
+        id: EVIC_111_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI1_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI1_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_110_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_110_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI1_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI1_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI1_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: SPI1_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_111_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_111_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI1_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI1_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI1_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi1
+            value: SPI1_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
   userData:
     children:
     - attributes:

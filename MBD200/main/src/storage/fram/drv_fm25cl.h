@@ -12,8 +12,8 @@
 #include <string.h>
 #include "definitions.h"
 
-#define DRV_FM25CL_CHIP_SELECT_PIN      GPIO_PIN_RD9
-#define DRV_FM25CL_RESET_PIN            GPIO_PIN_NONE
+#define DRV_FM25CL_CHIP_SELECT_PIN      GPIO_PIN_RD12
+#define DRV_FM25CL_RESET_PIN            GPIO_PIN_RC14
 
 #define DRV_FM25CL_HEADER_LEN           3 // 1byte opcode + 2byte address
 

@@ -113,22 +113,35 @@ void APP_Tasks(void) {
         case APP_STATE_INIT:
         {
             bool appInitialized = true;
-            RTC_Initialize();
+            Rtc_Initialize();
             SIMMain_Initialize();
             SDcard_Initialize();
+            BootConfig_Initialize();
+            ExtFlash_Initialize();
+            Fram_Initialize();
 
             if (appInitialized) {
 
-                appData.state = APP_STATE_SERVICE_TASKS;
+                appData.state = APP_STATE_BOOT_CONFIG;
             }
+            break;
+        }
+
+        case APP_STATE_BOOT_CONFIG:
+        {
+            ExtFlash_Task();
+            if (BootConfig_Task())
+                appData.state = APP_STATE_SERVICE_TASKS;
             break;
         }
 
         case APP_STATE_SERVICE_TASKS:
         {
-            RTC_Tasks();
+            Rtc_Task();
             SIMMain_Task();
             SDcard_Task();
+            ExtFlash_Task();
+            Fram_Task();
             break;
         }
 

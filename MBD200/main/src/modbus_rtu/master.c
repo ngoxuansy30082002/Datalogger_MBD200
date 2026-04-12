@@ -468,7 +468,7 @@ void MbrtuMaster_Initialize(void) {
     mbrtuMasterDt.state = 0;
     memset(&mbrtuMasterDt, 0, sizeof (MBRTU_MASTER_DATA));
     for (uint8_t i = 0; i < gMbrtuCfg.numTag; i++) {
-        mbrtuMasterDt.status[i] = UNKNOWN;
+        mbrtuMasterDt.status[i] = STATUS_UNKNOWN;
     }
 
     modbus_app_init(_uartPlib);
@@ -514,7 +514,7 @@ void MbrtuMaster_Tasks(void) {
                         mbrtuMasterDt.led = 1;
                     } else {
                         if (!gMbrtuCfg.entry[_rowIndex].enable)
-                            mbrtuMasterDt.status[_rowIndex] = UNKNOWN;
+                            mbrtuMasterDt.status[_rowIndex] = STATUS_UNKNOWN;
                         mbrtuMasterDt.led = 0;
                         _MBRTU_gotoNewRow();
                     }
@@ -576,7 +576,7 @@ void MbrtuMaster_Tasks(void) {
                 mbrtuMasterDt.led = 0;
                 if (retry >= gAppCfg.modbusRtu.retries) {
                     retry = 0;
-                    mbrtuMasterDt.status[_rowIndex] = BAD;
+                    mbrtuMasterDt.status[_rowIndex] = STATUS_BAD;
                     memset(&mbrtuMasterDt.value[_rowIndex], 0, sizeof (MBRTU_PARSED_VALUE));
                     NEXT_STATE(MBRTU_MASTER_COMPLETE);
                     break;

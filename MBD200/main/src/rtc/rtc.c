@@ -6,6 +6,7 @@ RTC_DATA *ptrRtcDt = &rtcDt;
 static const char * __TAG__ = "RTC";
 static uint8_t _rxBuffer[ISL1208_RTC_SECTION_LEN] = {0};
 static uint8_t _txBuffer[ISL1208_RTC_SECTION_LEN + 1] = {0};
+static TIME _bufferTime = {0};
 
 const RTC_I2C_PLIB _i2cPlib = {
     .read_t = (RTC_I2C_READ) I2C2_Read,
@@ -70,16 +71,13 @@ static uint8_t _daysInMonth(int month, int year) {
 
 /* Public function */
 
-void RTC_Initialize() {
+void Rtc_Initialize() {
     _i2cPlib.CallbackRegister(_i2cCallbackHandler, (uintptr_t) ptrRtcDt);
     memset(&rtcDt, 0, sizeof (RTC_DATA));
 }
 
-void RTC_Tasks() {
-    static uint32_t _pollTick = 0;
-
-    uint32_t currentTick = SYS_TMR_TickCountGet();
-    uint32_t tickPerSecond = SYS_TMR_TickCounterFrequencyGet();
+void Rtc_Task() {
+    static uint32_t pollTick = 0;
 
     switch (rtcDt.state) {
         case RTC_IDLE:
@@ -88,10 +86,11 @@ void RTC_Tasks() {
                 rtcDt.state = RTC_SET;
                 break;
             }
-            if (currentTick - _pollTick >= (tickPerSecond * 200 / 1000)
+
+            if (TIME_IS_EXPIRED(pollTick, 200)
                     && ptrRtcDt->nextState == RTC_IDLE) {
                 rtcDt.state = RTC_GET;
-                _pollTick = SYS_TMR_TickCountGet();
+                pollTick = TICK_NOW();
             }
             break;
         case RTC_INIT:
@@ -103,7 +102,7 @@ void RTC_Tasks() {
             rtcDt.state = RTC_IDLE;
             break;
         case RTC_SET:
-            i2cSetTime(&rtcDt.bufferTime);
+            i2cSetTime(&_bufferTime);
             rtcDt.f.bits.isValidTime = 0;
             ptrRtcDt->nextState = RTC_GET;
             rtcDt.state = RTC_IDLE;
@@ -137,93 +136,87 @@ void RTC_Tasks() {
     }
 }
 
-void RTC_parseStringTime(const char *timeString, TIME *rtc) {
+void Rtc_updateFromManual(const char *timeString) {
     char buffer[5];
 
     strncpy(buffer, timeString, 4);
     buffer[4] = '\0';
-    rtc->year = (uint16_t) atoi(buffer);
+    _bufferTime.year = (uint16_t) atoi(buffer);
 
     strncpy(buffer, timeString + 5, 2);
     buffer[2] = '\0';
-    rtc->month = (uint8_t) atoi(buffer);
+    _bufferTime.month = (uint8_t) atoi(buffer);
 
     strncpy(buffer, timeString + 8, 2);
     buffer[2] = '\0';
-    rtc->day = (uint8_t) atoi(buffer);
+    _bufferTime.day = (uint8_t) atoi(buffer);
 
     strncpy(buffer, timeString + 11, 2);
     buffer[2] = '\0';
-    rtc->hour = (uint8_t) atoi(buffer);
+    _bufferTime.hour = (uint8_t) atoi(buffer);
 
     strncpy(buffer, timeString + 14, 2);
     buffer[2] = '\0';
-    rtc->minute = (uint8_t) atoi(buffer);
+    _bufferTime.minute = (uint8_t) atoi(buffer);
 
     strncpy(buffer, timeString + 17, 2);
     buffer[2] = '\0';
-    rtc->second = (uint8_t) atoi(buffer);
+    _bufferTime.second = (uint8_t) atoi(buffer);
 
-    rtc->dayOfWeek = _calculateDayOfWeek(rtc->year, rtc->month, rtc->day);
+    _bufferTime.dayOfWeek = _calculateDayOfWeek(_bufferTime.year, _bufferTime.month, _bufferTime.day);
+    rtcDt.f.bits.forceSet = 1;
 }
 
-//static time_t _adjustTimeZone(time_t tUnixSeconds, const char *timezone) {
-//    float offset;
-//    sscanf(timezone, "%f", &offset);
-//    int offset_seconds = (int) (offset * 3600);
-//    tUnixSeconds += offset_seconds;
-//
-//    return tUnixSeconds;
-//}
-//
-//void RTC_parseUnixTime(time_t tUnixSeconds, TIME *rtc) {
-//    tUnixSeconds = _adjustTimeZone(tUnixSeconds, appCfg.time.);
-//
-//    struct tm *time_info;
-//    time_info = localtime(&tUnixSeconds);
-//
-//    rtc->hour = time_info->tm_hour;
-//    rtc->minute = time_info->tm_min;
-//    rtc->second = time_info->tm_sec;
-//    rtc->day = time_info->tm_mday;
-//    rtc->month = time_info->tm_mon + 1;
-//    rtc->year = time_info->tm_year + 1900;
-//    rtc->dayOfWeek = time_info->tm_wday;
-//}
+static time_t _adjustTimeZone(time_t tUnixSeconds, uint8_t timeZone) {
+    int offset_seconds = (int) (timeZone * 3600);
+    tUnixSeconds += offset_seconds;
 
-void RTC_parseGsmNtpTime(const char *response_str, TIME *rtc) {
+    return tUnixSeconds;
+}
+
+void Rtc_parseUnixTime(time_t tUnixSeconds, TIME *rtc) {
+    tUnixSeconds = _adjustTimeZone(tUnixSeconds, gAppCfg.time.timeZone);
+
+    struct tm *time_info;
+    time_info = localtime(&tUnixSeconds);
+
+    rtc->hour = time_info->tm_hour;
+    rtc->minute = time_info->tm_min;
+    rtc->second = time_info->tm_sec;
+    rtc->day = time_info->tm_mday;
+    rtc->month = time_info->tm_mon + 1;
+    rtc->year = time_info->tm_year + 1900;
+    rtc->dayOfWeek = time_info->tm_wday;
+}
+
+void Rtc_updateFromGsmNtp(const char * timeString) {
     struct tm t;
-    int tz_hour;
-    char time_str[25];
+    int tz_units;
 
     memset(&t, 0, sizeof (struct tm));
-
-    char *start = strchr(response_str, '"');
-    if (start != NULL) {
-        start++;
-        char *end = strchr(start, '"');
-        if (end != NULL) {
-            size_t len = end - start;
-            strncpy(time_str, start, len);
-            time_str[len] = '\0';
-        }
-    }
-
-    sscanf(time_str, "%d/%d/%d,%d:%d:%d+%d",
+    if (sscanf(timeString, "%d/%d/%d,%d:%d:%d%d",
             &t.tm_year, &t.tm_mon, &t.tm_mday,
             &t.tm_hour, &t.tm_min, &t.tm_sec,
-            &tz_hour);
+            &tz_units) < 7) {
+        return;
+    }
 
     t.tm_year -= 1900;
     t.tm_mon -= 1;
 
     time_t unix_time = mktime(&t);
-    unix_time -= tz_hour * 3600;
+    unix_time -= (time_t) tz_units * 900;
 
-    RTC_parseUnixTime(unix_time, rtc);
+    Rtc_parseUnixTime(unix_time, &_bufferTime);
+    rtcDt.f.bits.forceSet = 1;
 }
 
-TIME RTC_getNextTime(TIME currentTime, int interval) {
+void Rtc_updateFromEthNtp(time_t tUnixSeconds) {
+    Rtc_parseUnixTime(tUnixSeconds, &_bufferTime);
+    rtcDt.f.bits.forceSet = 1;
+}
+
+TIME Rtc_getNextTime(TIME currentTime, int interval) {
     TIME nextTime = currentTime;
 
     uint8_t totalMinutes = nextTime.minute + interval;
@@ -254,7 +247,7 @@ TIME RTC_getNextTime(TIME currentTime, int interval) {
     return nextTime;
 }
 
-bool RTC_isTimeEqual(TIME time1, TIME time2) {
+bool Rtc_isTimeEqual(TIME time1, TIME time2) {
     return (time1.hour == time2.hour &&
             time1.minute == time2.minute &&
             time1.day == time2.day &&

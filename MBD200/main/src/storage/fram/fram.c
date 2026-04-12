@@ -15,9 +15,7 @@ static uint8_t _framData[2048] = {0};
 
 static const FRAM_PARTITION _partition[FRAM_DATA_COUNT] = {
     {},
-    {.type = FRAM_DATA_CS_OPERATION, .address = FRAM_ADDR_CS_OPERATION, .maxSize = 16},
-    {.type = FRAM_DATA_TRANSACTION_EVSE1, .address = FRAM_ADDR_TRANSACTION_EVSE1, .maxSize = 2048},
-    {.type = FRAM_DATA_METER, .address = FRAM_ADDR_METER, .maxSize = 192},
+    {.type = FRAM_DATA_COUNTER, .address = FRAM_ADDR_COUNTER, .maxSize = 16},
 };
 
 static uint16_t _packFramData(const FRAM_QUEUE_ITEM * item) {
@@ -33,13 +31,6 @@ static uint16_t _packFramData(const FRAM_QUEUE_ITEM * item) {
     memcpy(_framData, &header, headerSize);
     memcpy(&_framData[headerSize], item->buffer, item->size);
 
-
-    //    SYS_CONSOLE_PRINT("%s\t %u %u\r\n", __func__, item->size, headerSize);
-    //    for (uint8_t i = 0; i < (item->size + headerSize); i++)
-    //        SYS_CONSOLE_PRINT("%x ", _framData[i]);
-    //    SYS_CONSOLE_PRINT("\r\n");
-
-
     return (item->size + headerSize);
 }
 
@@ -47,18 +38,12 @@ static bool _unpackFramData(const FRAM_QUEUE_ITEM * item) {
     FRAM_METADATA header;
     uint8_t headerSize = sizeof (FRAM_METADATA);
 
-
-    //    SYS_CONSOLE_PRINT("%s\t %u %u\r\n", __func__, item->size, headerSize);
-    //    for (uint8_t i = 0; i < (item->size + headerSize); i++)
-    //        SYS_CONSOLE_PRINT("%x ", _framData[i]);
-    //    SYS_CONSOLE_PRINT("\r\n");
-
-
     memcpy(&header, _framData, headerSize);
     if (header.type != item->type || header.len != item->size) return false;
 
     uint32_t crc = Helpers_CRC32Calculate((uint8_t *) & _framData[headerSize], header.len);
     if (header.crc != crc) return false;
+    
     memcpy(item->buffer, &_framData[headerSize], item->size);
 
     return true;
@@ -67,25 +52,21 @@ static bool _unpackFramData(const FRAM_QUEUE_ITEM * item) {
 void Fram_Initialize(void) {
     DrvFM25CL_Initialize();
     _initStatus = SYS_STATUS_UNINITIALIZED;
-    _writeState = FRAM_IDLE;
-    _readState = FRAM_IDLE;
     iqueue_init(&_writeQueue, FRAM_QUEUE_SIZE, sizeof (FRAM_QUEUE_ITEM), &_writeQueueBuffer);
     iqueue_init(&_readQueue, FRAM_QUEUE_SIZE, sizeof (FRAM_QUEUE_ITEM), &_readQueueBuffer);
 }
 
 void Fram_Task(void) {
     static FRAM_QUEUE_ITEM item;
-    static uint32_t lastTick = 0;
+    static uint32_t timeoutTick = 0;
     static uint32_t openTick = 0;
     static FRAM_RESULT rslt = 0;
 
-    uint32_t currentTick = SYS_TMR_TickCountGet();
-    uint32_t tickPerSecond = SYS_TMR_TickCounterFrequencyGet();
-
     if (_initStatus != SYS_STATUS_READY && _initStatus != SYS_STATUS_ERROR) {
-        if (currentTick - openTick < tickPerSecond / 100)
+        if (!TIME_IS_EXPIRED(openTick, 100))
             return;
 
+        openTick = TICK_NOW();
         _initStatus = DrvFM25CL_Open();
         if (_initStatus == SYS_STATUS_READY)
             SYS_CONSOLE_PRINT("%s - %s\t Init SUCCESS\r\n", __TAG__, __func__);
@@ -103,7 +84,7 @@ void Fram_Task(void) {
             if (wQueueSize == 0 || _readState != FRAM_IDLE) break;
 
             if (iqueue_dequeue(&_writeQueue, &item) == I_OK) {
-                lastTick = currentTick;
+                timeoutTick = TICK_NOW();
                 rslt = FRAM_RES_SUCCESS;
                 _writeState = FRAM_TRANSFER;
             }
@@ -111,7 +92,7 @@ void Fram_Task(void) {
         }
         case FRAM_TRANSFER:
         {
-            if (currentTick - lastTick > (tickPerSecond * 1)) {
+            if (TIME_IS_EXPIRED(timeoutTick, 500)) {
                 _writeState = FRAM_DONE;
                 rslt = FRAM_RES_TIMEOUT;
                 break;
@@ -129,12 +110,13 @@ void Fram_Task(void) {
                 break;
             }
 
+            timeoutTick = TICK_NOW();
             _writeState = FRAM_WAIT_TRANSFER;
             break;
         }
         case FRAM_WAIT_TRANSFER:
         {
-            if (currentTick - lastTick > (tickPerSecond * 1)) {
+            if (TIME_IS_EXPIRED(timeoutTick, 500)) {
                 _writeState = FRAM_DONE;
                 rslt = FRAM_RES_TIMEOUT;
                 break;
@@ -163,7 +145,7 @@ void Fram_Task(void) {
             if (queueSize == 0 || _writeState != FRAM_IDLE) break;
 
             if (iqueue_dequeue(&_readQueue, &item) == I_OK) {
-                lastTick = currentTick;
+                timeoutTick = TICK_NOW();
                 rslt = FRAM_RES_SUCCESS;
                 _readState = FRAM_TRANSFER;
             }
@@ -178,13 +160,13 @@ void Fram_Task(void) {
                 break;
             }
 
-            lastTick = currentTick;
+            timeoutTick = TICK_NOW();
             _readState = FRAM_WAIT_TRANSFER;
             break;
         }
         case FRAM_WAIT_TRANSFER:
         {
-            if (currentTick - lastTick > (tickPerSecond * 1)) {
+            if (TIME_IS_EXPIRED(timeoutTick, 500)) {
                 _readState = FRAM_DONE;
                 rslt = FRAM_RES_TIMEOUT;
                 break;

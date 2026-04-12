@@ -12,10 +12,9 @@
 #include <string.h>
 #include "definitions.h"
 
-#define FRAM_ADDR_CS_OPERATION                     0x20
-#define FRAM_ADDR_TRANSACTION_EVSE1                0x30
-#define FRAM_ADDR_METER                            0x830
-#define FRAM_QUEUE_SIZE                            16
+#define FRAM_ADDR_COUNTER                           0x20
+
+#define FRAM_QUEUE_SIZE                             16
 
 #ifdef	__cplusplus
 extern "C" {
@@ -30,9 +29,7 @@ extern "C" {
 
     typedef enum {
         FRAM_DATA_UNKNOWN = 0,
-        FRAM_DATA_CS_OPERATION,
-        FRAM_DATA_TRANSACTION_EVSE1,
-        FRAM_DATA_METER,
+        FRAM_DATA_COUNTER,
         FRAM_DATA_COUNT,
     } FRAM_DATA_TYPE;
 

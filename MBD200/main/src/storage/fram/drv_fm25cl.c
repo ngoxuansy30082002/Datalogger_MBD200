@@ -8,11 +8,11 @@ static CACHE_ALIGN uint8_t _rxBuffer[2048] = {0};
 static CACHE_ALIGN uint8_t _opcode = 0;
 
 static const DRV_FM25CL_PLIB_INTERFACE _fm25clPlib = {
-    .writeRead = (DRV_FM25CL_PLIB_WRITE_READ) SPI4_WriteRead,
-    .write_t = (DRV_FM25CL_PLIB_WRITE) SPI4_Write,
-    .read_t = (DRV_FM25CL_PLIB_READ) SPI4_Read,
-    .isBusy = (DRV_FM25CL_PLIB_IS_BUSY) SPI4_IsBusy,
-    .callbackRegister = (DRV_FM25CL_PLIB_CALLBACK_REGISTER) SPI4_CallbackRegister,
+    .writeRead = (DRV_FM25CL_PLIB_WRITE_READ) SPI1_WriteRead,
+    .write_t = (DRV_FM25CL_PLIB_WRITE) SPI1_Write,
+    .read_t = (DRV_FM25CL_PLIB_READ) SPI1_Read,
+    .isBusy = (DRV_FM25CL_PLIB_IS_BUSY) SPI1_IsBusy,
+    .callbackRegister = (DRV_FM25CL_PLIB_CALLBACK_REGISTER) SPI1_CallbackRegister,
     .chipSelectPin = DRV_FM25CL_CHIP_SELECT_PIN,
     .resetPin = DRV_FM25CL_RESET_PIN,
 };
@@ -192,7 +192,7 @@ SYS_STATUS DrvFM25CL_Open() {
                 dObj->openState = DRV_FM25CL_OPEN_DONE;
                 dObj->status = SYS_STATUS_READY;
             } else {
-                if (++numRetry > 1) {
+                if (++numRetry > 5) {
                     dObj->openState = DRV_FM25CL_OPEN_DONE;
                     dObj->status = SYS_STATUS_ERROR;
                 } else

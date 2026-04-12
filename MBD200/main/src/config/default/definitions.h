@@ -63,6 +63,7 @@
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/tmr/plib_tmr3.h"
 #include "peripheral/spi/spi_master/plib_spi2_master.h"
+#include "peripheral/spi/spi_master/plib_spi1_master.h"
 #include "system/int/sys_int.h"
 #include "system/ports/sys_ports.h"
 #include "system/cache/sys_cache.h"
@@ -101,12 +102,15 @@
 #include "utils/helpers.h"
 #include "utils/iqueue.h"
 
+#include "boot_config.h"
+#include "storage/external_flash/extflash_manager.h"
+#include "storage/fram/fram.h"
+#include "storage/sd_card/sd_card.h"
 #include "rtc/rtc.h"
 #include "hmi/hmi_dwin.h"
 #include "modbus_rtu/master.h"
 #include "rule_engine/rule_engine.h"
 #include "sim/sim_main.h"
-#include "storage/sd_card/sd_card.h"
 #include "app.h"
 
 

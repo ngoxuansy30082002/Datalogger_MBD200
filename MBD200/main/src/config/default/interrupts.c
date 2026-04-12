@@ -71,6 +71,8 @@ void CORE_TIMER_Handler (void);
 void TIMER_3_Handler (void);
 void INPUT_CAPTURE_4_Handler (void);
 void INPUT_CAPTURE_6_Handler (void);
+void SPI1_RX_Handler (void);
+void SPI1_TX_Handler (void);
 void UART1_FAULT_Handler (void);
 void UART1_RX_Handler (void);
 void UART1_TX_Handler (void);
@@ -117,6 +119,16 @@ void __attribute__((used)) __ISR(_INPUT_CAPTURE_4_VECTOR, ipl1SRS) INPUT_CAPTURE
 void __attribute__((used)) __ISR(_INPUT_CAPTURE_6_VECTOR, ipl1SRS) INPUT_CAPTURE_6_Handler (void)
 {
     INPUT_CAPTURE_6_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI1_RX_VECTOR, ipl1SRS) SPI1_RX_Handler (void)
+{
+    SPI1_RX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI1_TX_VECTOR, ipl1SRS) SPI1_TX_Handler (void)
+{
+    SPI1_TX_InterruptHandler();
 }
 
 void __attribute__((used)) __ISR(_UART1_FAULT_VECTOR, ipl1SRS) UART1_FAULT_Handler (void)

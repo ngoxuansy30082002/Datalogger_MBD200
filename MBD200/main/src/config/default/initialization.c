@@ -917,6 +917,8 @@ void SYS_Initialize ( void* data )
 
 	SPI2_Initialize();
 
+	SPI1_Initialize();
+
     DMAC_Initialize();
 
     I2C2_Initialize();

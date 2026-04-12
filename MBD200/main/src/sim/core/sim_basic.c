@@ -87,7 +87,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                 }
                 _simInfo.imei[i] = '\0';
                 if (i >= 15) {
-                    SYS_CONSOLE_PRINT("%s - %s:\t IMEI: %s\r\n", __TAG__, __func__, _simInfo.imei);
+                    //                    SYS_CONSOLE_PRINT("%s - %s:\t IMEI: %s\r\n", __TAG__, __func__, _simInfo.imei);
                     return true;
                 }
             }
@@ -110,12 +110,12 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                     if (isdigit((unsigned char) *ptr)) {
                         int status = *ptr - '0'; /* Read <status> */
                         if (status == 1) {
-                            SYS_CONSOLE_PRINT("%s - %s:\t SIM inserted\r\n", __TAG__, __func__);
+                            //                            SYS_CONSOLE_PRINT("%s - %s:\t SIM inserted\r\n", __TAG__, __func__);
                             _simInfo.inserted = true;
                             return true; /* SIM detected */
                         } else {
                             _simInfo.inserted = false;
-                            SYS_CONSOLE_PRINT("%s - %s:\t SIM NOT inserted\r\n", __TAG__, __func__);
+                            //                            SYS_CONSOLE_PRINT("%s - %s:\t SIM NOT inserted\r\n", __TAG__, __func__);
                             return false; /* SIM not detected */
                         }
                     }
@@ -342,14 +342,15 @@ void SIMBasic_Process(void) {
                     _handleErrorOrTimeout();
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
-            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
+            //            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
             _handleErrorOrTimeout();
         }
     }
 }
 // -----------Info qua HMI--------------------
+
 SIM_BASIC_INFO* SIMBasic_GetInfo(void) {
-    extern SIM_BASIC_INFO _simInfo; 
+    extern SIM_BASIC_INFO _simInfo;
     return &_simInfo;
 }
 // --------------------------------

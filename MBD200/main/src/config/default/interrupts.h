@@ -60,6 +60,8 @@ void CORE_TIMER_InterruptHandler( void );
 void TIMER_3_InterruptHandler( void );
 void INPUT_CAPTURE_4_InterruptHandler( void );
 void INPUT_CAPTURE_6_InterruptHandler( void );
+void SPI1_RX_InterruptHandler( void );
+void SPI1_TX_InterruptHandler( void );
 void UART1_FAULT_InterruptHandler( void );
 void UART1_RX_InterruptHandler( void );
 void UART1_TX_InterruptHandler( void );

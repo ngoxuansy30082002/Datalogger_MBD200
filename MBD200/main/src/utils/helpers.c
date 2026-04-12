@@ -37,3 +37,17 @@ uint8_t Helpers_HexFromChars(char high, char low) {
 
     return hex_value;
 }
+
+uint32_t Helpers_CRC32Calculate(const uint8_t *data, size_t length) {
+    uint32_t crc = 0xFFFFFFFF;
+    for (size_t i = 0; i < length; i++) {
+        crc ^= data[i];
+        for (uint8_t j = 0; j < 8; j++) {
+            if (crc & 1)
+                crc = (crc >> 1) ^ 0xEDB88320UL;
+            else
+                crc >>= 1;
+        }
+    }
+    return ~crc;
+}

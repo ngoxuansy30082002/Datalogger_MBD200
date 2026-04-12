@@ -153,7 +153,7 @@ data:
         type: Attributes
       - children:
         - attributes:
-            value: '4096'
+            value: '8192'
           type: User
         type: Values
       type: Integer

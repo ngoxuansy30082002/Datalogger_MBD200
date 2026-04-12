@@ -43,6 +43,8 @@
 #define DATE_LEN                        32
 #define MODEL_LEN                       32
 #define SERIAL_LEN                      32
+#define HASHCODE_SIZE                    16
+
 #define SENSOR_NAME_LEN                 24
 #define SENSOR_UNIT_LEN                 16
 #define USERNAME_LEN                    48
@@ -57,12 +59,12 @@
 #define MAX_DIGITAL_OUTPUT              2
 #define MAX_HMI_PARA                    20
 #define MAX_ANALOG_CHANNEL              4
-#define MAX_BUFFER_TAG                  14
+#define MAX_MODBUS_TAG                  14
 #define MAX_INPUT_CAPTURE               4
 #define MAX_SENSOR                      20
 #define MAX_ROW_PER_PAGE                10
 #define MAX_FTP_SERVER                  2
-#define MAX_POSITION_SIZE               MAX_INPUT_CAPTURE + MAX_ANALOG_CHANNEL + MAX_BUFFER_TAG
+#define MAX_POSITION_SIZE               MAX_INPUT_CAPTURE + MAX_ANALOG_CHANNEL + MAX_MODBUS_TAG
 #define OFFSET_POSITION_COUNTER         0        
 #define OFFSET_POSITION_ANALOG          4   
 #define OFFSET_POSITION_MBRTU           8
@@ -106,20 +108,20 @@ extern "C" {
 #endif
 
     typedef enum {
-        NONE = 0,
-        ALL,
-        ETH,
-        GSM
-    } UPLINK;
+        UPLINK_NONE = 0,
+        UPLINK_ALL,
+        UPLINK_ETH,
+        UPLINK_GSM
+    } INTERNET_UPLINK;
 
     typedef enum {
-        TT24 = 0,
-        DNA,
-    } FORMAT_DATA;
+        FORMAT_FILE_TT24 = 0,
+        FORMAT_FILE_DNA,
+    } FORMAT_FILE;
 
     typedef enum {
-        TXT = 0,
-        CSV,
+        FILE_TYPE_TXT = 0,
+        FILE_TYPE_CSV,
     } FILE_TYPE;
 
     typedef enum {
@@ -150,29 +152,19 @@ extern "C" {
     } STATUS_SOURCE;
 
     typedef enum {
-        NONE_FOLDER = 0,
-        BY_DAY,
-        BY_MONTH,
+        MAKE_FOLDER_NONE = 0,
+        MAKE_FOLDER_DAY,
+        MAKE_FOLDER_MONTH,
     } MAKE_FOLDER;
 
-    typedef struct {
-        uint8_t hour;
-        uint8_t minute;
-        uint8_t second;
-        uint8_t day;
-        uint8_t month;
-        uint16_t year;
-        uint8_t dayOfWeek;
-    } TIME;
-
     typedef enum {
-        OCLOCK = 0,
-        CYCLE,
+        TIME_MODE_OCLOCK = 0,
+        TIME_MODE_CYCLE,
     } TIME_MODE;
 
     typedef enum {
-        HOLD = 0,
-        PULSE,
+        OUT_HOLD = 0,
+        OUT_PULSE,
     } CTRL_OUT_TYPE;
 
     typedef enum {
@@ -189,13 +181,23 @@ extern "C" {
     } SENSOR_DATA_TYPE;
 
     typedef enum {
-        UNKNOWN = -1,
-        GOOD = 0,
-        CALIBRATION,
-        BAD
+        STATUS_UNKNOWN = -1,
+        STATUS_GOOD = 0,
+        STATUS_CALIBRATION,
+        STATUS_BAD
     } SENSOR_STATUS;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
+        uint8_t hour;
+        uint8_t minute;
+        uint8_t second;
+        uint8_t day;
+        uint8_t month;
+        uint16_t year;
+        uint8_t dayOfWeek;
+    } TIME;
+
+    typedef struct {
         char username[USERNAME_LEN];
         char password[PASSWORD_LEN];
         char dirPath[DIR_PATH_LEN];
@@ -207,22 +209,22 @@ extern "C" {
     }
     FTP_SERVER_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         uint8_t retentionMonths;
         uint8_t lastMonth;
     }
     SDCARD_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
-        UPLINK uplink;
-        FORMAT_DATA formatData;
+    typedef struct {
+        INTERNET_UPLINK uplink;
+        FORMAT_FILE formatFile;
         FILE_TYPE typefile;
         TIME_MODE timeMode;
         uint16_t sendInterval;
     }
     LOG_FILE_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         uint16_t timeout;
         uint8_t retries;
         uint32_t baudRate;
@@ -233,25 +235,24 @@ extern "C" {
     }
     MODBUSRTU_PHY_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         char usernameAPN[USERNAME_LEN];
         char passwordAPN[PASSWORD_LEN];
         char APN[APN_LEN];
     }
     GSM_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         uint8_t indexNTP;
+        uint8_t timeZone;
         bool timeAuto;
         uint8_t yearNumber;
     }
-    TIME_CONFIG;
+    DATETIME_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         IP_ADDR ipAddr;
-        IP_ADDR defaultIpAddr;
         IP_ADDR ipMask;
-        IP_ADDR defaultIpMask;
         IP_ADDR gateway;
         IP_ADDR primaryDNS;
         IP_ADDR secondDNS;
@@ -263,22 +264,23 @@ extern "C" {
     }
     NETWORK_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
-        char describeOUT1[SENSOR_NAME_LEN];
-        char describeOUT2[SENSOR_NAME_LEN];
-        uint16_t timeCtrlOut1;
-        uint16_t timeCtrlOut2;
-        CTRL_OUT_TYPE typeCtrlOut1;
-        CTRL_OUT_TYPE typeCtrlOut2;
+    typedef struct {
+
+        struct {
+            char describe[SENSOR_NAME_LEN];
+            uint16_t time;
+            CTRL_OUT_TYPE type;
+        }
+        out[MAX_DIGITAL_OUTPUT];
     }
     IO_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
 
-        struct __attribute__((__packed__)) {
+        struct {
             bool enable;
-            SENSOR_TYPE type; //loai sensor (mb,adc,counter)
-            uint8_t indexOfType; // thu tu cua ss do trong nhom loai cua no (mb1,mb2, adc1,adc3...)
+            SENSOR_TYPE type;
+            uint8_t indexOfType;
 
             bool calibrated;
             STATUS_SOURCE typeStatus;
@@ -298,39 +300,38 @@ extern "C" {
             uint16_t errorValueCompare;
         }
         entry[MAX_SENSOR];
-        uint8_t total_sensor;
+        uint8_t numSensor;
     }
     SENSOR_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         NETWORK_CONFIG network;
         FTP_SERVER_CONFIG ftpServer[MAX_FTP_SERVER];
         LOG_FILE_CONFIG logFile;
         MODBUSRTU_PHY_CONFIG modbusRtu;
         GSM_CONFIG gsm;
-        TIME_CONFIG time;
+        DATETIME_CONFIG time;
         IO_CONFIG io;
         SDCARD_CONFIG sdCard;
-        SENSOR_CONFIG sensor;
 
         uint8_t hmi[MAX_HMI_PARA];
         uint16_t position[MAX_POSITION_SIZE];
     }
     APP_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
 
-        struct __attribute__((__packed__)) {
+        struct {
             bool enable;
+            char name[SENSOR_NAME_LEN];
+            char unit[SENSOR_UNIT_LEN];
+
             uint8_t slaveAddress;
             uint8_t function;
             uint16_t regAddress;
             uint8_t quantity;
             SENSOR_DATA_TYPE rawDataType;
             bool bigEndian;
-
-            char name[SENSOR_NAME_LEN];
-            char unit[SENSOR_UNIT_LEN];
 
             SENSOR_SCALE_TYPE scaleType;
             SENSOR_DATA_TYPE scaleDataType;
@@ -344,15 +345,15 @@ extern "C" {
             OPERATOR offSetPreOperator;
             OPERATOR offsetSubOperator;
         }
-        entry[MAX_BUFFER_TAG];
+        entry[MAX_MODBUS_TAG];
 
         uint8_t numTag;
     }
-    MODBUS_RTU_TAG;
+    MODBUSRTU_TAG_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
 
-        struct __attribute__((__packed__)) {
+        struct {
             bool enable;
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
@@ -371,37 +372,40 @@ extern "C" {
         }
         entry[MAX_ANALOG_CHANNEL];
     }
-    ANALOG;
+    ANALOG_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
 
-        struct __attribute__((__packed__)) {
+        struct {
             bool enable;
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
-            float pulse;
+
+            float valPerPulse;
             float minFreq;
             float scale;
         }
-        counter[MAX_INPUT_CAPTURE];
+        entry[MAX_INPUT_CAPTURE];
     }
-    INPUT_CAPTURE;
+    INPUT_CAPTURE_CONFIG;
 
-    typedef struct __attribute__((__packed__)) {
+    typedef struct {
         char manufacturer[MANUFACTURER_LEN];
-        char fw_code[FW_CODE_LEN];
-        char hw_code[HW_CODE_LEN];
-        char date[DATE_LEN];
+        char fwVer[FW_CODE_LEN];
+        char hwVer[HW_CODE_LEN];
+        char dateTime[DATE_LEN];
         char model[MODEL_LEN];
         char serial[SERIAL_LEN];
+        uint8_t fwHashCode[HASHCODE_SIZE];
     }
     DEVICE_INFO;
 
-    extern APP_CONFIG gAppCfg;
-    extern ANALOG gAnalogCfg;
     extern DEVICE_INFO gDeviceInfo;
-    extern MODBUS_RTU_TAG gMbrtuCfg;
-    extern INPUT_CAPTURE gInCaptureCfg;
+    extern APP_CONFIG gAppCfg;
+    extern SENSOR_CONFIG gSensorCfg;
+    extern ANALOG_CONFIG gAnalogCfg;
+    extern MODBUSRTU_TAG_CONFIG gMbrtuCfg;
+    extern INPUT_CAPTURE_CONFIG gInCaptureCfg;
 
     extern int lenLog;
     extern char logs[100];

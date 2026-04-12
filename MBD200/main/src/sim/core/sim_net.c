@@ -14,22 +14,16 @@ static const SIM_CMD_SEQ _cmdTable[] = {
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_NET_IDLE, SIM_NET_IDLE},
 
     [SIM_NET_DEFINE_PDP] =
-    { NULL, _cmdBuilder, "OK", "ERROR", 300, 5, NULL, SIM_NET_ACTIVE_PDP, SIM_NET_DEACTIVE_PDP},
+    { "AT+QICSGP=%u,1,\"%s\",\"%s\",\"%s\",1\r\n", _cmdBuilder, "OK", "ERROR", 300, 5, NULL, SIM_NET_ACTIVE_PDP, SIM_NET_DEACTIVE_PDP},
 
     [SIM_NET_DEACTIVE_PDP] =
-    { NULL, _cmdBuilder, "OK", "ERROR", 40000, 3, _respParser, SIM_NET_DEFINE_PDP, SIM_NET_ERROR},
+    { "AT+QIDEACT=%u\r\n", _cmdBuilder, "OK", "ERROR", 40000, 3, _respParser, SIM_NET_DEFINE_PDP, SIM_NET_ERROR},
 
     [SIM_NET_ACTIVE_PDP] =
-    { NULL, _cmdBuilder, "OK", "ERROR", 150000, 3, NULL, SIM_NET_CHECK_ACTIVE, SIM_NET_DEACTIVE_PDP},
+    { "AT+QIACT=%u\r\n", _cmdBuilder, "OK", "ERROR", 150000, 3, NULL, SIM_NET_CHECK_ACTIVE, SIM_NET_DEACTIVE_PDP},
 
     [SIM_NET_CHECK_ACTIVE] =
     { "AT+QIACT?\r\n", NULL, "OK", "ERROR", 1000, 3, _respParser, SIM_NET_READY, SIM_NET_DEFINE_PDP},
-
-    [SIM_NET_READY] =
-    { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_NET_IDLE, SIM_NET_IDLE},
-
-    [SIM_NET_ERROR] =
-    { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_NET_IDLE, SIM_NET_IDLE}
 };
 
 
@@ -46,12 +40,12 @@ static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* forma
 
     switch (state) {
         case SIM_NET_DEFINE_PDP:
-            return snprintf(buffer, maxLen, "AT+QICSGP=%u,1,\"%s\",\"%s\",\"%s\",1\r\n",
+            return snprintf(buffer, maxLen, format,
                     SIM_CONTEXT_ID, gAppCfg.gsm.APN, gAppCfg.gsm.usernameAPN, gAppCfg.gsm.passwordAPN);
         case SIM_NET_DEACTIVE_PDP:
-            return snprintf(buffer, maxLen, "AT+QIDEACT=%u\r\n", SIM_CONTEXT_ID);
+            return snprintf(buffer, maxLen, format, SIM_CONTEXT_ID);
         case SIM_NET_ACTIVE_PDP:
-            return snprintf(buffer, maxLen, "AT+QIACT=%u\r\n", SIM_CONTEXT_ID);
+            return snprintf(buffer, maxLen, format, SIM_CONTEXT_ID);
 
         default: return snprintf(buffer, maxLen, "%s", format);
     }

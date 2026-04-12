@@ -93,6 +93,9 @@ typedef enum
     /* Command to perform High Speed Read */
     SST26_CMD_HIGH_SPEED_READ    = 0x0B,
 
+    /* Command to perform Read */
+    SST26_CMD_READ    = 0x03,
+            
     /* Write enable command. */
     SST26_CMD_WRITE_ENABLE       = 0x06,
 
@@ -109,13 +112,10 @@ typedef enum
     SST26_CMD_BULK_ERASE_64K     = 0xD8,
 
     /* Command to perform Chip erase */
-    SST26_CMD_CHIP_ERASE         = 0xC7,
+    SST26_CMD_CHIP_ERASE         = 0x60,
 
     /* Command to unlock the flash device. */
-    SST26_CMD_UNPROTECT_GLOBAL   = 0x98,
-
-    /* Command to write the Flash status register. */
-    SST26_CMD_WRITE_STATUS_REG    = 0x01
+    SST26_CMD_UNPROTECT_GLOBAL   = 0x01
 
 } SST26_CMD;
 

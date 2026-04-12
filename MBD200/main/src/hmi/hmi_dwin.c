@@ -4,12 +4,6 @@
 #include "rtc/rtc.h"
 #include "sim/core/sim_basic.h"
 
-extern APP_CONFIG gAppCfg;
-extern ANALOG gAnalogCfg;
-extern DEVICE_INFO gDeviceInfo;
-extern MODBUS_RTU_TAG gMbrtuCfg;
-extern INPUT_CAPTURE gInCaptureCfg;
-
 static const HMI_UART_INTERFACE _hmiUartFunc = {
     .read_t = (HMI_UART_READ) UART6_Read,
     .readIsBusy = (HMI_UART_READ_IS_BUSY) UART6_ReadIsBusy,
@@ -174,18 +168,18 @@ static uint16_t _buildFrameData(HMI_TAG_TYPE type, uint8_t maxSize, uint16_t sta
         {
             for (uint8_t i = 0; i < (MAX_HMI_PARA / 4 * 1); i++) {
                 uint8_t idxHMI = gAppCfg.hmi[i];
-                uint8_t indexOfType = gAppCfg.sensor.entry[idxHMI].indexOfType;
-                if (idxHMI != 30 && gAppCfg.sensor.entry[idxHMI].enable) {
+                uint8_t indexOfType = gSensorCfg.entry[idxHMI].indexOfType;
+                if (idxHMI != 30 && gSensorCfg.entry[idxHMI].enable) {
                     uint16_t offset;
                     uint8_t len;
                     char * str = NULL;
                     offset = (HMI_ADDR_ROW_NAME(i) - startAddress) * 2;
-                    if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_MBRTU)
+                    if (gSensorCfg.entry[idxHMI].type == SENSOR_MBRTU)
                         str = gMbrtuCfg.entry[indexOfType].name;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_ANALOG)
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_ANALOG)
                         str = gAnalogCfg.entry[indexOfType].name;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
-                        str = gInCaptureCfg.counter[indexOfType].name;
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
+                        str = gInCaptureCfg.entry[indexOfType].name;
 
                     if (str) {
                         len = strlen(str);
@@ -202,18 +196,18 @@ static uint16_t _buildFrameData(HMI_TAG_TYPE type, uint8_t maxSize, uint16_t sta
         {
             for (uint8_t i = (MAX_HMI_PARA / 4 * 1); i < (MAX_HMI_PARA / 4 * 2); i++) {
                 uint8_t idxHMI = gAppCfg.hmi[i];
-                uint8_t indexOfType = gAppCfg.sensor.entry[idxHMI].indexOfType;
-                if (idxHMI != 30 && gAppCfg.sensor.entry[idxHMI].enable) {
+                uint8_t indexOfType = gSensorCfg.entry[idxHMI].indexOfType;
+                if (idxHMI != 30 && gSensorCfg.entry[idxHMI].enable) {
                     uint16_t offset;
                     uint8_t len;
                     char * str = NULL;
                     offset = (HMI_ADDR_ROW_NAME(i) - startAddress) * 2;
-                    if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_MBRTU)
+                    if (gSensorCfg.entry[idxHMI].type == SENSOR_MBRTU)
                         str = gMbrtuCfg.entry[indexOfType].name;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_ANALOG)
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_ANALOG)
                         str = gAnalogCfg.entry[indexOfType].name;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
-                        str = gInCaptureCfg.counter[indexOfType].name;
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
+                        str = gInCaptureCfg.entry[indexOfType].name;
 
                     if (str) {
                         len = strlen(str);
@@ -232,18 +226,18 @@ static uint16_t _buildFrameData(HMI_TAG_TYPE type, uint8_t maxSize, uint16_t sta
         {
             for (uint8_t i = 0; i < (MAX_HMI_PARA / 4 * 1); i++) {
                 uint8_t idxHMI = gAppCfg.hmi[i];
-                uint8_t indexOfType = gAppCfg.sensor.entry[idxHMI].indexOfType;
-                if (idxHMI != 30 && gAppCfg.sensor.entry[idxHMI].enable) {
+                uint8_t indexOfType = gSensorCfg.entry[idxHMI].indexOfType;
+                if (idxHMI != 30 && gSensorCfg.entry[idxHMI].enable) {
                     uint16_t offset;
                     uint8_t len;
                     char * str = NULL;
                     offset = (HMI_ADDR_ROW_UNIT(i) - startAddress) * 2;
-                    if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_MBRTU)
+                    if (gSensorCfg.entry[idxHMI].type == SENSOR_MBRTU)
                         str = gMbrtuCfg.entry[indexOfType].unit;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_ANALOG)
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_ANALOG)
                         str = gAnalogCfg.entry[indexOfType].unit;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
-                        str = gInCaptureCfg.counter[indexOfType].unit;
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
+                        str = gInCaptureCfg.entry[indexOfType].unit;
 
                     if (str) {
                         len = strlen(str);
@@ -261,18 +255,18 @@ static uint16_t _buildFrameData(HMI_TAG_TYPE type, uint8_t maxSize, uint16_t sta
         {
             for (uint8_t i = (MAX_HMI_PARA / 4 * 1); i < (MAX_HMI_PARA / 4 * 2); i++) {
                 uint8_t idxHMI = gAppCfg.hmi[i];
-                uint8_t indexOfType = gAppCfg.sensor.entry[idxHMI].indexOfType;
-                if (idxHMI != 30 && gAppCfg.sensor.entry[idxHMI].enable) {
+                uint8_t indexOfType = gSensorCfg.entry[idxHMI].indexOfType;
+                if (idxHMI != 30 && gSensorCfg.entry[idxHMI].enable) {
                     uint16_t offset;
                     uint8_t len;
                     char * str = NULL;
                     offset = (HMI_ADDR_ROW_UNIT(i) - startAddress) * 2;
-                    if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_MBRTU)
+                    if (gSensorCfg.entry[idxHMI].type == SENSOR_MBRTU)
                         str = gMbrtuCfg.entry[indexOfType].unit;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_ANALOG)
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_ANALOG)
                         str = gAnalogCfg.entry[indexOfType].unit;
-                    else if (gAppCfg.sensor.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
-                        str = gInCaptureCfg.counter[indexOfType].unit;
+                    else if (gSensorCfg.entry[idxHMI].type == SENSOR_INPUT_CAPTURE)
+                        str = gInCaptureCfg.entry[indexOfType].unit;
 
                     if (str) {
                         len = strlen(str);
@@ -454,7 +448,7 @@ void HMIDwin_Tasks() {
 
             for (uint8_t i = 0; i < MAX_HMI_PARA; i++) {
                 uint8_t idxHMI = gAppCfg.hmi[i];
-                if (idxHMI == 30 || gAppCfg.sensor.entry[idxHMI].enable == false) {
+                if (idxHMI == 30 || gSensorCfg.entry[idxHMI].enable == false) {
                     HMIDwin_TriggerSendStatus(i, 0);
                     HMIDwin_TriggerSendValue(i, HMI_DATA_NONE, 0);
                 }
@@ -481,9 +475,9 @@ bool HMIDwin_TriggerSendStatus(uint8_t idxRow, uint8_t status) {
     HMI_TAG_TYPE tagType = HMI_TAG_ROW_STATUS;
 
     if (!_hmiBootReady || idxRow >= MAX_HMI_PARA) return false;
-    if (status == BAD)
+    if (status == STATUS_BAD)
         _statusPending.entry[idxRow].buffer[0] = '0';
-    else if (status == CALIBRATION)
+    else if (status == STATUS_CALIBRATION)
         _statusPending.entry[idxRow].buffer[0] = '1';
     else
         _statusPending.entry[idxRow].buffer[0] = '2';
