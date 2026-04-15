@@ -148,7 +148,7 @@ static uint16_t _buildFrameData(HMI_TAG_TYPE type, uint8_t maxSize, uint16_t sta
             payload[offset] = 0x00;
             payload[offset + 1] = percent; 
 
-            // VP 0x5016 cho tên m?ng
+            // VP 0x5016 cho tên mang
             offset = (HMI_ADDR_NETWORK1 - startAddress) * 2;
             uint8_t nameLen = strlen(simData->networkName);
             if (nameLen > 0) {

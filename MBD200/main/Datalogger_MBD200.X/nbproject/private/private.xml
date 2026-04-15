@@ -3,15 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</file>
             <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basic.c</file>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_net.c</file>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ntp.h</file>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/generic_types.h</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.h</file>
             <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h</file>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.c</file>
-            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/main.c</file>
             <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_ntp.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/generic_types.h</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_sms.h</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_sms.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.c</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basic.h</file>
+            <file>file:/D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/main.c</file>
         </group>
     </open-files>
 </project-private>

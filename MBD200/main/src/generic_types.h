@@ -239,6 +239,7 @@ extern "C" {
         char usernameAPN[USERNAME_LEN];
         char passwordAPN[PASSWORD_LEN];
         char APN[APN_LEN];
+        
     }
     GSM_CONFIG;
 

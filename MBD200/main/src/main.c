@@ -1,74 +1,26 @@
-/*******************************************************************************
-  Main Source File
-
-  Company:
-    Microchip Technology Inc.
-
-  File Name:
-    main.c
-
-  Summary:
-    This file contains the "main" function for a project.
-
-  Description:
-    This file contains the "main" function for a project.  The
-    "main" function calls the "SYS_Initialize" function to initialize the state
-    machines of all modules in the system
- *******************************************************************************/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
-
-#include <stddef.h>                     // Defines NULL
-#include <stdbool.h>                    // Defines true
-#include <stdlib.h>                     // Defines EXIT_FAILURE
-#include "definitions.h"                // SYS function prototypes
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include "definitions.h"
 
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Main Entry Point
-// *****************************************************************************
-// *****************************************************************************
-static void HMI_Force_Demo_Tasks(void) {
-    static uint32_t lastTick = 0;
-    uint32_t curTick = SYS_TMR_TickCountGet();
-    uint32_t tickPerSec = SYS_TMR_TickCounterFrequencyGet();
+int main(void) {
+    SYS_Initialize(NULL);
+    SIM_SMS_Initialize();   // Khoi tao SMS
+    static bool smsReadyPrinted = false;
 
-    if (curTick - lastTick >= (tickPerSec * 1)) {
-        lastTick = curTick;
-
-        HMIDwin_TriggerSend(HMI_TAG_NETWORK_SIGNAL);
-
-        HMIDwin_TriggerSend(HMI_TAG_DATETIME);
-
-    }
+    while (true) {
+    SYS_Tasks();
+    HMIDwin_Tasks();
+    
+//    test sms
+    if (SIMBasic_IsReady()&& SIM_SMS_IsReady()&& !smsReadyPrinted) {
+    SYS_CONSOLE_PRINT("\r\n SMS Init \r\n");
+    //    SIM_SMS_Send("+84898171844", "AnhSondeptrai");
+   
+    smsReadyPrinted = true;
 }
-
-int main ( void )
-{
-    /* Initialize all modules */
-    SYS_Initialize ( NULL );
-    HMIDwin_Initialize();
-    while ( true )
-    {
-        /* Maintain state machines of all polled MPLAB Harmony modules. */
-        SYS_Tasks ( );
-        HMIDwin_Tasks();
-        HMI_Force_Demo_Tasks();
-
     }
+    return (EXIT_FAILURE);
 
-    /* Execution should not come here during normal operation */
-
-    return ( EXIT_FAILURE );
 }
-
-
-/*******************************************************************************
- End of File
-*/
-
