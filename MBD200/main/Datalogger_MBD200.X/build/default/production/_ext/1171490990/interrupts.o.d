@@ -127,7 +127,7 @@ build/default/production/_ext/1171490990/interrupts.o: \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h
 ../src/config/default/configuration.h:
 ../src/config/default/user.h:
 ../src/config/default/device.h:
@@ -268,3 +268,4 @@ build/default/production/_ext/1171490990/interrupts.o: \
 ../src/app.h:
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
+../src/sim/service/sim_gps.h:

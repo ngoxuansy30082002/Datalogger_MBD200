@@ -129,7 +129,7 @@ build/default/production/_ext/1246559292/sim_basic.o: \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h \
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h \
  D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_driver.h
 ../src/sim/sim_general.h:
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basic.h:
@@ -271,4 +271,5 @@ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_basi
 ../src/app.h:
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
+../src/sim/service/sim_gps.h:
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/core/sim_driver.h:

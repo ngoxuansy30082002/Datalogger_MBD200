@@ -1,7 +1,7 @@
-build/default/production/_ext/692222561/modbus_rtu_app.o: \
- D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.c \
- D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h \
- D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h \
+build/default/production/_ext/931150736/sim_gps.o: \
+ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_gps.c \
+ ../src/sim/sim_general.h \
+ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_gps.h \
  ../src/config/default/definitions.h \
  ../src/config/default/crypto/crypto.h \
  ../src/config/default/peripheral/icap/plib_icap6.h \
@@ -129,9 +129,10 @@ build/default/production/_ext/692222561/modbus_rtu_app.o: \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h
-D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h:
-D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h:
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h \
+ ../src/sim/core/sim_driver.h
+../src/sim/sim_general.h:
+D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sim/service/sim_gps.h:
 ../src/config/default/definitions.h:
 ../src/config/default/crypto/crypto.h:
 ../src/config/default/peripheral/icap/plib_icap6.h:
@@ -271,3 +272,4 @@ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
 ../src/sim/service/sim_gps.h:
+../src/sim/core/sim_driver.h:

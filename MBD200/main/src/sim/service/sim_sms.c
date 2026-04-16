@@ -29,7 +29,7 @@ void SIM_SMS_Initialize(void) {
 bool SIM_SMS_IsReady(void) {
     return (_smsState == SIM_SMS_IDLE);
 }
-
+    //    SIM_SMS_Send("+84898171844", "AnhSondeptrai");
 bool SIM_SMS_Send(const char* phoneNumber, const char* message) {
     if (_smsState != SIM_SMS_IDLE || !SIMBasic_IsReady()) {
         return false;

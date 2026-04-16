@@ -126,7 +126,7 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h
 ../src/config/default/definitions.h:
 ../src/config/default/crypto/crypto.h:
 ../src/config/default/peripheral/icap/plib_icap6.h:
@@ -265,3 +265,4 @@ build/default/production/_ext/1360937237/main.o: ../src/main.c \
 ../src/app.h:
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
+../src/sim/service/sim_gps.h:

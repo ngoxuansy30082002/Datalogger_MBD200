@@ -128,7 +128,7 @@ build/default/production/_ext/692222561/master.o: \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h \
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h \
  D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h \
  D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.h:
@@ -270,5 +270,6 @@ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master
 ../src/app.h:
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
+../src/sim/service/sim_gps.h:
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h:
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h:

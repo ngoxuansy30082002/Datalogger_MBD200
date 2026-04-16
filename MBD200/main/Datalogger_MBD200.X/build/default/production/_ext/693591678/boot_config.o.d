@@ -128,7 +128,7 @@ build/default/production/_ext/693591678/boot_config.o: \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_sms.h \
- ../src/sim/core/sim_basic.h
+ ../src/sim/core/sim_basic.h ../src/sim/service/sim_gps.h
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.h:
 ../src/config/default/definitions.h:
 ../src/config/default/crypto/crypto.h:
@@ -268,3 +268,4 @@ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.h:
 ../src/app.h:
 ../src/sim/service/sim_sms.h:
 ../src/sim/core/sim_basic.h:
+../src/sim/service/sim_gps.h:
