@@ -7,7 +7,7 @@ static const char * __TAG__ = "SIMBASIC";
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format);
 static bool _respParser(int state, char* buffer, size_t maxLen);
 
-static const SIM_CMD_SEQ _cmdTable[] = {
+static const SIM_CMD_SEQ _cmdTable[SIM_BASIC_COUNT] = {
     /* { cmd, builderFunc, respOk, respFail, timeoutMs, attempts , parserFunc, nextStateOk, nextStateFail } */
     [SIM_BASIC_IDLE] =
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_BASIC_IDLE, SIM_BASIC_IDLE},
@@ -320,13 +320,13 @@ void SIMBasic_Process(void) {
         if (status == SIM_DRV_STATUS_RECV_RESP) {
             uint8_t* rx_buf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
             if (rx_buf != NULL) {
-                _isWaitingResp = false;
                 //                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rx_buf);
 
                 const char* expected_ok = _cmdTable[_currentState].respOk;
                 const char* expected_fail = _cmdTable[_currentState].respFail;
 
                 if (strstr((char*) rx_buf, expected_ok) != NULL) {
+                    _isWaitingResp = false;
                     /* Success: move to next state and reset retry counter */
                     bool parsed = true;
                     if (_cmdTable[_currentState].parserFunc)
@@ -336,10 +336,10 @@ void SIMBasic_Process(void) {
                         _currentState = _cmdTable[_currentState].nextStateOk;
                     } else
                         _handleErrorOrTimeout();
-                } else if (strstr((char*) rx_buf, expected_fail) != NULL)
+                } else if (strstr((char*) rx_buf, expected_fail) != NULL) {
+                    _isWaitingResp = false;
                     _handleErrorOrTimeout();
-                else
-                    _handleErrorOrTimeout();
+                }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
             //            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
@@ -347,10 +347,7 @@ void SIMBasic_Process(void) {
         }
     }
 }
-// -----------Info qua HMI--------------------
 
-SIM_BASIC_INFO* SIMBasic_GetInfo(void) {
-    extern SIM_BASIC_INFO _simInfo;
+SIM_BASIC_INFO * SIMBasic_GetInfo(void) {
     return &_simInfo;
 }
-// --------------------------------

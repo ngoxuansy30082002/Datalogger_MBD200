@@ -15,12 +15,6 @@ static const BOOT_CONFIG_PLIB _bootCfglib = {
     .led4 = GPIO_PIN_RE4,
 };
 
-static SENSOR_PACKED _sensorPacked = {0};
-static APP_PACKED _appPacked = {0};
-static MODBUSRTU_TAG_PACKED _mbTagPacked = {0};
-static ANALOG_PACKED _analogPacked = {0};
-static INPUT_CAPTURE_PACKED _inCapturePacked = {0};
-static DEVICE_INFO_PACKED _deviceInfoPacked = {0};
 
 static BOOT_CONFIG_STATES _states = 0;
 static bool _saveFlag = false;
@@ -128,107 +122,107 @@ void BootConfig_Initialize() {
     _setLed(true);
 
 
-    memset((void *) &_sensorPacked, 0x00, sizeof (_sensorPacked));
-    memset((void *) &_appPacked, 0x00, sizeof (_appPacked));
-    memset((void *) &_mbTagPacked, 0x00, sizeof (_mbTagPacked));
-    memset((void *) &_analogPacked, 0x00, sizeof (_analogPacked));
-    memset((void *) &_inCapturePacked, 0x00, sizeof (_inCapturePacked));
+    memset((void *) &gSensorCfg, 0x00, sizeof (gSensorCfg));
+    memset((void *) &gAppCfg, 0x00, sizeof (gAppCfg));
+    memset((void *) &gMbrtuCfg, 0x00, sizeof (gMbrtuCfg));
+    memset((void *) &gAnalogCfg, 0x00, sizeof (gAnalogCfg));
+    memset((void *) &gInCaptureCfg, 0x00, sizeof (gInCaptureCfg));
 
 
-    _appPacked.network.isDHCPEn = true;
-    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0, &_appPacked.network.ipAddr);
-    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0, &_appPacked.network.ipMask);
-    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0, &_appPacked.network.gateway);
-    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_DNS_IDX0, &_appPacked.network.primaryDNS);
-    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0, &_appPacked.network.secondDNS);
-    snprintf(_appPacked.network.netBIOSName, BIOS_NAME_LEN, "%s", SERIAL);
-    snprintf(_appPacked.network.deviceUsername, USERNAME_LEN, "%s", DEFAULT_USERNAME_DEVICE);
-    snprintf(_appPacked.network.devicePassword, PASSWORD_LEN, "%s", DEFAULT_PASSWORD_DEVICE);
+    gAppCfg.network.isDHCPEn = true;
+    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0, &gAppCfg.network.ipAddr);
+    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0, &gAppCfg.network.ipMask);
+    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0, &gAppCfg.network.gateway);
+    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_DNS_IDX0, &gAppCfg.network.primaryDNS);
+    TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0, &gAppCfg.network.secondDNS);
+    snprintf(gAppCfg.network.netBIOSName, BIOS_NAME_LEN, "%s", SERIAL);
+    snprintf(gAppCfg.network.deviceUsername, USERNAME_LEN, "%s", DEFAULT_USERNAME_DEVICE);
+    snprintf(gAppCfg.network.devicePassword, PASSWORD_LEN, "%s", DEFAULT_PASSWORD_DEVICE);
 
-    _appPacked.modbusRtu.baudRate = MBRTU_BAUD_RATE; // baud modbus
-    _appPacked.modbusRtu.timeout = MBRTU_TIMEOUT; // time timeout
-    _appPacked.modbusRtu.retries = MBRTU_RETRIES; // retries
-    _appPacked.modbusRtu.pollInterval = MBRTU_POLL_INTERVAL; // poll interval
-    _appPacked.modbusRtu.stopbits = MBRTU_STOP_BITS;
-    _appPacked.modbusRtu.parity = MBRTU_PARITY;
+    gAppCfg.modbusRtu.baudRate = MBRTU_BAUD_RATE; // baud modbus
+    gAppCfg.modbusRtu.timeout = MBRTU_TIMEOUT; // time timeout
+    gAppCfg.modbusRtu.retries = MBRTU_RETRIES; // retries
+    gAppCfg.modbusRtu.pollInterval = MBRTU_POLL_INTERVAL; // poll interval
+    gAppCfg.modbusRtu.stopbits = MBRTU_STOP_BITS;
+    gAppCfg.modbusRtu.parity = MBRTU_PARITY;
 
     for (uint8_t i = 0; i < MAX_FTP_SERVER; i++) {
-        snprintf(_appPacked.ftpServer[i].username, USERNAME_LEN, "%s", FTP_USER);
-        snprintf(_appPacked.ftpServer[i].password, PASSWORD_LEN, "%s", FTP_PASS);
-        snprintf(_appPacked.ftpServer[i].dirPath, DIR_PATH_LEN, "%s", FTP_PATH);
-        snprintf(_appPacked.ftpServer[i].hostname, URL_LEN, "%s", FTP_HOST);
-        _appPacked.ftpServer[i].port = FTP_PORT;
-        _appPacked.ftpServer[i].makeFolder = MAKE_FOLDER_NONE;
-        snprintf(_appPacked.ftpServer[i].namePrefix, FILE_NAME_PREFIX_LEN, "%s", FTP_NAME_PREFIX);
-        _appPacked.ftpServer[i].enable = false;
+        snprintf(gAppCfg.ftpServer[i].username, USERNAME_LEN, "%s", FTP_USER);
+        snprintf(gAppCfg.ftpServer[i].password, PASSWORD_LEN, "%s", FTP_PASS);
+        snprintf(gAppCfg.ftpServer[i].dirPath, DIR_PATH_LEN, "%s", FTP_PATH);
+        snprintf(gAppCfg.ftpServer[i].hostname, URL_LEN, "%s", FTP_HOST);
+        gAppCfg.ftpServer[i].port = FTP_PORT;
+        gAppCfg.ftpServer[i].makeFolder = MAKE_FOLDER_NONE;
+        snprintf(gAppCfg.ftpServer[i].namePrefix, FILE_NAME_PREFIX_LEN, "%s", FTP_NAME_PREFIX);
+        gAppCfg.ftpServer[i].enable = false;
     }
 
-    _appPacked.logFile.uplink = UPLINK_ETH;
-    _appPacked.logFile.typefile = FILE_TYPE_TXT;
-    _appPacked.logFile.formatFile = FORMAT_FILE_TT24;
-    _appPacked.logFile.timeMode = TIME_MODE_OCLOCK;
-    _appPacked.logFile.sendInterval = 2;
+    gAppCfg.logFile.uplink = UPLINK_ETH;
+    gAppCfg.logFile.typefile = FILE_TYPE_TXT;
+    gAppCfg.logFile.formatFile = FORMAT_FILE_TT24;
+    gAppCfg.logFile.timeMode = TIME_MODE_OCLOCK;
+    gAppCfg.logFile.sendInterval = 2;
 
-    snprintf(_appPacked.gsm.APN, APN_LEN, "%s", MY_APN);
-    snprintf(_appPacked.gsm.usernameAPN, USERNAME_LEN, "%s", USERNAME_APN);
-    snprintf(_appPacked.gsm.passwordAPN, PASSWORD_LEN, "%s", PASSWORD_APN);
+    snprintf(gAppCfg.gsm.APN, APN_LEN, "%s", MY_APN);
+    snprintf(gAppCfg.gsm.usernameAPN, USERNAME_LEN, "%s", USERNAME_APN);
+    snprintf(gAppCfg.gsm.passwordAPN, PASSWORD_LEN, "%s", PASSWORD_APN);
 
-    memset(_appPacked.position, 1, sizeof (_appPacked.position));
+    memset(gAppCfg.position, 1, sizeof (gAppCfg.position));
 
     for (uint8_t i = 0; i < MAX_DIGITAL_OUTPUT; i++) {
-        snprintf(_appPacked.io.out[i].describe, SENSOR_NAME_LEN, "Description");
-        _appPacked.io.out[i].time = 0;
-        _appPacked.io.out[i].type = OUT_HOLD;
+        snprintf(gAppCfg.io.out[i].describe, SENSOR_NAME_LEN, "Description");
+        gAppCfg.io.out[i].time = 0;
+        gAppCfg.io.out[i].type = OUT_HOLD;
     }
 
-    _appPacked.sdCard.retentionMonths = SDCARD_TIME_REMOVE;
+    gAppCfg.sdCard.retentionMonths = SDCARD_TIME_REMOVE;
 
-    _appPacked.time.yearNumber = 20;
-    _appPacked.time.timeAuto = 0;
-    _appPacked.time.indexNTP = 0;
-    _appPacked.time.timeZone = 7;
+    gAppCfg.time.yearNumber = 20;
+    gAppCfg.time.timeAuto = 0;
+    gAppCfg.time.indexNTP = 0;
+    gAppCfg.time.timeZone = 7;
 
-    memset(_appPacked.hmi, 30, sizeof (_appPacked.hmi));
+    memset(gAppCfg.hmi, 30, sizeof (gAppCfg.hmi));
 
 
 
-    _mbTagPacked.numTag = 0;
-    memset(_mbTagPacked.entry, 0, sizeof (_mbTagPacked.entry));
+    gMbrtuCfg.numTag = 0;
+    memset(gMbrtuCfg.entry, 0, sizeof (gMbrtuCfg.entry));
     for (uint8_t i = 0; i < MAX_MODBUS_TAG; i++) {
-        snprintf(_mbTagPacked.entry[i].name, SENSOR_NAME_LEN, "Unused");
-        snprintf(_mbTagPacked.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
+        snprintf(gMbrtuCfg.entry[i].name, SENSOR_NAME_LEN, "Unused");
+        snprintf(gMbrtuCfg.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
     }
 
 
 
-    memset(_analogPacked.entry, 0, sizeof (_analogPacked.entry));
+    memset(gAnalogCfg.entry, 0, sizeof (gAnalogCfg.entry));
     for (uint8_t i = 0; i < MAX_ANALOG_CHANNEL; i++) {
-        if (i < 4) _analogPacked.entry[i].adcType = ADC_4_20mA;
-        else _analogPacked.entry[i].adcType = ADC_0_10V;
-        snprintf(_analogPacked.entry[i].name, SENSOR_NAME_LEN, "Unused");
-        snprintf(_analogPacked.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
+        if (i < 4) gAnalogCfg.entry[i].adcType = ADC_4_20mA;
+        else gAnalogCfg.entry[i].adcType = ADC_0_10V;
+        snprintf(gAnalogCfg.entry[i].name, SENSOR_NAME_LEN, "Unused");
+        snprintf(gAnalogCfg.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
     }
 
 
 
     for (uint8_t i = 0; i < MAX_INPUT_CAPTURE; i++) {
         if (i & 1) {
-            snprintf(_inCapturePacked.entry[i].name, SENSOR_NAME_LEN, "TotalFlow%u", i);
-            snprintf(_inCapturePacked.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3");
+            snprintf(gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN, "TotalFlow%u", i);
+            snprintf(gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3");
         } else {
-            snprintf(_inCapturePacked.entry[i].name, SENSOR_NAME_LEN, "Flowrate%u", i);
-            snprintf(_inCapturePacked.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3/h");
+            snprintf(gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN, "Flowrate%u", i);
+            snprintf(gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3/h");
         }
-        _inCapturePacked.entry[i].enable = false;
-        _inCapturePacked.entry[i].scale = 3600;
-        _inCapturePacked.entry[i].valPerPulse = 1;
-        _inCapturePacked.entry[i].minFreq = 1;
+        gInCaptureCfg.entry[i].enable = false;
+        gInCaptureCfg.entry[i].scale = 3600;
+        gInCaptureCfg.entry[i].valPerPulse = 1;
+        gInCaptureCfg.entry[i].minFreq = 1;
     }
 
 
 
-    _sensorPacked.numSensor = 0;
-    memset(_sensorPacked.entry, 0, sizeof (_sensorPacked.entry));
+    gSensorCfg.numSensor = 0;
+    memset(gSensorCfg.entry, 0, sizeof (gSensorCfg.entry));
 }
 
 bool BootConfig_Task(void) {

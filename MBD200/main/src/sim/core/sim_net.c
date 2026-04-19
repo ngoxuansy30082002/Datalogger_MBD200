@@ -8,7 +8,7 @@ static const char * __TAG__ = "SIMNET";
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format);
 static bool _respParser(int state, char* buffer, size_t maxLen);
 
-static const SIM_CMD_SEQ _cmdTable[] = {
+static const SIM_CMD_SEQ _cmdTable[SIM_NET_COUNT] = {
     /* { cmd, builderFunc, respOk, respFail, timeoutMs, attempts, parserFunc, nextStateOk, nextStateFail } */
     [SIM_NET_IDLE] =
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_NET_IDLE, SIM_NET_IDLE},
@@ -24,6 +24,9 @@ static const SIM_CMD_SEQ _cmdTable[] = {
 
     [SIM_NET_CHECK_ACTIVE] =
     { "AT+QIACT?\r\n", NULL, "OK", "ERROR", 1000, 3, _respParser, SIM_NET_READY, SIM_NET_DEFINE_PDP},
+
+    [SIM_NET_DEACTIVE_PDP_STOP] =
+    { "AT+QIDEACT=%u\r\n", _cmdBuilder, "OK", "ERROR", 40000, 3, _respParser, SIM_NET_IDLE, SIM_NET_IDLE},
 };
 
 
@@ -43,7 +46,7 @@ static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* forma
             return snprintf(buffer, maxLen, format,
                     SIM_CONTEXT_ID, gAppCfg.gsm.APN, gAppCfg.gsm.usernameAPN, gAppCfg.gsm.passwordAPN);
         case SIM_NET_DEACTIVE_PDP:
-            return snprintf(buffer, maxLen, format, SIM_CONTEXT_ID);
+        case SIM_NET_DEACTIVE_PDP_STOP:
         case SIM_NET_ACTIVE_PDP:
             return snprintf(buffer, maxLen, format, SIM_CONTEXT_ID);
 
@@ -60,7 +63,10 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
         {
             char pattern[20];
             snprintf(pattern, sizeof (pattern), "+QIACT: %d,1", SIM_CONTEXT_ID);
-            if (strstr(buffer, pattern) != NULL) return true;
+            if (strstr(buffer, pattern) != NULL) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Net active OKK: %s\r\n", __TAG__, __func__, (char *) buffer);
+                return true;
+            }
             return false;
         }
 
@@ -88,14 +94,30 @@ static void _handleErrorOrTimeout(void) {
     _isBuilded = false;
 }
 
-void SIMNet_Initialize() {
-    _currentState = SIM_NET_DEFINE_PDP;
-
+static void _initialize(void) {
     _isWaitingResp = false;
     _isBuilded = false;
     _currentTxLen = 0;
     _attemptCount = 0;
     _activeFailCount = 0;
+}
+
+bool SIMNet_Start(bool restart) {
+    if (!restart && _currentState > SIM_NET_IDLE)
+        return false;
+
+    _initialize();
+    _currentState = SIM_NET_DEFINE_PDP;
+
+    return true;
+}
+
+void SIMNet_Stop(void) {
+    if (_currentState == SIM_NET_IDLE)
+        return;
+
+    _initialize();
+    _currentState = SIM_NET_DEACTIVE_PDP_STOP;
 }
 
 bool SIMNet_IsReady(void) {
@@ -108,9 +130,9 @@ bool SIMNet_HasError(void) {
 
 void SIMNet_Process(void) {
     if (!SIMBasic_IsReady() ||
-            _currentState == SIM_BASIC_IDLE ||
-            _currentState == SIM_BASIC_READY ||
-            _currentState == SIM_BASIC_ERROR) {
+            _currentState == SIM_NET_IDLE ||
+            _currentState == SIM_NET_READY ||
+            _currentState == SIM_NET_ERROR) {
         return;
     }
 
@@ -119,22 +141,22 @@ void SIMNet_Process(void) {
         const SIM_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
 
         if (!_isBuilded) {
-            uint8_t* tx_buf = SIMDriver_GetBuffer(SIM_DRV_TX_BUSY);
-            if (tx_buf == NULL) return; /* Driver busy, wait next cycle */
+            uint8_t* txbuf = SIMDriver_GetBuffer(SIM_DRV_TX_BUSY);
+            if (txbuf == NULL) return; /* Driver busy, wait next cycle */
 
             if (cmdInfo->builderFunc != NULL)
-                _currentTxLen = cmdInfo->builderFunc((int) _currentState, (char*) tx_buf, SIM_TRANSFER_BUFF_SIZE, cmdInfo->cmd);
+                _currentTxLen = cmdInfo->builderFunc((int) _currentState, (char*) txbuf, SIM_TRANSFER_BUFF_SIZE, cmdInfo->cmd);
             else
-                _currentTxLen = snprintf((char*) tx_buf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
+                _currentTxLen = snprintf((char*) txbuf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
 
-            //            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) tx_buf);
+            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
             _isBuilded = true; /* Mark as built */
         }
 
         /* Execute sending to driver */
         if (_currentTxLen > 0) {
             if (SIMDriver_Execute((size_t) _currentTxLen, cmdInfo->timeoutMs)) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Sended\r\n", __TAG__, __func__);
+                //                SYS_CONSOLE_PRINT("%s - %s:\t Sended\r\n", __TAG__, __func__);F
                 _isWaitingResp = true;
                 _isBuilded = false; /* Clear flag so next cycle/state can rebuild */
             }
@@ -144,28 +166,28 @@ void SIMNet_Process(void) {
         SIM_DRV_STATUS status = SIMDriver_GetStatus();
 
         if (status == SIM_DRV_STATUS_RECV_RESP) {
-            uint8_t* rx_buf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
-            if (rx_buf != NULL) {
-                _isWaitingResp = false;
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rx_buf);
+            uint8_t* rxbuf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
+            if (rxbuf != NULL) {
+                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
 
-                const char* expected_ok = _cmdTable[_currentState].respOk;
-                const char* expected_fail = _cmdTable[_currentState].respFail;
+                const char* expectedOk = _cmdTable[_currentState].respOk;
+                const char* expectedFail = _cmdTable[_currentState].respFail;
 
-                if (strstr((char*) rx_buf, expected_ok) != NULL) {
+                if (strstr((char*) rxbuf, expectedOk) != NULL) {
+                    _isWaitingResp = false;
                     /* Success: move to next state and reset retry counter */
                     bool parsed = true;
                     if (_cmdTable[_currentState].parserFunc)
-                        parsed = _cmdTable[_currentState].parserFunc(_currentState, rx_buf, SIM_TRANSFER_BUFF_SIZE);
+                        parsed = _cmdTable[_currentState].parserFunc(_currentState, rxbuf, SIM_TRANSFER_BUFF_SIZE);
                     if (parsed) {
                         _attemptCount = 0;
                         _currentState = _cmdTable[_currentState].nextStateOk;
                     } else
                         _handleErrorOrTimeout();
-                } else if (strstr((char*) rx_buf, expected_fail) != NULL)
+                } else if (strstr((char*) rxbuf, expectedFail) != NULL) {
+                    _isWaitingResp = false;
                     _handleErrorOrTimeout();
-                else
-                    _handleErrorOrTimeout();
+                }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
             SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);

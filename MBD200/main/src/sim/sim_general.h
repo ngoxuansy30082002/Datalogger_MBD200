@@ -19,6 +19,10 @@
 #define SIM_TRANSFER_BUFF_SIZE          4096
 #define SIM_TRANSFER_GAP_TIME           100 //ms
 #define SIM_CONTEXT_ID                  1
+#define SIM_MQTT_CLIENT_ID              0
+#define SIM_FTP_TIMEOUT                 40
+#define SIM_FTP_FILE_LEN                4096
+#define SIM_FTP_PATH_LEN                256
 
 #ifdef	__cplusplus
 extern "C" {

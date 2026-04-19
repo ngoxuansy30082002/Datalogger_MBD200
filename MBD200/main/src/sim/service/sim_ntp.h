@@ -16,10 +16,17 @@ extern "C" {
         SIM_NTP_IDLE = 0,
         SIM_NTP_SETUP_TIMEZONE,
         SIM_NTP_SYNC_TIME,
+        SIM_NTP_QUERY_TIME,
         SIM_NTP_READY,
-        SIM_NTP_ERROR
+        SIM_NTP_ERROR,
+        SIM_NTP_COUNT
     } SIM_NTP_STATE;
 
+    bool SIMNtp_Start(void);
+    void SIMNtp_Process(void);
+    void SIMNtp_Abort(void);
+    bool SIMNtp_IsReady(void);
+    bool SIMNtp_HasError(void);
 
 #ifdef	__cplusplus
 }

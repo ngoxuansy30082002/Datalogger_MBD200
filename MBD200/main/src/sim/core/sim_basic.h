@@ -33,7 +33,8 @@ extern "C" {
         SIM_BASIC_CMGF,
         SIM_BASIC_CSQ,
         SIM_BASIC_READY,
-        SIM_BASIC_ERROR
+        SIM_BASIC_ERROR,
+        SIM_BASIC_COUNT
     } SIM_BASIC_STATE;
 
     typedef struct {

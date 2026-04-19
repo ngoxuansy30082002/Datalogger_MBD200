@@ -7,7 +7,7 @@ static const char * __TAG__ = "SIMGPS";
 
 static bool _respParser(int state, char* buffer, size_t maxLen);
 
-static const SIM_CMD_SEQ _cmdTable[] = {
+static const SIM_CMD_SEQ _cmdTable[SIM_GPS_COUNT] = {
     [SIM_GPS_IDLE] =
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_GPS_IDLE, SIM_GPS_IDLE},
 

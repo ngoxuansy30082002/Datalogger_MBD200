@@ -104,24 +104,7 @@ void APP_Initialize(void) {
   Remarks:
     See prototype in app.h.
  */
-static void HMI_Test_Init(void) {
-    for(uint8_t i = 0; i < 8; i++) {
-        // ?ánh d?u dòng i là ?ang ho?t ??ng (Enable)
-        gSensorCfg.entry[i].enable = true;
-        gSensorCfg.entry[i].type = SENSOR_ANALOG;
-        gSensorCfg.entry[i].indexOfType = i;
-        
-//         Map dòng i c?a màn hình vào ?úng sensor i
-        gAppCfg.hmi[i] = i; 
 
-        // Gán tên và ??n v? m?u (?? hi?n luôn tên/??n v?)
-        snprintf(gAnalogCfg.entry[i].name, 16, "Sen %d", i+1);
-        snprintf(gAnalogCfg.entry[i].unit, 8, "U");
-        
-       
-    }
-
-}
 void APP_Tasks(void) {
 
     /* Check the application's current state. */
@@ -150,7 +133,6 @@ void APP_Tasks(void) {
             if (BootConfig_Task())
                 appData.state = APP_STATE_SERVICE_TASKS;
             
-            HMI_Test_Init();
             break;
         }
 

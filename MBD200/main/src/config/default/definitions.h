@@ -112,9 +112,6 @@
 #include "rule_engine/rule_engine.h"
 #include "sim/sim_main.h"
 #include "app.h"
-#include "sim/service/sim_sms.h"
-#include "sim/core/sim_basic.h"
-#include "sim/service/sim_gps.h"
 
 
 // DOM-IGNORE-BEGIN

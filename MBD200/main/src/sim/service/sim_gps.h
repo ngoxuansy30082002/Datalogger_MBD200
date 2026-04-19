@@ -18,7 +18,8 @@ extern "C" {
         SIM_GPS_CHECK_SAT,
         SIM_GPS_READ_LOC,
         SIM_GPS_READY,
-        SIM_GPS_ERROR
+        SIM_GPS_ERROR,
+        SIM_GPS_COUNT
     } SIM_GPS_STATE;
 
     typedef struct {
