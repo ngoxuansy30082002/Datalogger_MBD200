@@ -39,6 +39,24 @@ data:
             type: String
           type: Attributes
         type: DirectDependency
+      - attributes:
+          id: lib_wolfssl
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: TCP/IP STACK
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: PRESENTATION LAYER:net_Pres:Net_Pres_Crypto_Dependency
+            type: String
+          type: Attributes
+        type: DirectCapability
       type: Attachments
     type: lib_wolfssl
   elementPosition:

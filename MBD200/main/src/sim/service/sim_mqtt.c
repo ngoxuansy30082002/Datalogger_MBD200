@@ -13,7 +13,6 @@ typedef struct {
     const char* password;
 } MQTT_CONFIG_T;
 
-// Gi? s? b?n có bi?n c?u hình này ? ?âu ?ó trong ch??ng trình
 static MQTT_CONFIG_T _mqttCfg = {
     .client_idx = 0,
     .host = "broker.emqx.io",

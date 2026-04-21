@@ -2,54 +2,41 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "definitions.h"
+#include "tcpip/tcpip.h"
+#include "tcpip/tcpip_manager.h"
 
 int main(void) {
     SYS_Initialize(NULL);
 
-    //    SIMGps_Initialize();    
-    //
-    //    uint32_t gpsTimer = 0;
-    //    bool gpsRequested = false;
-    //    static bool basicReadyPrinted = false;
+    bool isNetworkReady = false; 
 
     while (true) {
         SYS_Tasks();
+        HMIDwin_Tasks();
 
+        TCPIP_NET_HANDLE netH = TCPIP_STACK_IndexToNet(0);
 
-        //        HMIDwin_Tasks();
-        //
-        //        SIMGps_Process();
-        //
-        //        uint32_t curTick = SYS_TMR_TickCountGet();
-        //        uint32_t tickPerSec = SYS_TMR_TickCounterFrequencyGet();
-        //
-        //        if (SIMBasic_IsReady()) {
-        //                if (!basicReadyPrinted) {
-        //                SYS_CONSOLE_PRINT("\r\nGPS Init <<<\r\n");
-        //                basicReadyPrinted = true;
-        //            }
-        //
-        //            if (SIMGps_IsReady()) {
-        //                if (curTick - gpsTimer >= (tickPerSec * 10)) {
-        //                    gpsTimer = curTick;
-        //                    if (SIMGps_UpdateLocation()) { 
-        //                        gpsRequested = true;
-        //                        SYS_CONSOLE_PRINT("\r\n[GPS] Updating.\r\n");
-        //                    }
-        //                }
-        //
-        //                if (gpsRequested) {
-        //                    gpsRequested = false;
-        //                    SIM_GPS_INFO* info = SIMGps_GetInfo(); 
-        //
-        //                    if (info->hasFix) {
-        //                        SYS_CONSOLE_PRINT("[GPS SUCCESS] Location: %s\r\n", info->rawData);
-        //                    } else {
-        //                        SYS_CONSOLE_PRINT("[GPS WAIT] GPS FAIL\r\n");
-        //                    }
-        //                }
-        //            }
-        //        }
+        if (netH != NULL && TCPIP_STACK_NetIsReady(netH)) {
+            
+            IPV4_ADDR ipAddr;
+            ipAddr.Val = TCPIP_STACK_NetAddress(netH);
+
+            if (ipAddr.Val != 0) {
+                if (!isNetworkReady) {
+                    SYS_CONSOLE_PRINT("\r\n================================\r\n");
+                    SYS_CONSOLE_PRINT("[ETH] LAN CONNECTED!\r\n");
+                    SYS_CONSOLE_PRINT("[ETH] IP Address: %d.%d.%d.%d\r\n", 
+                                      ipAddr.v[0], ipAddr.v[1], ipAddr.v[2], ipAddr.v[3]);
+                    SYS_CONSOLE_PRINT("================================\r\n\r\n");
+                    isNetworkReady = true;
+                }
+            }
+        } else {
+            if (isNetworkReady) {
+                SYS_CONSOLE_PRINT("\r\n[ETH] MAT KET NOI LAN (Rut cap hoac rot mang)!\r\n");
+                isNetworkReady = false;
+            }
+        }
     }
     return (EXIT_FAILURE);
 }

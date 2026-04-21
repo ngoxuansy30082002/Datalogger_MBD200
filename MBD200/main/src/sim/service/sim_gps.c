@@ -1,5 +1,5 @@
 #include "sim/sim_general.h"
-#include "sim_gps.h"
+#include "sim/service/sim_gps.h"
 #include "sim/core/sim_driver.h"
 #include "sim/core/sim_basic.h"
 
@@ -17,8 +17,11 @@ static const SIM_CMD_SEQ _cmdTable[SIM_GPS_COUNT] = {
     [SIM_GPS_TURN_ON] =
     { "AT+QGPS=1\r\n", NULL, "OK", "ERROR", 5000, 3, _respParser, SIM_GPS_READY, SIM_GPS_ERROR},
 
+    [SIM_GPS_CHECK_SAT] =
+    { "AT+QGPSGNMEA=\"GSV\"\r\n", NULL, "OK", "ERROR", 2000, 1, _respParser, SIM_GPS_READ_LOC, SIM_GPS_READ_LOC},
+
     [SIM_GPS_READ_LOC] =
-    { "AT+QGPSLOC=1\r\n", NULL, "OK", "ERROR", 2000, 1, _respParser, SIM_GPS_READY, SIM_GPS_READY},
+    { "AT+QGPSLOC?\r\n", NULL, "OK", "ERROR", 2000, 1, _respParser, SIM_GPS_READY, SIM_GPS_READY},
     
     [SIM_GPS_READY] =
     { NULL, NULL, NULL, NULL, 0, 0, NULL, SIM_GPS_READY, SIM_GPS_READY},
@@ -36,8 +39,6 @@ static int _currentTxLen = 0;
 static uint8_t _attemptCount = 0;
 
 static bool _respParser(int state, char* buffer, size_t maxLen) {
-    char *ptr = NULL;
-
     switch (state) {
         case SIM_GPS_CHECK_ON:
             if (strstr(buffer, "+QGPS: 1") != NULL) {
@@ -52,28 +53,17 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
             SYS_CONSOLE_PRINT("\r\nGPS ON\r\n");
             return true;
 
+        case SIM_GPS_CHECK_SAT:
+            SYS_CONSOLE_PRINT("\r\n[GSV] %s", buffer);
+            return true;
+
         case SIM_GPS_READ_LOC:
-            ptr = strstr(buffer, "+QGPSLOC:");
-            if (ptr != NULL) {
+            SYS_CONSOLE_PRINT("\r\n[Location] %s", buffer);
+            
+            if (strstr(buffer, "+QGPSLOC:") != NULL) {
                 _gpsInfo.hasFix = true;
-                int i = 0;
-                while (*ptr && *ptr != '\r' && *ptr != '\n' && i < (sizeof(_gpsInfo.rawData) - 1)) {
-                    _gpsInfo.rawData[i++] = *ptr++;
-                }
-                _gpsInfo.rawData[i] = '\0';
-                SYS_CONSOLE_PRINT("\r\nLocation Raw: %s\r\n", _gpsInfo.rawData);
             } else {
                 _gpsInfo.hasFix = false;
-                
-                char errStr[64] = {0};
-                int j = 0, k = 0;
-                while (buffer[j] != '\0' && k < 63) {
-                    if (buffer[j] >= 32 && buffer[j] <= 126) { // Ch? l?y các ký t? in ???c
-                        errStr[k++] = buffer[j];
-                    }
-                    j++;
-                }
-                SYS_CONSOLE_PRINT("\r\nSIM: [%s]\r\n", errStr);
             }
             return true;
 
@@ -114,8 +104,8 @@ bool SIMGps_HasError(void) {
 
 bool SIMGps_UpdateLocation(void) {
     if (_currentState == SIM_GPS_READY) {
-        SYS_CONSOLE_PRINT("\r\nupdate location.\r\n");
-        _currentState = SIM_GPS_READ_LOC;
+        SYS_CONSOLE_PRINT("\r\n--- UPDATE LOCATION ---\r\n");
+        _currentState = SIM_GPS_CHECK_SAT; 
         _isWaitingResp = false;
         _isBuilded = false;
         return true;
@@ -197,3 +187,26 @@ void SIMGps_Process(void) {
         }
     }
 }
+
+//    SIMBasic_Initialize(0); 
+//    SIMGps_Initialize();   
+
+//while (true) {
+//        SYS_Tasks();
+//        HMIDwin_Tasks();
+//
+//        SIMBasic_Process();
+//        SIMGps_Process();
+//
+//        if (SIMBasic_IsReady()) {
+//            uint32_t curTick = SYS_TMR_TickCountGet();
+//            uint32_t tickPerSec = SYS_TMR_TickCounterFrequencyGet();
+//
+//            if (SIMGps_IsReady()) {
+//                if (curTick - gpsTimer >= (tickPerSec * 10)) { 
+//                    gpsTimer = curTick;
+//                    SIMGps_UpdateLocation(); 
+//                }
+//            }
+//        }
+//    }

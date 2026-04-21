@@ -44,6 +44,8 @@ data:
       - attributes:
           id: net_Pres:Net_Pres_Crypto_Dependency
           namespace: PRESENTATION LAYER
+          targetAttachmentID: lib_wolfssl
+          targetComponentID: lib_wolfssl
         type: Attachment
       - attributes:
           id: tcpipStack:Core_SysConsole_Dependency

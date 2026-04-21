@@ -15,7 +15,7 @@ extern "C" {
         SIM_GPS_IDLE = 0,
         SIM_GPS_CHECK_ON,
         SIM_GPS_TURN_ON,
-        SIM_GPS_CHECK_SAT,
+        SIM_GPS_CHECK_SAT, 
         SIM_GPS_READ_LOC,
         SIM_GPS_READY,
         SIM_GPS_ERROR,
