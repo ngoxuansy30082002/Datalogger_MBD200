@@ -33,6 +33,10 @@ dependency:
   type: package
   version: v3.14.4
 - dependencyPackage: ''
+  name: wolfMQTT
+  type: package
+  version: v1.19.2
+- dependencyPackage: ''
   name: wolfssl
   type: package
   version: v5.4.0

@@ -127,7 +127,8 @@ build/default/production/_ext/1360937237/mpfs_net_img.o: \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
  ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h
+ ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
+ ../src/ethernet/tcp_mqtt.h
 ../src/config/default/configuration.h:
 ../src/config/default/user.h:
 ../src/config/default/device.h:
@@ -268,3 +269,5 @@ build/default/production/_ext/1360937237/mpfs_net_img.o: \
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:

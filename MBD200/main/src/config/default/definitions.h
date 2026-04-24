@@ -117,6 +117,8 @@
 #include "sim/core/sim_basic.h"
 #include "sim/core/sim_net.h"
 #include "sim/service/sim_mqtt.h" 
+#include "ethernet/eth_net.h"
+#include "ethernet/tcp_mqtt.h"
 
 
 // DOM-IGNORE-BEGIN

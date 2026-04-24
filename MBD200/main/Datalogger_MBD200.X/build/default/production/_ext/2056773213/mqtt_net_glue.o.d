@@ -46,7 +46,13 @@ build/default/production/_ext/2056773213/mqtt_net_glue.o: \
  ../src/config/default/peripheral/evic/plib_evic.h \
  ../src/config/default/system/int/sys_int_mapping.h \
  ../src/config/default/system/time/sys_time_definitions.h \
- ../src/config/default/third_party_adapter/wolfMQTT/src/mqtt_net_glue.h
+ ../src/config/default/third_party_adapter/wolfMQTT/src/mqtt_net_glue.h \
+ ../src/third_party/wolfMQTT/wolfmqtt/mqtt_client.h \
+ ../src/third_party/wolfMQTT/wolfmqtt/mqtt_types.h \
+ ../src/third_party/wolfMQTT/wolfmqtt/visibility.h \
+ ../src/config/default/user_settings.h \
+ ../src/third_party/wolfMQTT/wolfmqtt/mqtt_packet.h \
+ ../src/third_party/wolfMQTT/wolfmqtt/mqtt_socket.h
 ../src/config/default/configuration.h:
 ../src/config/default/user.h:
 ../src/config/default/device.h:
@@ -95,3 +101,9 @@ build/default/production/_ext/2056773213/mqtt_net_glue.o: \
 ../src/config/default/system/int/sys_int_mapping.h:
 ../src/config/default/system/time/sys_time_definitions.h:
 ../src/config/default/third_party_adapter/wolfMQTT/src/mqtt_net_glue.h:
+../src/third_party/wolfMQTT/wolfmqtt/mqtt_client.h:
+../src/third_party/wolfMQTT/wolfmqtt/mqtt_types.h:
+../src/third_party/wolfMQTT/wolfmqtt/visibility.h:
+../src/config/default/user_settings.h:
+../src/third_party/wolfMQTT/wolfmqtt/mqtt_packet.h:
+../src/third_party/wolfMQTT/wolfmqtt/mqtt_socket.h:

@@ -16,5 +16,25 @@ customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
 data:
   attachments: {}
   elementPosition: {}
-  symbols: {}
+  symbols:
+    TCPIP_IPV4_ARP_QUEUE_SLOTS:
+      attributes:
+        id: TCPIP_IPV4_ARP_QUEUE_SLOTS
+      children:
+      - children:
+        - attributes:
+            value: '20'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_IPV4_COMMANDS_ENABLE:
+      attributes:
+        id: TCPIP_IPV4_COMMANDS_ENABLE
+      children:
+      - children:
+        - attributes:
+            value: 'false'
+          type: User
+        type: Values
+      type: Boolean
   userData: {}

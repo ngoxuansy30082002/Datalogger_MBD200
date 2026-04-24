@@ -319,6 +319,15 @@
             <itemPath>../src/config/default/system/system_module.h</itemPath>
             <itemPath>../src/config/default/system/system_media.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="third_party_adapter"
+                         displayName="third_party_adapter"
+                         projectFiles="true">
+            <logicalFolder name="wolfMQTT" displayName="wolfMQTT" projectFiles="true">
+              <logicalFolder name="src" displayName="src" projectFiles="true">
+                <itemPath>../src/config/default/third_party_adapter/wolfMQTT/src/mqtt_net_glue.h</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
           <itemPath>../src/config/default/toolchain_specifics.h</itemPath>
           <itemPath>../src/config/default/definitions.h</itemPath>
           <itemPath>../src/config/default/interrupts.h</itemPath>
@@ -330,7 +339,12 @@
           <itemPath>../src/config/default/sys_tasks.h</itemPath>
           <itemPath>../src/config/default/device_cache.h</itemPath>
           <itemPath>../src/config/default/config.h</itemPath>
+          <itemPath>../src/config/default/user_settings.h</itemPath>
         </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.h</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.h</itemPath>
       </logicalFolder>
       <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.h</itemPath>
@@ -381,6 +395,19 @@
       <logicalFolder name="system" displayName="system" projectFiles="true">
         <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
           <itemPath>../src/config/default/system/tmr/sys_tmr.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="third_party" displayName="third_party" projectFiles="true">
+        <logicalFolder name="wolfMQTT" displayName="wolfMQTT" projectFiles="true">
+          <logicalFolder name="wolfmqtt" displayName="wolfmqtt" projectFiles="true">
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/mqtt_client.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/mqtt_packet.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/mqtt_socket.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/mqtt_types.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/version.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/visibility.h</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/wolfmqtt/vs_settings.h</itemPath>
+          </logicalFolder>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
@@ -543,6 +570,7 @@
       <itemPath>../src/app.h</itemPath>
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.h</itemPath>
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/generic_types.h</itemPath>
+      <itemPath>../src/app_mqtt_task.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -641,6 +669,7 @@
           <itemPath>Datalogger_MBD200_default/components/icap6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/uart2.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_sst26.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/lib_wolfmqtt.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/uart1.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/spi1.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_console.yml</itemPath>
@@ -847,11 +876,24 @@
             <itemPath>../src/config/default/system/sys_time_h2_adapter.c</itemPath>
             <itemPath>../src/config/default/system/sys_random_h2_adapter.c</itemPath>
           </logicalFolder>
+          <logicalFolder name="third_party_adapter"
+                         displayName="third_party_adapter"
+                         projectFiles="true">
+            <logicalFolder name="wolfMQTT" displayName="wolfMQTT" projectFiles="true">
+              <logicalFolder name="src" displayName="src" projectFiles="true">
+                <itemPath>../src/config/default/third_party_adapter/wolfMQTT/src/mqtt_net_glue.c</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
           <itemPath>../src/config/default/initialization.c</itemPath>
           <itemPath>../src/config/default/interrupts.c</itemPath>
           <itemPath>../src/config/default/exceptions.c</itemPath>
           <itemPath>../src/config/default/tasks.c</itemPath>
         </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.c</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.c</itemPath>
       </logicalFolder>
       <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.c</itemPath>
@@ -896,6 +938,15 @@
         <logicalFolder name="sd_card" displayName="sd_card" projectFiles="true">
           <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/storage/sd_card/log_config.c</itemPath>
           <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/storage/sd_card/sd_card.c</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="third_party" displayName="third_party" projectFiles="true">
+        <logicalFolder name="wolfMQTT" displayName="wolfMQTT" projectFiles="true">
+          <logicalFolder name="src" displayName="src" projectFiles="true">
+            <itemPath>../src/third_party/wolfMQTT/src/mqtt_client.c</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/src/mqtt_packet.c</itemPath>
+            <itemPath>../src/third_party/wolfMQTT/src/mqtt_socket.c</itemPath>
+          </logicalFolder>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
@@ -1018,6 +1069,7 @@
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.c</itemPath>
+      <itemPath>../src/app_mqtt_task.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

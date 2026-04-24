@@ -130,7 +130,8 @@ build/default/production/_ext/692222561/modbus_rtu_app.o: \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
  ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h
+ ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
+ ../src/ethernet/tcp_mqtt.h
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h:
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h:
 ../src/config/default/definitions.h:
@@ -273,3 +274,5 @@ D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:

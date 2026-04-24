@@ -4,7 +4,7 @@
 
 
 project: Datalogger_MBD200
-creation_date: 2026-04-21T11:32:55.900+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-04-23T15:02:02.221+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 11
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.6.4
@@ -18,6 +18,7 @@ modules:
     - {name: "csp", version: "v3.24.0"}
     - {name: "filex", version: "v6.4.0_rel"}
     - {name: "littlefs", version: "v2.8.2"}
+    - {name: "wolfMQTT", version: "v1.19.2"}
     - {name: "wolfssl", version: "v5.4.0"}
     - {name: "net", version: "v3.14.4"}
     - {name: "crypto", version: "v3.8.2"}

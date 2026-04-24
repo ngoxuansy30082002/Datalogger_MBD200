@@ -127,7 +127,8 @@ build/default/production/_ext/1360937237/app.o: ../src/app.c ../src/app.h \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
  ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h
+ ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
+ ../src/ethernet/tcp_mqtt.h
 ../src/app.h:
 ../src/config/default/definitions.h:
 ../src/config/default/crypto/crypto.h:
@@ -269,3 +270,5 @@ build/default/production/_ext/1360937237/app.o: ../src/app.c ../src/app.h \
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:

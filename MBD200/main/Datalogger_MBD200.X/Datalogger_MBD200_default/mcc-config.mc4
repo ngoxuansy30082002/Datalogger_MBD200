@@ -56,6 +56,7 @@ modules:
 - icap6
 - lib_crypto
 - lib_wolfcrypt
+- lib_wolfmqtt
 - lib_wolfssl
 - spi1
 - spi2
@@ -76,10 +77,14 @@ generatedFileHashHistoryMap:
   hash: 632c78c323cb9f8c6359f20337440c08f8461eb4b0304552b6a3cfd5c4052620
 - file: ..\src\app.h
   hash: 8e35d8509552a4d1d6e6f123ad75694cf784a707f7dac592ed33b55121aa8e28
+- file: ..\src\app_mqtt_task.c
+  hash: 0c62eefba74b46581d0b932c035bf3bc778c226e79810725f961d4f7dd1a62b8
+- file: ..\src\app_mqtt_task.h
+  hash: c4ab06439b1254b6150006ab39aeb6925e3e695769786a246688ca150f80cc1f
 - file: ..\src\config\default\config.h
-  hash: 97d048aca9fc536435fb697f0f2a72f52d90d14b9f2ac52dc55b627c4850848e
+  hash: dc2c3d6ac5a1c0c3af2b09bc39553dc2b4077274990471fed0c080134c7c1817
 - file: ..\src\config\default\configuration.h
-  hash: a45e2f14207b9ba8e762703f4d13617178521f098d8684b9e983995c5e94c1b6
+  hash: 587c98c04fdbede1b4f97139a992021590e26e02660f64053d38f14f5c84ee6c
 - file: ..\src\config\default\crypto\crypto.h
   hash: 63bc6589b6538aeb76bc00351d3b99016c8357699c9403067f79a7f43461d208
 - file: ..\src\config\default\crypto\src\crypto.c
@@ -684,14 +689,40 @@ generatedFileHashHistoryMap:
   hash: 612bd2e1561e9222079ce81f842ab47e962671dfce335e26dd1e53d71602e9e5
 - file: ..\src\config\default\tasks.c
   hash: f0c5041ff5c77eb6f5b8371d17bc44f259665cd7a8674bd42fd5bd4cdfe91a31
+- file: ..\src\config\default\third_party_adapter\wolfMQTT\src\mqtt_net_glue.c
+  hash: 23a9b76bedba5064a36bd22cc7adf83c311592e47e236faf189f2f02071f4171
+- file: ..\src\config\default\third_party_adapter\wolfMQTT\src\mqtt_net_glue.h
+  hash: 3bfbaccfb2dca5f4f271d805cbb75651ed16adbf543f4613968002d4e6509693
 - file: ..\src\config\default\toolchain_specifics.h
   hash: fd2fc7bbe60706409cc0c0a525825c0194f6f71adc0a89e6310041f06dc2f645
 - file: ..\src\config\default\user.h
   hash: 451e0878e9fcf6cf9fab046c1452ea662757988346c7f39e6bc98478ca25f995
+- file: ..\src\config\default\user_settings.h
+  hash: dc2c3d6ac5a1c0c3af2b09bc39553dc2b4077274990471fed0c080134c7c1817
 - file: ..\src\main.c
   hash: d3c233d419e6304bfacbafc18cc68c0f5c26e365f23b20ea40ccfac458f664c5
 - file: ..\src\mpfs_net_img.c
   hash: be4054c796ee83c166aa4f946380ffe12f0cb8f73a7580613584f5356c6c6a3e
+- file: ..\src\third_party\wolfMQTT\src\mqtt_client.c
+  hash: 65c8b799b5cf4b15b159024876e07a773ae52d61f5d0d35c9ad7ccad338851c5
+- file: ..\src\third_party\wolfMQTT\src\mqtt_packet.c
+  hash: c4756cca909b98667cc9ade87e4e0519c7e047998db62cb2f8c7c42e18bed730
+- file: ..\src\third_party\wolfMQTT\src\mqtt_socket.c
+  hash: 8eade29024efe49c19257d960bdba852e285b768755005b2625cca866a4c1ef8
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\mqtt_client.h
+  hash: c6e33efcc7bc0ad742aa2825396fe4d66ca4b6e46256b9b3859a9d7d13f64ba8
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\mqtt_packet.h
+  hash: 67372b52a53ff0b811c8b18cf70debc62cbb2250dea7b6ee7e78ccd20a820c4f
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\mqtt_socket.h
+  hash: d999a96f0764532e1c8fc5b24401313a6ae2546008d3ed758b166607a2199441
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\mqtt_types.h
+  hash: 1d22282dacea69a1d0fb1a38c1e15e48ffed165a00a9012593c1357f1152710e
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\version.h
+  hash: 35cac015da43db41550cb176389769b4e8041eafc3ff0b13209a65b2df95782c
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\visibility.h
+  hash: 0c076bf350f8f71f4a71d409356f4b75eab077dec91b88b70efc56709273f253
+- file: ..\src\third_party\wolfMQTT\wolfmqtt\vs_settings.h
+  hash: 25cddc2545b1213a6f1f04d91c6bd1455fb0b3ef67d7607612e8ec837cfd5c84
 - file: ..\src\third_party\wolfssl\src\conf.c
   hash: 54a545d0e78532f200bb52c0772cbfa9eb0a8edf3d174e75d892ad1d4d445e0b
 - file: ..\src\third_party\wolfssl\src\crl.c

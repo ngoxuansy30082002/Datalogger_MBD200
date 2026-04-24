@@ -129,6 +129,7 @@ build/default/production/_ext/931150736/sim_gps.o: \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/core/sim_basic.h \
  ../src/sim/core/sim_net.h ../src/sim/service/sim_mqtt.h \
+ ../src/ethernet/eth_net.h ../src/ethernet/tcp_mqtt.h \
  ../src/sim/core/sim_driver.h
 ../src/sim/sim_general.h:
 ../src/sim/service/sim_gps.h:
@@ -271,4 +272,6 @@ build/default/production/_ext/931150736/sim_gps.o: \
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:
 ../src/sim/core/sim_driver.h:

@@ -24,8 +24,18 @@ data:
       - children:
         - attributes:
             id: tcpipArp
-            value: '222'
+            value: '582'
           type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_ARP_CACHE_ENTRIES:
+      attributes:
+        id: TCPIP_ARP_CACHE_ENTRIES
+      children:
+      - children:
+        - attributes:
+            value: '20'
+          type: User
         type: Values
       type: Integer
   userData: {}

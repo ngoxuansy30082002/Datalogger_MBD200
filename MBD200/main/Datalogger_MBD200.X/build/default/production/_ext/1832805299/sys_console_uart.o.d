@@ -130,7 +130,8 @@ build/default/production/_ext/1832805299/sys_console_uart.o: \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
  ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h
+ ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
+ ../src/ethernet/tcp_mqtt.h
 ../src/config/default/system/console/sys_console.h:
 ../src/config/default/configuration.h:
 ../src/config/default/user.h:
@@ -274,3 +275,5 @@ build/default/production/_ext/1832805299/sys_console_uart.o: \
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:

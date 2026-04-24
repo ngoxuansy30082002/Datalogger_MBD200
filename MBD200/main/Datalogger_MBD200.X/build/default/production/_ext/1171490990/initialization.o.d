@@ -129,7 +129,8 @@ build/default/production/_ext/1171490990/initialization.o: \
  ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
  ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
  ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h \
+ ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
+ ../src/ethernet/tcp_mqtt.h \
  ../src/config/default/net_pres/pres/net_pres_enc_glue.h \
  ../src/config/default/net_pres/pres/net_pres_encryptionproviderapi.h
 ../src/config/default/configuration.h:
@@ -273,5 +274,7 @@ build/default/production/_ext/1171490990/initialization.o: \
 ../src/sim/core/sim_basic.h:
 ../src/sim/core/sim_net.h:
 ../src/sim/service/sim_mqtt.h:
+../src/ethernet/eth_net.h:
+../src/ethernet/tcp_mqtt.h:
 ../src/config/default/net_pres/pres/net_pres_enc_glue.h:
 ../src/config/default/net_pres/pres/net_pres_encryptionproviderapi.h:
