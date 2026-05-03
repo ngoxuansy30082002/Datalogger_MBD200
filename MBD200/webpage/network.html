@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Network Configuration - Cấu hình mạng IP, Gateway, DNS cho DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout-wrapper">
+    <div id="sidebarMount"></div>
+    <div class="main-wrapper" id="mainWrapper">
+
+        <header class="top-header">
+            <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+            <div class="header-breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item">System Configuration</li>
+                    <li class="breadcrumb-item active">Network Configuration</li>
+                </ol>
+            </div>
+            <div class="header-actions">
+                <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                <div class="header-divider"></div>
+                <div class="user-info dropdown" data-bs-toggle="dropdown">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <main class="page-content">
+            <div class="page-header">
+                <h1><i class="bi bi-wifi text-primary me-2"></i>Network Configuration</h1>
+                <p>Cấu hình địa chỉ IP, Subnet Mask, Gateway và DNS</p>
+            </div>
+
+            <!-- Network status overview -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card p-3 h-100">
+                        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px">IP Address</div>
+                        <div style="font-size:18px;font-weight:700;color:#267dc1;font-family:monospace">192.168.1.100</div>
+                        <div><span class="badge badge-status-active">DHCP Assigned</span></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card p-3 h-100">
+                        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px">MAC Address</div>
+                        <div style="font-size:15px;font-weight:600;color:#374151;font-family:monospace">A4:CF:12:23:45:67</div>
+                        <div style="font-size:12px;color:#9ca3af">Ethernet (eth0)</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card p-3 h-100">
+                        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px">Link Speed</div>
+                        <div style="font-size:18px;font-weight:700;color:#059669">100 Mbps</div>
+                        <div style="font-size:12px;color:#9ca3af">Full Duplex</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card p-3 h-100">
+                        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px">Internet</div>
+                        <div style="font-size:18px;font-weight:700;color:#059669"><i class="bi bi-globe2 me-1"></i>Online</div>
+                        <div style="font-size:12px;color:#9ca3af">Latency: 12ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <form class="needs-validation" id="networkForm" novalidate>
+                <!-- Internet Uplink Mode -->
+                <div class="form-section mb-4">
+                    <div class="form-section-header">
+                        <div class="section-icon"><i class="bi bi-router-fill"></i></div>
+                        <div>
+                            <h6>Internet Uplink Mode</h6>
+                            <p>Chọn nguồn kết nối Internet cho hệ thống</p>
+                        </div>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="uplink-option selected" id="uplink-eth" for="uplinkEth">
+                                    <input type="radio" name="uplink_mode" id="uplinkEth" value="ethernet" checked>
+                                    <i class="bi bi-ethernet uplink-icon text-primary"></i>
+                                    <div class="uplink-label">Ethernet</div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px">LAN / WAN cáp mạng</div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="uplink-option" id="uplink-sim" for="uplinkSim">
+                                    <input type="radio" name="uplink_mode" id="uplinkSim" value="sim">
+                                    <i class="bi bi-sim-fill uplink-icon" style="color:#10b981"></i>
+                                    <div class="uplink-label">SIM Card (4G/LTE)</div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px">Internet qua module 4G</div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="uplink-option" id="uplink-both" for="uplinkBoth">
+                                    <input type="radio" name="uplink_mode" id="uplinkBoth" value="both">
+                                    <i class="bi bi-arrows-expand uplink-icon" style="color:#8b5cf6"></i>
+                                    <div class="uplink-label">Auto Failover</div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px">Ethernet ưu tiên, SIM backup</div>
+                                </label>
+                            </div>
+                            <div class="col-12" id="simNoteRow" style="display:none">
+                                <div class="alert alert-info d-flex gap-2 py-2 mb-0">
+                                    <i class="bi bi-info-circle-fill flex-shrink-0"></i>
+                                    <span style="font-size:12.5px">SIM đã được chọn. Cấu hình APN và chi tiết SIM trong <a href="sim.html" class="fw-600">System → SIM Config</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-7">
+
+                        <!-- Interface Selection -->
+                        <div class="form-section mb-4">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-ethernet"></i></div>
+                                <div>
+                                    <h6>Giao diện mạng</h6>
+                                    <p>Chọn interface và chế độ cấu hình IP</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="networkInterface">Interface <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="networkInterface" name="network_interface" disabled>
+                                            <option value="eth0" selected>eth0 - Ethernet (LAN)</option>
+                                            <option value="eth1">eth1 - Ethernet 2</option>
+                                            <option value="wlan0">wlan0 - WiFi (nếu có)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Chế độ IP</label>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="ip_mode" id="ipDhcp" value="dhcp" checked>
+                                                <label class="form-check-label fw-500" for="ipDhcp">DHCP (Tự động)</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="ip_mode" id="ipStatic" value="static">
+                                                <label class="form-check-label fw-500" for="ipStatic">Static (Tĩnh)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IP Settings -->
+                        <div class="form-section mb-4" id="ipSettingsSection" style="opacity:0.6;pointer-events:none">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-hdd-network-fill"></i></div>
+                                <div>
+                                    <h6>Địa chỉ IP tĩnh</h6>
+                                    <p>IP Address, Subnet Mask, Gateway</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="ipAddress">IP Address <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control ip-field" id="ipAddress" name="ip_address" placeholder="192.168.1.100">
+                                        <div class="form-text">Địa chỉ IP thiết bị</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="subnetMask">Subnet Mask <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="subnetMask" name="subnet_mask">
+                                            <option value="255.255.255.0" selected>/24 - 255.255.255.0</option>
+                                            <option value="255.255.0.0">/16 - 255.255.0.0</option>
+                                            <option value="255.255.255.128">/25 - 255.255.255.128</option>
+                                            <option value="255.255.255.192">/26 - 255.255.255.192</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="gateway">Default Gateway <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control ip-field" id="gateway" name="gateway" placeholder="192.168.1.1">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="broadcast">Broadcast</label>
+                                        <input type="text" class="form-control ip-field" id="broadcast" name="broadcast" placeholder="192.168.1.255" readonly style="background:#f9fafb">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DNS -->
+                        <div class="form-section mb-0">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-search-heart-fill"></i></div>
+                                <div>
+                                    <h6>DNS Server</h6>
+                                    <p>Máy chủ phân giải tên miền</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="dns1">DNS Primary <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-1-circle"></i></span>
+                                            <input type="text" class="form-control ip-field" id="dns1" name="dns_primary" value="8.8.8.8" required>
+                                        </div>
+                                        <div class="form-text">Google DNS: 8.8.8.8</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="dns2">DNS Secondary</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-2-circle"></i></span>
+                                            <input type="text" class="form-control ip-field" id="dns2" name="dns_secondary" value="8.8.4.4">
+                                        </div>
+                                        <div class="form-text">Google DNS 2: 8.8.4.4</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="dns3">DNS Tertiary</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-3-circle"></i></span>
+                                            <input type="text" class="form-control ip-field" id="dns3" name="dns_tertiary" value="1.1.1.1">
+                                        </div>
+                                        <div class="form-text">Cloudflare DNS: 1.1.1.1</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="hostname">Hostname</label>
+                                        <input type="text" class="form-control" id="hostname" name="hostname" value="datalogger-01">
+                                        <div class="form-text">Tên trên mạng nội bộ</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel -->
+                    <div class="col-lg-5">
+                        <!-- Ping Tool -->
+                        <div class="form-section mb-4">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-reception-4"></i></div>
+                                <div>
+                                    <h6>Công cụ kiểm tra mạng</h6>
+                                    <p>Ping và kiểm tra kết nối</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label" for="pingTarget">Địa chỉ ping</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="pingTarget" value="8.8.8.8" placeholder="IP hoặc hostname">
+                                            <button type="button" class="btn btn-outline-primary" id="pingBtn">
+                                                <i class="bi bi-broadcast"></i> Ping
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div style="background:#1a2332;border-radius:8px;padding:12px;min-height:120px;font-family:monospace;font-size:12px" id="pingOutput">
+                                            <span style="color:#9ca3af">Nhấn "Ping" để kiểm tra kết nối...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Info -->
+                        <div class="form-section mb-4">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-info-circle-fill"></i></div>
+                                <div><h6>Thông tin mạng hiện tại</h6></div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-2" style="font-size:13px">
+                                    <div class="col-5 text-muted">IP (Current)</div>
+                                    <div class="col-7 fw-600 font-monospace">192.168.1.100</div>
+                                    <div class="col-5 text-muted">Subnet</div>
+                                    <div class="col-7 fw-600 font-monospace">255.255.255.0</div>
+                                    <div class="col-5 text-muted">Gateway</div>
+                                    <div class="col-7 fw-600 font-monospace">192.168.1.1</div>
+                                    <div class="col-5 text-muted">MAC</div>
+                                    <div class="col-7 fw-600 font-monospace">A4:CF:12:23:45:67</div>
+                                    <div class="col-5 text-muted">RX bytes</div>
+                                    <div class="col-7 fw-600">1.24 GB</div>
+                                    <div class="col-5 text-muted">TX bytes</div>
+                                    <div class="col-7 fw-600">234 MB</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 justify-content-end mt-4">
+                    <button type="button" class="btn btn-secondary btn-reset">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy-fill me-2"></i>Áp dụng cấu hình mạng
+                    </button>
+                </div>
+
+                <div class="alert alert-warning d-flex gap-2 mt-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>
+                    <div><strong>Lưu ý:</strong> Thay đổi cấu hình mạng sẽ ngắt kết nối hiện tại. Đảm bảo bạn có thể truy cập thiết bị qua địa chỉ IP mới.</div>
+                </div>
+            </form>
+        </main>
+
+        <footer class="page-footer">
+            <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+            <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+        </footer>
+    </div>
+</div>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/layout.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+/* Xử lý request POST */
+function sendPostRequest(url, formId, callback) {
+    var form = document.getElementById(formId);
+    if (!form) return;
+    
+    var formData = new FormData(form);
+    var params = new URLSearchParams();
+    for (var pair of formData.entries()) {
+        params.append(pair[0], pair[1]);
+    }
+    var encodedParams = params.toString();
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 || xhr.status === 0) {
+                if (typeof showToast === 'function') {
+                    showToast('Đã lưu cấu hình Mạng thành công!', 'success');
+                } else {
+                    alert('Đã lưu cấu hình Mạng thành công!');
+                }
+                if (callback) callback(true);
+            } else {
+                if (typeof showToast === 'function') {
+                    showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                } else {
+                    alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                }
+                if (callback) callback(false);
+            }
+        }
+    };
+    xhr.send(encodedParams);
+}
+
+$(document).ready(function(){
+    // Form Submit
+    $('#networkForm').on('submit', function (e) {
+        e.preventDefault();
+        if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+        sendPostRequest('network.html', 'networkForm');
+    });
+
+    // Uplink Mode selector
+    $('input[name="uplink_mode"]').on('change', function(){
+        $('.uplink-option').removeClass('selected');
+        $(this).closest('.uplink-option').addClass('selected');
+        const val = $(this).val();
+        $('#simNoteRow').toggle(val === 'sim' || val === 'both');
+    });
+
+    // Toggle Static IP
+    $('input[name="ip_mode"]').on('change', function(){
+        const isStatic = $(this).val() === 'static';
+        if (isStatic) {
+            $('#ipSettingsSection').css({opacity:'1', pointerEvents:'all'});
+        } else {
+            $('#ipSettingsSection').css({opacity:'0.6', pointerEvents:'none'});
+        }
+    });
+
+    // Toggle VLAN
+    $('#enableVlan').on('change', function(){
+        $('#vlanId').prop('disabled', !this.checked);
+    });
+
+    // Auto-fill broadcast
+    $('#ipAddress').on('input', function(){
+        const parts = $(this).val().split('.');
+        if (parts.length === 4) {
+            $('#broadcast').val(parts[0]+'.'+parts[1]+'.'+parts[2]+'.255');
+        }
+    });
+
+    // Ping simulation
+    $('#pingBtn').on('click', function(){
+        const target = $('#pingTarget').val().trim() || '8.8.8.8';
+        const $out = $('#pingOutput');
+        $out.html('<span style="color:#f59e0b">Đang ping ' + target + '...</span>');
+
+        setTimeout(() => {
+            const latencies = [12, 14, 11, 13].map(v => v + Math.floor(Math.random()*4));
+            const avg = (latencies.reduce((a,b)=>a+b,0)/4).toFixed(1);
+            $out.html(`
+                <span style="color:#9ca3af">PING ${target} (${target}): 56 bytes</span><br>
+                ${latencies.map((l,i) => `<span style="color:#22c55e">64 bytes from ${target}: icmp_seq=${i+1} ttl=118 time=${l} ms</span>`).join('<br>')}<br>
+                <br>
+                <span style="color:#9ca3af">--- ${target} ping statistics ---</span><br>
+                <span style="color:#22c55e">4 packets transmitted, 4 received, 0% loss, time: ${avg}ms</span>
+            `);
+        }, 1500);
+    });
+});
+</script>
+</body>
+</html>

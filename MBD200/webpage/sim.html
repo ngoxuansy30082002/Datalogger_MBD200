@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SIM Configuration - Cấu hình kết nối SIM 4G/LTE cho DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">SIM Config</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-sim-fill text-primary me-2"></i>SIM Config (4G/LTE)</h1>
+                    <p>Cấu hình kết nối Dual SIM – APN, ưu tiên và auto-switch</p>
+                </div>
+
+                <!-- Dual SIM Status Cards -->
+                <div class="row g-4 mb-4" id="simCardsContainer">
+                    <!-- SIM cards will be rendered here by JavaScript -->
+                </div>
+
+                <!-- SIM Priority & Auto Switch -->
+                <form class="needs-validation" id="simPriorityForm" novalidate>
+                    <div class="form-section mb-4">
+                        <div class="form-section-header">
+                            <div class="section-icon"><i class="bi bi-arrow-left-right"></i></div>
+                            <div>
+                                <h6>SIM ưu tiên &amp; Auto Switch</h6>
+                                <p>Chọn SIM chính và cấu hình tự động chuyển đổi</p>
+                            </div>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">SIM ưu tiên (Primary)</label>
+                                    <div class="d-flex gap-3 mt-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sim_priority" id="pri1"
+                                                value="sim1" checked disabled>
+                                            <label class="form-check-label fw-500" for="pri1">
+                                                <i class="bi bi-sim-fill me-1 text-primary"></i>SIM 1 <span> (Viettel)
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="sim_priority" id="pri2"
+                                                value="sim2" disabled>
+                                            <label class="form-check-label fw-500" for="pri2">
+                                                <i class="bi bi-sim-fill me-1 text-warning"></i>SIM 2 <span> (N/A)
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input" type="checkbox" id="autoSwitchSim"
+                                            name="auto_switch" style="width:40px;height:20px" disabled>
+                                        <label class="form-check-label fw-600 ms-2" for="autoSwitchSim">
+                                            Tự động chuyển SIM khi mất kết nối
+                                        </label>
+                                    </div>
+                                    <div id="autoSwitchOptions" class="mt-3">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:12px">Timeout trước khi
+                                                    switch (s)</label>
+                                                <input type="number" class="form-control form-control-sm"
+                                                    name="switch_timeout" value="30" min="5" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:12px">Ping test
+                                                    target</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name="ping_target" value="8.8.8.8" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:12px">Ping interval
+                                                    (s)</label>
+                                                <input type="number" class="form-control form-control-sm"
+                                                    name="ping_interval" value="60" min="10" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" style="font-size:12px">Ngưỡng RSSI switch
+                                                    (dBm)</label>
+                                                <input type="number" class="form-control form-control-sm"
+                                                    name="rssi_threshold" value="-95" max="-50" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-3 justify-content-between">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary" id="testSim1Btn">
+                                <i class="bi bi-broadcast me-1"></i>Test SIM
+                            </button>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-secondary btn-reset"><i
+                                    class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình hệ thống
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu dữ liệu thành công!', 'success');
+                        } else {
+                            alert('Đã lưu dữ liệu thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        const mockSimData = [
+            {
+                sim_slot: "SIM1",
+                name: "Viettel 4G",
+                network: "Viettel",
+                status: "connected",
+                technology: "LTE (4G)",
+                ip: "10.14.28.112",
+                rssi: "-72 dBm",
+                imei: "35812309012345",
+                iccid: "35812309054321",
+                apn: "v-internet",
+                username: "",
+                password: "",
+                bars: 4,
+                isActive: true
+            },
+            {
+                sim_slot: "SIM2",
+                name: "Mobifone 3G",
+                network: "Mobifone",
+                status: "standby",
+                technology: "WCDMA (3G)",
+                ip: "—",
+                rssi: "-88 dBm",
+                imei: "35812309054321",
+                iccid: "35812309054321",
+                apn: "m-wap",
+                username: "",
+                password: "",
+                bars: 0,
+                isActive: false
+            }
+        ];
+
+        function renderSimCards() {
+            let html = '';
+            mockSimData.forEach((sim, index) => {
+                const idx = index + 1;
+                const statusBadge = sim.status === 'connected'
+                    ? '<span style="background:#22c55e;color:white;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600"><i class="bi bi-circle-fill me-1" style="font-size:7px"></i>Connected</span>'
+                    : '<span style="background:#6b7280;color:white;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600"><i class="bi bi-circle me-1" style="font-size:7px"></i>Standby</span>';
+
+                let signalBarsHtml = '';
+                for (let i = 0; i < 5; i++) {
+                    signalBarsHtml += `<div class="signal-bar ${i < sim.bars ? 'active' : ''}"></div>`;
+                }
+
+                html += `
+        <div class="col-md-6">
+            <form class="needs-validation sim-form" id="simForm_${idx}" novalidate>
+                <input type="hidden" name="sim_slot" value="${sim.sim_slot}">
+                <div class="sim-card ${sim.isActive ? 'active-sim' : ''}" id="sim${idx}Card">
+                    <div class="sim-card-header">
+                        <div>
+                            <div class="sim-label">Khe ${sim.sim_slot}</div>
+                            <div class="sim-name">${sim.name}</div>
+                            <div style="font-size:12px;margin-top:4px">
+                                ${statusBadge}
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center gap-2">
+                            <div class="sim-icon">SIM<br>${idx}</div>
+                            <div class="signal-bars" id="sim${idx}SignalBars">
+                                ${signalBarsHtml}
+                            </div>
+                            <div style="font-size:10px;color:rgba(255,255,255,0.6)">${sim.bars}/5 bars</div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="row g-2 mb-3" style="font-size:13px">
+                            <div class="col-5 text-muted">Nhà mạng</div><div class="col-7 fw-600">${sim.network}</div>
+                            <div class="col-5 text-muted">Công nghệ</div><div class="col-7 fw-600">${sim.technology}</div>
+                            <div class="col-5 text-muted">IP</div><div class="col-7 fw-600 font-monospace">${sim.ip}</div>
+                            <div class="col-5 text-muted">RSSI</div><div class="col-7 fw-600">${sim.rssi}</div>
+                            <div class="col-5 text-muted">IMEI</div><div class="col-7 fw-600 font-monospace">${sim.imei}</div>
+                            <div class="col-5 text-muted">ICCID</div><div class="col-7 fw-600 font-monospace">${sim.iccid}</div>
+                        </div>
+                        <div class="separator"></div>
+
+                        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;margin-bottom:10px">Cấu hình APN</div>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label" style="font-size:12px">APN</label>
+                                <input type="text" class="form-control form-control-sm" name="apn" value="${sim.apn}">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" style="font-size:12px">Username</label>
+                                <input type="text" class="form-control form-control-sm" name="username" value="${sim.username}" placeholder="(trống nếu không có)">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" style="font-size:12px">Password</label>
+                                <input type="password" class="form-control form-control-sm" name="password" value="${sim.password}" placeholder="(trống nếu không có)">
+                            </div>
+                            <div class="col-12 mt-3 text-end">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-floppy-fill me-1"></i>Lưu SIM ${idx}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        `;
+            });
+            $('#simCardsContainer').html(html);
+
+            // Bind submit for SIM forms
+            $('.sim-form').on('submit', function (e) {
+                e.preventDefault();
+                sendPostRequest('sim.html', $(this).attr('id'));
+            });
+        }
+
+        $(document).ready(function () {
+            // Initial Render
+            renderSimCards();
+
+            // Priority change → highlight active sim card
+            $('input[name="sim_priority"]').on('change', function () {
+                $('.sim-card').removeClass('active-sim');
+                if ($(this).val() === 'sim1') $('#sim1Card').addClass('active-sim');
+                else $('#sim2Card').addClass('active-sim');
+            });
+
+            // Submit Priority Form
+            $('#simPriorityForm').on('submit', function (e) {
+                e.preventDefault();
+                sendPostRequest('sim.html', 'simPriorityForm');
+            });
+
+            // Auto switch toggle
+            $('#autoSwitchSim').on('change', function () {
+                $('#autoSwitchOptions').toggle(this.checked);
+            });
+
+            // Test buttons
+            $('#testSim1Btn').on('click', function () {
+                const $btn = $(this).html('<span class="spinner-border spinner-border-sm me-1"></span>Testing...').prop('disabled', true);
+                setTimeout(() => {
+                    $(this).html('<i class="bi bi-broadcast me-1"></i>Test SIM 1').prop('disabled', false);
+                    showToast('SIM 1 (Viettel): Ping 8.8.8.8 → 42ms ✓', 'success');
+                }, 2000);
+            });
+            $('#testSim2Btn').on('click', function () {
+                $(this).html('<span class="spinner-border spinner-border-sm me-1"></span>Testing...').prop('disabled', true);
+                setTimeout(() => {
+                    $(this).html('<i class="bi bi-broadcast me-1"></i>Test SIM 2').prop('disabled', false);
+                    showToast('SIM 2 (Mobifone): Tín hiệu yếu (-88dBm), kết nối chậm.', 'warning');
+                }, 2500);
+            });
+
+            // Simulate signal fluctuation
+            setInterval(() => {
+                const bars1 = 3 + Math.floor(Math.random() * 2); // 3-4
+                $('#sim1SignalBars .signal-bar').each(function (i) {
+                    $(this).toggleClass('active', i < bars1);
+                });
+            }, 4000);
+        });
+    </script>
+</body>
+
+</html>

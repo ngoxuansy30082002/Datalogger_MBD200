@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Time Settings - Cấu hình thời gian và múi giờ cho DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">Time Settings</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-clock-fill text-primary me-2"></i>Time Settings</h1>
+                    <p>Cấu hình đồng hồ hệ thống, múi giờ và đồng bộ NTP</p>
+                </div>
+
+                <!-- Current time display -->
+                <div class="card mb-4"
+                    style="background:linear-gradient(135deg,#1a2332,#243447);color:white;border:none">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <i class="bi bi-clock" style="font-size:64px;opacity:0.3"></i>
+                            </div>
+                            <div class="col">
+                                <div
+                                    style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
+                                    Thời gian hệ thống hiện tại</div>
+                                <div id="currentTime"
+                                    style="font-size:36px;font-weight:700;font-family:monospace;letter-spacing:2px">
+                                    --:--:--</div>
+                                <div id="currentDate" style="font-size:15px;opacity:0.7;margin-top:4px">Loading...</div>
+                            </div>
+                            <div class="col-auto text-end">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span
+                                        style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse-green 2s infinite;display:inline-block"></span>
+                                    <span style="font-size:13px;color:#22c55e;font-weight:500">NTP Synchronized</span>
+                                </div>
+                                <div style="font-size:12px;opacity:0.5">Last sync: 5 phút trước</div>
+                                <div style="font-size:12px;opacity:0.5">UTC+7 (ICT) - Ho Chi Minh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <!-- Timezone -->
+                        <form class="needs-validation" id="timezoneForm" novalidate>
+                            <input type="hidden" name="action" value="timezone">
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-globe-asia-australia"></i></div>
+                                    <div>
+                                        <h6>Múi giờ (Timezone)</h6>
+                                        <p>Cấu hình múi giờ hệ thống</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="timezone">Múi giờ <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="timezone" name="timezone" required>
+                                                <optgroup label="Đông Nam Á">
+                                                    <option value="Asia/Ho_Chi_Minh" selected>UTC+7 - Asia/Ho_Chi_Minh
+                                                        (Việt Nam)</option>
+                                                    <option value="Asia/Bangkok">UTC+7 - Asia/Bangkok (Thái Lan)
+                                                    </option>
+                                                    <option value="Asia/Singapore">UTC+8 - Asia/Singapore</option>
+                                                    <option value="Asia/Jakarta">UTC+7 - Asia/Jakarta (Indonesia)
+                                                    </option>
+                                                    <option value="Asia/Kuala_Lumpur">UTC+8 - Asia/Kuala_Lumpur</option>
+                                                </optgroup>
+                                                <optgroup label="Châu Âu">
+                                                    <option value="Europe/London">UTC+0 - Europe/London</option>
+                                                    <option value="Europe/Paris">UTC+1 - Europe/Paris</option>
+                                                    <option value="Europe/Berlin">UTC+1 - Europe/Berlin</option>
+                                                </optgroup>
+                                                <optgroup label="Mỹ">
+                                                    <option value="America/New_York">UTC-5 - America/New York</option>
+                                                    <option value="America/Los_Angeles">UTC-8 - America/Los Angeles
+                                                    </option>
+                                                </optgroup>
+                                                <optgroup label="UTC">
+                                                    <option value="UTC">UTC+0 - Universal Time (UTC)</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="dateFormat">Định dạng ngày tháng</label>
+                                            <select class="form-select" id="dateFormat" name="date_format">
+                                                <option value="DD/MM/YYYY" selected>DD/MM/YYYY (Việt Nam)</option>
+                                                <option value="MM/DD/YYYY">MM/DD/YYYY (Mỹ)</option>
+                                                <option value="YYYY-MM-DD">YYYY-MM-DD (ISO 8601)</option>
+                                                <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="timeFormat">Định dạng thời gian</label>
+                                            <select class="form-select" id="timeFormat" name="time_format">
+                                                <option value="24h" selected>24 giờ (HH:mm:ss)</option>
+                                                <option value="12h">12 giờ (hh:mm:ss AM/PM)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-floppy-fill me-2"></i>Lưu Múi giờ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Manual Time -->
+                        <form class="needs-validation" id="manualTimeForm" novalidate>
+                            <input type="hidden" name="action" value="manual_time">
+                            <div class="form-section">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-pencil-fill"></i></div>
+                                    <div>
+                                        <h6>Đặt thời gian thủ công</h6>
+                                        <p>Nhập thời gian nếu không có NTP</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="manualDate">Ngày</label>
+                                            <input type="date" class="form-control" id="manualDate" name="manual_date" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="manualTime">Giờ</label>
+                                            <input type="time" class="form-control" id="manualTime" name="manual_time" step="1" required>
+                                        </div>
+                                        <div class="col-12 mt-4">
+                                            <button type="submit" class="btn btn-outline-primary w-100" id="applyManualTime">
+                                                <i class="bi bi-clock me-2"></i>Lưu thời gian thủ công
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <!-- NTP Config -->
+                        <form class="needs-validation" id="ntpForm" novalidate>
+                            <input type="hidden" name="action" value="ntp_config">
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-cloud-fill"></i></div>
+                                    <div>
+                                        <h6>NTP Server</h6>
+                                        <p>Đồng bộ thời gian qua mạng</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="form-check form-switch d-flex align-items-center mb-2">
+                                                <input class="form-check-input" type="checkbox" id="enableNtp"
+                                                    name="ntp_enable" checked>
+                                                <label class="form-check-label fw-600 ms-2" for="enableNtp">Bật đồng bộ NTP</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="ntpServer1">NTP Server 1 (Primary) <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="ntpServer1" name="ntp_server_1"
+                                                value="pool.ntp.org" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="ntpServer2">NTP Server 2 (Backup)</label>
+                                            <input type="text" class="form-control" id="ntpServer2" name="ntp_server_2"
+                                                value="time.google.com">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="ntpInterval">Chu kỳ đồng bộ</label>
+                                            <select class="form-select" id="ntpInterval" name="ntp_sync_interval">
+                                                <option value="300">5 phút</option>
+                                                <option value="600">10 phút</option>
+                                                <option value="3600" selected>1 giờ</option>
+                                                <option value="86400">24 giờ</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="ntpPort">NTP Port</label>
+                                            <input type="number" class="form-control port-field" id="ntpPort"
+                                                name="ntp_port" value="123">
+                                        </div>
+                                        <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" id="syncNowBtn">
+                                                <i class="bi bi-arrow-repeat me-1"></i>Đồng bộ ngay
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình NTP
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+            
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu cấu hình thành công!', 'success');
+                        } else {
+                            alert('Đã lưu cấu hình thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        $(document).ready(function () {
+            // Live clock
+            function updateClock() {
+                const now = new Date();
+                $('#currentTime').text(
+                    now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0') + ':' +
+                    now.getSeconds().toString().padStart(2, '0')
+                );
+                const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+                $('#currentDate').text(
+                    days[now.getDay()] + ', ' +
+                    now.getDate().toString().padStart(2, '0') + '/' +
+                    (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                    now.getFullYear()
+                );
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Set manual date/time defaults
+            const now = new Date();
+            $('#manualDate').val(now.toISOString().split('T')[0]);
+            $('#manualTime').val(now.toTimeString().split(' ')[0]);
+
+            // Form Submits
+            $('#timezoneForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                sendPostRequest('time.html', 'timezoneForm');
+            });
+
+            $('#manualTimeForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                sendPostRequest('time.html', 'manualTimeForm');
+            });
+
+            $('#ntpForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                sendPostRequest('time.html', 'ntpForm');
+            });
+
+            // NTP Sync Now
+            $('#syncNowBtn').on('click', function () {
+                const $btn = $(this);
+                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Đang đồng bộ...').prop('disabled', true);
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "time.html", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        $btn.html('<i class="bi bi-arrow-repeat me-1"></i>Đồng bộ ngay').prop('disabled', false);
+                        if (xhr.status === 200 || xhr.status === 0) {
+                            showToast('Đồng bộ NTP thành công! Thời gian đã được cập nhật.', 'success');
+                        } else {
+                            showToast('Lỗi đồng bộ NTP!', 'error');
+                        }
+                    }
+                };
+                xhr.send("action=sync_ntp_now");
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Storage - Quản lý thẻ nhớ SD Card cho DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">Storage (SD Card)</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-sd-card-fill text-primary me-2"></i>Storage (SD Card)</h1>
+                    <p>Quản lý thẻ nhớ, cấu hình lưu trữ dữ liệu cảm biến</p>
+                </div>
+
+                <!-- SD Card Status -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card p-4">
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="storage-donut" id="storageDonut"
+                                    style="background: conic-gradient(#267dc1 0% 72%, #e5e7eb 72% 100%)">
+                                    <div class="storage-donut-label">
+                                        <div style="font-size:18px;font-weight:800;color:#1f2937">72%</div>
+                                        <div style="font-size:10px;color:#9ca3af">Used</div>
+                                    </div>
+                                </div>
+                                <div style="flex:1">
+                                    <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:8px">SD Card
+                                    </div>
+                                    <div class="d-flex justify-content-between"
+                                        style="font-size:12px;margin-bottom:4px">
+                                        <span style="color:#9ca3af">Total</span>
+                                        <span class="fw-600">32.0 GB</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height:6px">
+                                        <div class="progress-bar bg-primary" style="width:72%"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between" style="font-size:12px">
+                                        <span style="color:#267dc1">Used: <strong>23.0 GB</strong></span>
+                                        <span style="color:#9ca3af">Free: <strong>9.0 GB</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-4">
+                        <div class="card p-3 text-center h-100 d-flex flex-column justify-content-center">
+                            <i class="bi bi-check-circle-fill"
+                                style="font-size:28px;color:#22c55e;margin-bottom:8px"></i>
+                            <div style="font-size:14px;font-weight:700;color:#22c55e">Mounted</div>
+                            <div style="font-size:11px;color:#9ca3af">FAT32</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-4">
+                        <div class="card p-3 text-center h-100 d-flex flex-column justify-content-center">
+                            <div style="font-size:22px;font-weight:800;color:#267dc1">1,248</div>
+                            <div style="font-size:12px;color:#9ca3af">Số file</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- File Tree Explorer -->
+                    <div class="col-lg-5">
+                        <div class="card" style="height:fit-content">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                            class="bi bi-folder-fill"></i></div>
+                                    <h6>File Explorer</h6>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary" id="expandAllBtn"
+                                        title="Mở tất cả">
+                                        <i class="bi bi-arrows-expand"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-sm btn-outline-secondary" id="collapseAllBtn"
+                                        title="Thu tất cả">
+                                        <i class="bi bi-arrows-collapse"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body" style="max-height:440px;overflow-y:auto">
+                                <div class="file-tree" id="fileTree">
+
+                                    <!-- Root -->
+                                    <div class="file-tree-item" data-folder="root">
+                                        <span class="tree-toggle open"><i class="bi bi-chevron-right"></i></span>
+                                        <span class="tree-icon"><i class="bi bi-sd-card text-primary"></i></span>
+                                        <span style="font-weight:600">/datalogger</span>
+                                        <span style="font-size:11px;color:#9ca3af;margin-left:auto">23.0 GB</span>
+                                    </div>
+                                    <div class="file-tree-children open" id="children-root">
+
+                                        <div class="file-tree-item" data-folder="2024">
+                                            <span class="tree-toggle"><i class="bi bi-chevron-right"></i></span>
+                                            <span class="tree-icon"><i class="bi bi-folder-fill"
+                                                    style="color:#f59e0b"></i></span>
+                                            <span>2024</span>
+                                            <span style="font-size:11px;color:#9ca3af;margin-left:auto">18.2 GB</span>
+                                        </div>
+                                        <div class="file-tree-children" id="children-2024">
+                                            <div class="file-tree-item" data-folder="2024-12">
+                                                <span class="tree-toggle"><i class="bi bi-chevron-right"></i></span>
+                                                <span class="tree-icon"><i class="bi bi-folder-fill"
+                                                        style="color:#f59e0b"></i></span>
+                                                <span>12</span>
+                                                <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.4
+                                                    GB</span>
+                                            </div>
+                                            <div class="file-tree-children" id="children-2024-12">
+                                                <div class="file-tree-item selected">
+                                                    <span class="tree-toggle" style="opacity:0"></span>
+                                                    <span class="tree-icon"><i class="bi bi-file-earmark-spreadsheet"
+                                                            style="color:#22c55e"></i></span>
+                                                    <span>20241201.csv</span>
+                                                    <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.3
+                                                        MB</span>
+                                                </div>
+                                                <div class="file-tree-item">
+                                                    <span class="tree-toggle" style="opacity:0"></span>
+                                                    <span class="tree-icon"><i class="bi bi-file-earmark-spreadsheet"
+                                                            style="color:#22c55e"></i></span>
+                                                    <span>20241202.csv</span>
+                                                    <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.4
+                                                        MB</span>
+                                                </div>
+                                                <div class="file-tree-item">
+                                                    <span class="tree-toggle" style="opacity:0"></span>
+                                                    <span class="tree-icon"><i class="bi bi-file-earmark-spreadsheet"
+                                                            style="color:#22c55e"></i></span>
+                                                    <span>20241203.csv</span>
+                                                    <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.1
+                                                        MB</span>
+                                                </div>
+                                            </div>
+                                            <div class="file-tree-item">
+                                                <span class="tree-toggle"><i class="bi bi-chevron-right"></i></span>
+                                                <span class="tree-icon"><i class="bi bi-folder-fill"
+                                                        style="color:#f59e0b"></i></span>
+                                                <span>11</span>
+                                                <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.1
+                                                    GB</span>
+                                            </div>
+                                            <div class="file-tree-children" id="children-2024-11">
+                                                <div class="file-tree-item">
+                                                    <span class="tree-toggle" style="opacity:0"></span>
+                                                    <span class="tree-icon"><i class="bi bi-file-earmark-spreadsheet"
+                                                            style="color:#22c55e"></i></span>
+                                                    <span>20241101.csv</span>
+                                                    <span style="font-size:11px;color:#9ca3af;margin-left:auto">2.0
+                                                        MB</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="file-tree-item" data-folder="2023">
+                                            <span class="tree-toggle"><i class="bi bi-chevron-right"></i></span>
+                                            <span class="tree-icon"><i class="bi bi-folder-fill"
+                                                    style="color:#f59e0b"></i></span>
+                                            <span>2023</span>
+                                            <span style="font-size:11px;color:#9ca3af;margin-left:auto">4.8 GB</span>
+                                        </div>
+                                        <div class="file-tree-children" id="children-2023">
+                                            <div class="file-tree-item">
+                                                <span class="tree-toggle" style="opacity:0"></span>
+                                                <span class="tree-icon"><i class="bi bi-file-earmark-zip"
+                                                        style="color:#8b5cf6"></i></span>
+                                                <span>2023_archive.zip</span>
+                                                <span style="font-size:11px;color:#9ca3af;margin-left:auto">4.8
+                                                    GB</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Log folder -->
+                                        <div class="file-tree-item" data-folder="logs">
+                                            <span class="tree-toggle"><i class="bi bi-chevron-right"></i></span>
+                                            <span class="tree-icon"><i class="bi bi-folder-fill"
+                                                    style="color:#ef4444"></i></span>
+                                            <span>logs</span>
+                                            <span style="font-size:11px;color:#9ca3af;margin-left:auto">12 MB</span>
+                                        </div>
+                                        <div class="file-tree-children" id="children-logs">
+                                            <div class="file-tree-item">
+                                                <span class="tree-toggle" style="opacity:0"></span>
+                                                <span class="tree-icon"><i class="bi bi-file-earmark-text"
+                                                        style="color:#6b7280"></i></span>
+                                                <span>system.log</span>
+                                                <span style="font-size:11px;color:#9ca3af;margin-left:auto">4 MB</span>
+                                            </div>
+                                            <div class="file-tree-item">
+                                                <span class="tree-toggle" style="opacity:0"></span>
+                                                <span class="tree-icon"><i class="bi bi-file-earmark-text"
+                                                        style="color:#6b7280"></i></span>
+                                                <span>error.log</span>
+                                                <span style="font-size:11px;color:#9ca3af;margin-left:auto">1.2
+                                                    MB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex gap-2" style="padding:12px 18px">
+                                <button class="btn btn-sm btn-outline-danger"
+                                    onclick="showToast('Đã xóa file được chọn.','warning')">
+                                    <i class="bi bi-trash me-1"></i>Xóa
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary"
+                                    onclick="showToast('Bắt đầu tải xuống file...','info')">
+                                    <i class="bi bi-download me-1"></i>Tải xuống
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary ms-auto" id="formatSdBtn">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Format SD
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage Config -->
+                    <div class="col-lg-7">
+                        <div class="form-section mb-4">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-calendar3"></i></div>
+                                <div>
+                                    <h6>Thời gian lưu trữ</h6>
+                                    <p>Tự động xóa file cũ sau thời gian quy định</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="retentionMonths">Thời gian giữ dữ liệu</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="retentionMonths" value="6"
+                                                min="1" max="120">
+                                            <select class="form-select" style="max-width:100px" id="retentionUnit">
+                                                <option value="months" selected>Tháng</option>
+                                                <option value="days">Ngày</option>
+                                                <option value="years">Năm</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-text">File cũ hơn sẽ tự động xóa</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch mt-4  d-flex align-items-center mb-2">
+                                            <input class="form-check-input" type="checkbox" id="autoCleanup" checked>
+                                            <label class="form-check-label fw-500 ms-2" for="autoCleanup">Tự động dọn
+                                                dẹp file cũ</label>
+                                        </div>
+                                        <div class="form-check form-switch mt-2  d-flex align-items-center mb-2">
+                                            <input class="form-check-input" type="checkbox" id="warnLowStorage" checked>
+                                            <label class="form-check-label fw-500 ms-2" for="warnLowStorage">Cảnh báo
+                                                khi đầy &gt; 90%</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section mb-4">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-folder-fill"></i></div>
+                                <div>
+                                    <h6>Cấu trúc thư mục</h6>
+                                    <p>Cách tổ chức file dữ liệu trên thẻ nhớ</p>
+                                </div>
+                            </div>
+                            <div class="form-section-body">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Remote Path</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-folder2-open"></i></span>
+                                            <input type="text" class="form-control" id="remotePath"
+                                                placeholder="Ví dụ: /datalogger">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Cấu trúc thư mục</label>
+                                        <div class="d-flex gap-3 flex-wrap">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="folderStruct"
+                                                    id="structDaily" value="daily" checked>
+                                                <label class="form-check-label" for="structDaily">
+                                                    <strong>Theo ngày</strong><br>
+                                                    <code
+                                                        style="font-size:11px;color:#9ca3af">/YYYYMMDD/filename.csv</code>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="folderStruct"
+                                                    id="structMonthly" value="monthly">
+                                                <label class="form-check-label" for="structMonthly">
+                                                    <strong>Theo tháng</strong><br>
+                                                    <code
+                                                        style="font-size:11px;color:#9ca3af">/YYYYMM//YYYYMMDD/filename.csv</code>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="folderStruct"
+                                                    id="structFlat" value="flat">
+                                                <label class="form-check-label" for="structFlat">
+                                                    <strong>Phẳng (Flat)</strong><br>
+                                                    <code style="font-size:11px;color:#9ca3af">/filename.csv</code>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <!-- Preview path -->
+                                        <div
+                                            style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:12px">
+                                            <div
+                                                style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;margin-bottom:6px">
+                                                Ví dụ đường dẫn file</div>
+                                            <code style="font-size:14px;color:#267dc1"
+                                                id="pathPreview">/remotepath/YYYYMMDD/data.csv</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end">
+                            <button class="btn btn-secondary"><i class="bi bi-arrow-counterclockwise me-2"></i>Đặt
+                                lại</button>
+                            <button class="btn btn-primary" onclick="showToast('Đã lưu cấu hình lưu trữ!','success')">
+                                <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình Storage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        $(document).ready(function () {
+            /* File tree expand/collapse */
+            $(document).on('click', '.file-tree-item', function (e) {
+                if ($(e.target).closest('.tree-toggle').length === 0 && !$(e.target).hasClass('tree-toggle')) {
+                    // If item has no children folder, just select
+                    $('.file-tree-item').removeClass('selected');
+                    $(this).addClass('selected');
+                    return;
+                }
+            });
+
+            /* Toggle on chevron click */
+            $(document).on('click', '.tree-toggle', function (e) {
+                e.stopPropagation();
+                const $item = $(this).closest('.file-tree-item');
+                const folder = $item.data('folder');
+                if (!folder) return;
+                const $children = $(`#children-${folder}`);
+                if (!$children.length) return;
+                const isOpen = $children.hasClass('open');
+                $children.toggleClass('open', !isOpen);
+                $(this).toggleClass('open', !isOpen);
+            });
+
+            /* Click folder item to select & toggle */
+            $(document).on('click', '.file-tree-item[data-folder]', function () {
+                const folder = $(this).data('folder');
+                const $children = $(`#children-${folder}`);
+                if (!$children.length) return;
+                const isOpen = $children.hasClass('open');
+                $children.toggleClass('open', !isOpen);
+                $(this).find('.tree-toggle').toggleClass('open', !isOpen);
+                $('.file-tree-item').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            /* Click file item to select */
+            $(document).on('click', '.file-tree-item:not([data-folder])', function () {
+                $('.file-tree-item').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            /* Expand All / Collapse All */
+            $('#expandAllBtn').on('click', function () {
+                $('.file-tree-children').addClass('open');
+                $('.tree-toggle').addClass('open');
+            });
+            $('#collapseAllBtn').on('click', function () {
+                $('.file-tree-children').removeClass('open');
+                $('.tree-toggle').removeClass('open');
+            });
+
+            /* Format SD warning */
+            $('#formatSdBtn').on('click', function () {
+                if (confirm('⚠️ CẢNH BÁO: Format SD Card sẽ XÓA TOÀN BỘ dữ liệu! Tiếp tục?')) {
+                    showToast('Đã gửi lệnh format SD Card. Vui lòng đợi...', 'warning');
+                }
+            });
+
+            /* Path preview */
+            function updatePathPreview() {
+                const struct = $('input[name="folderStruct"]:checked').val();
+                let basePath = $('#remotePath').val().trim();
+                
+                // Placeholder if empty
+                if (!basePath) {
+                    basePath = '/remotepath';
+                }
+                
+                // Clean trailing slash
+                if (basePath.endsWith('/')) {
+                    basePath = basePath.slice(0, -1);
+                }
+
+                let path = basePath;
+                
+                if (struct === 'daily') {
+                    path += '/YYYYMMDD/data.csv';
+                } else if (struct === 'monthly') {
+                    path += '/YYYYMM/YYYYMMDD/data.csv';
+                } else {
+                    path += '/data.csv';
+                }
+                
+                $('#pathPreview').text(path);
+            }
+            $('input[name="folderStruct"]').on('change', updatePathPreview);
+            $('#remotePath').on('input', updatePathPreview);
+            updatePathPreview();
+        });
+    </script>
+</body>
+
+</html>

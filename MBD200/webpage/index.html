@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DataLogger System - Hệ thống giám sát và ghi nhận dữ liệu cảm biến công nghiệp">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="layout-wrapper">
+
+        <!-- Sidebar Mount Point -->
+        <div id="sidebarMount"></div>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper" id="mainWrapper">
+
+            <!-- ===== TOP HEADER ===== -->
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar" title="Toggle Sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="header-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html"><i
+                                        class="bi bi-house-door me-1"></i>Home</a></li>
+                            <li class="breadcrumb-item active">Tổng quan</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <div class="header-actions">
+                    <div class="conn-status">
+                        <span class="status-dot"></span>
+                        <span>Connected</span>
+                    </div>
+
+                    <button class="header-btn" title="Notifications" data-bs-toggle="tooltip">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge-dot"></span>
+                    </button>
+
+                    <button class="header-btn" title="Settings">
+                        <i class="bi bi-gear"></i>
+                    </button>
+
+                    <div class="header-divider"></div>
+
+                    <div class="user-info dropdown" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                        <i class="bi bi-chevron-down ms-1" style="font-size:11px;color:#9ca3af"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0"
+                        style="min-width:200px;border-radius:12px">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2 text-primary"></i>Profile</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-shield-lock me-2 text-primary"></i>Change
+                                Password</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <!-- ===== PAGE CONTENT ===== -->
+            <main class="page-content">
+
+                <div class="page-header">
+                    <h1><i class="bi bi-house-door-fill text-primary me-2"></i>Trang Chủ</h1>
+                    <p>Chào mừng đến với hệ thống DataLogger - Giám sát &amp; Ghi nhận dữ liệu cảm biến công nghiệp</p>
+                </div>
+
+                <div class="card mb-4"
+                    style="background:linear-gradient(135deg,#267dc1,#3a9ad9); border:none; color:white; position:relative; border-radius: 12px; overflow: visible !important; z-index: 1;">
+                    <div
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border-radius: inherit; pointer-events: none;">
+                        <div
+                            style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.08)">
+                        </div>
+                        <div
+                            style="position:absolute;bottom:-60px;right:80px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.06)">
+                        </div>
+                    </div>
+                    <div class="card-body p-4 d-flex align-items-center gap-4"
+                        style="position: relative; overflow: visible !important;">
+                        <div style="font-size:72px;opacity:0.9; flex-shrink: 0;">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+
+                        <div style="flex-grow: 1;">
+                            <h2 style="font-size:26px;font-weight:700;margin-bottom:8px">DataLogger System v2.4</h2>
+                            <p style="opacity:0.85;margin-bottom:16px;font-size:14px;max-width:500px">
+                                Hệ thống thu thập, xử lý và lưu trữ dữ liệu từ nhiều loại cảm biến công nghiệp.
+                                Hỗ trợ Analog, Modbus RS485, Input Capture và nhiều giao thức khác.
+                            </p>
+                            <div class="d-flex gap-3 flex-wrap">
+                                <a href="dashboard.html" class="btn"
+                                    style="background:white;color:#267dc1;font-weight:600;border:none">
+                                    <i class="bi bi-grid-1x2-fill me-2"></i>Xem Dashboard
+                                </a>
+                                <a href="sensor-general.html" class="btn"
+                                    style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3)">
+                                    <i class="bi bi-sliders me-2"></i>Cấu hình Sensor
+                                </a>
+                            </div>
+                        </div>
+
+                        <img src="assets/img/MBD200.png" alt="MBD200 Hardware"
+                            class="floating-hardware d-none d-lg-block">
+                    </div>
+                </div>
+
+                <!-- Quick Access Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <h5 class="fw-bold text-dark mb-3"><i
+                                class="bi bi-lightning-charge-fill text-warning me-2"></i>Truy cập nhanh</h5>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-6">
+                        <a href="analog.html" class="text-decoration-none">
+                            <div class="card h-100 text-center p-3" style="cursor:pointer">
+                                <div class="icon-box mx-auto mb-3"
+                                    style="background:#fdf0e8;color:#d97706;width:56px;height:56px;font-size:24px;border-radius:14px">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <h6 class="fw-600 mb-1" style="font-size:14px;color:#1f2937">Analog Sensor</h6>
+                                <p style="font-size:12px;color:#9ca3af;margin:0">Cảm biến tương tự</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-6">
+                        <a href="modbus.html" class="text-decoration-none">
+                            <div class="card h-100 text-center p-3" style="cursor:pointer">
+                                <div class="icon-box mx-auto mb-3"
+                                    style="background:#eefdf8;color:#059669;width:56px;height:56px;font-size:24px;border-radius:14px">
+                                    <i class="bi bi-hdd-network-fill"></i>
+                                </div>
+                                <h6 class="fw-600 mb-1" style="font-size:14px;color:#1f2937">Modbus Sensor</h6>
+                                <p style="font-size:12px;color:#9ca3af;margin:0">RS485 Modbus RTU</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-6">
+                        <a href="input-capture.html" class="text-decoration-none">
+                            <div class="card h-100 text-center p-3" style="cursor:pointer">
+                                <div class="icon-box mx-auto mb-3"
+                                    style="background:#e8f4fd;color:#267dc1;width:56px;height:56px;font-size:24px;border-radius:14px">
+                                    <i class="bi bi-alt"></i>
+                                </div>
+                                <h6 class="fw-600 mb-1" style="font-size:14px;color:#1f2937">Input Capture Sensor</h6>
+                                <p style="font-size:12px;color:#9ca3af;margin:0">Cảm biến dạng xung</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-6">
+                        <a href="network.html" class="text-decoration-none">
+                            <div class="card h-100 text-center p-3" style="cursor:pointer">
+                                <div class="icon-box mx-auto mb-3"
+                                    style="background:#f0f0fe;color:#7c3aed;width:56px;height:56px;font-size:24px;border-radius:14px">
+                                    <i class="bi bi-wifi"></i>
+                                </div>
+                                <h6 class="fw-600 mb-1" style="font-size:14px;color:#1f2937">Network Config</h6>
+                                <p style="font-size:12px;color:#9ca3af;margin:0">Cài đặt mạng</p>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- System Info + Status -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1">
+                                        <i class="bi bi-info-circle-fill"></i>
+                                    </div>
+                                    <h6>Thông tin hệ thống</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <table class="table table-borderless" style="font-size:13.5px">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-muted fw-500" style="width:50%">Phiên bản</td>
+                                                    <td class="fw-600">v2.4.1</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Firmware</td>
+                                                    <td class="fw-600">FW-2024.12</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Model</td>
+                                                    <td class="fw-600">DL-PRO 400</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Serial</td>
+                                                    <td class="fw-600">SN-20241201-001</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <table class="table table-borderless" style="font-size:13.5px">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-muted fw-500" style="width:50%">CPU Load</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="progress flex-1" style="height:6px;flex:1">
+                                                                <div class="progress-bar"
+                                                                    style="width:34%;background:#267dc1"></div>
+                                                            </div>
+                                                            <span class="fw-600" style="font-size:12px">34%</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Memory</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="progress flex-1" style="height:6px;flex:1">
+                                                                <div class="progress-bar bg-success" style="width:58%">
+                                                                </div>
+                                                            </div>
+                                                            <span class="fw-600" style="font-size:12px">58%</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Storage</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="progress flex-1" style="height:6px;flex:1">
+                                                                <div class="progress-bar bg-warning" style="width:72%">
+                                                                </div>
+                                                            </div>
+                                                            <span class="fw-600" style="font-size:12px">72%</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted fw-500">Uptime</td>
+                                                    <td class="fw-600">14d 07h 23m</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#f0fdf4;color:#22c55e">
+                                        <i class="bi bi-check2-circle"></i>
+                                    </div>
+                                    <h6>Trạng thái dịch vụ</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-hdd-network-fill text-primary"></i>
+                                            <span style="font-size:13.5px">MQTT Broker</span>
+                                        </div>
+                                        <span class="badge badge-status-active">Active</span>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-folder-fill text-warning"></i>
+                                            <span style="font-size:13.5px">FTP Server</span>
+                                        </div>
+                                        <span class="badge badge-status-active">Active</span>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-usb-plug-fill text-success"></i>
+                                            <span style="font-size:13.5px">RS485 Modbus</span>
+                                        </div>
+                                        <span class="badge badge-status-active">Active</span>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-wifi text-info"></i>
+                                            <span style="font-size:13.5px">Network</span>
+                                        </div>
+                                        <span class="badge badge-status-active">Active</span>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-sd-card-fill text-secondary"></i>
+                                            <span style="font-size:13.5px">SD card</span>
+                                        </div>
+                                        <span class="badge badge-status-error">No insert</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- ===== FOOTER ===== -->
+            <footer class="page-footer">
+                <div class="footer-copy">
+                    &copy; 2024 <strong>DataLogger System</strong>. All rights reserved.
+                </div>
+                <div class="footer-version">
+                    <span>Build 2024.12.01</span>
+                    <span class="version-badge">v2.4.1</span>
+                </div>
+            </footer>
+
+        </div><!-- end main-wrapper -->
+    </div><!-- end layout-wrapper -->
+
+    <!-- jQuery -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <!-- Layout Loader -->
+    <script src="assets/js/layout.js"></script>
+    <!-- Main JS -->
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

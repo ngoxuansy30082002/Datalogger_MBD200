@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Output Control - Điều khiển đầu ra kỹ thuật số">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ── Highlight active edit sections ── */
+        .active-edit {
+            border: 2px solid #267dc1 !important;
+            background: rgba(38, 125, 193, 0.08) !important;
+            transition: all 0.2s ease;
+        }
+
+        .active-edit .form-section-header {
+            background: linear-gradient(135deg, rgba(38, 125, 193, 0.14), rgba(38, 125, 193, 0.04));
+        }
+
+        /* ── Editing banner ── */
+        #doEditBanner {
+            display: none;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Row hover ── */
+        .output-item {
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .output-item:hover {
+            background: #f0f7ff;
+        }
+
+        .output-item.row-active {
+            background: rgba(38, 125, 193, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Types</li>
+                        <li class="breadcrumb-item active">Output Control</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header d-flex align-items-start justify-content-between">
+                    <div>
+                        <h1><i class="bi bi-toggle-on text-primary me-2"></i>Output Control</h1>
+                        <p>Điều khiển trạng thái các đầu ra kỹ thuật số (Digital Output)</p>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-4">
+                        <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                            <div
+                                style="width:44px;height:44px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:20px;color:#22c55e">
+                                <i class="bi bi-toggle-on"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:22px;font-weight:700;color:#1f2937" id="onCount">0</div>
+                                <div style="font-size:12px;color:#9ca3af">Đang bật</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                            <div
+                                style="width:44px;height:44px;border-radius:50%;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:20px;color:#9ca3af">
+                                <i class="bi bi-toggle-off"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:22px;font-weight:700;color:#1f2937" id="offCount">0</div>
+                                <div style="font-size:12px;color:#9ca3af">Đang tắt</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                            <div
+                                style="width:44px;height:44px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:20px;color:#267dc1">
+                                <i class="bi bi-cpu-fill"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:22px;font-weight:700;color:#1f2937" id="totalDOCount">0</div>
+                                <div style="font-size:12px;color:#9ca3af">Tổng Output</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output List -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                    class="bi bi-list-ul"></i></div>
+                            <h6>Danh sách Digital Output (DO)</h6>
+                        </div>
+                    </div>
+                    <div class="card-body p-0" id="outputList">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                 EDITING BANNER
+                 ══════════════════════════════════════ -->
+                <div id="doEditBanner" class="alert alert-primary d-flex align-items-center gap-3 mb-3" role="alert">
+                    <i class="bi bi-pencil-square fs-5 flex-shrink-0"></i>
+                    <div>
+                        <strong>Đang chỉnh sửa:</strong>
+                        <span id="doEditLabel" class="ms-1 fw-600" style="color:#1d4ed8"></span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="doCancelBtn">
+                        <i class="bi bi-x-lg me-1"></i>Huỷ chỉnh sửa
+                    </button>
+                </div>
+
+                <!-- Pulse Config Section -->
+                <form class="needs-validation" id="outputForm" novalidate>
+                    <input type="hidden" id="do_id" name="do_id">
+                    <div class="form-section" id="sectionDoConfig">
+                        <div class="form-section-header">
+                            <div class="section-icon"><i class="bi bi-gear-fill"></i></div>
+                            <div>
+                                <h6>Cài đặt output</h6>
+                                <p>Cấu hình tên, chế độ và tham số đầu ra</p>
+                            </div>
+                        </div>
+                        <div class="form-section-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tên Output <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="doName" name="output_name"
+                                        placeholder="Ví dụ: Valve_01" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Mô tả</label>
+                                    <input type="text" class="form-control" id="doDesc" name="description"
+                                        placeholder="Ví dụ: Van xả nước">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Mode</label>
+                                    <select class="form-select" id="doMode" name="mode">
+                                        <option value="hold">Hold (Giữ trạng thái)</option>
+                                        <option value="non-hold">Non-Hold (Pulse)</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 mt-4">
+                                    <hr class="my-0">
+                                </div>
+                                <div class="col-12">
+                                    <h6 class="mb-0 text-muted" style="font-size:13px"><i
+                                            class="bi bi-activity me-1"></i>Tham số Pulse (Non-Hold)</h6>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label" for="pulseOnTime">Thời gian ON (ms)</label>
+                                    <input type="number" class="form-control pulse-param" id="pulseOnTime"
+                                        name="on_time" value="500" min="1">
+                                    <div class="form-text">Thời gian xung cao (HIGH)</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="pulseOffTime">Thời gian OFF (ms)</label>
+                                    <input type="number" class="form-control pulse-param" id="pulseOffTime"
+                                        name="off_time" value="500" min="1">
+                                    <div class="form-text">Thời gian xung thấp (LOW)</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="pulseCount">Số xung (0 = vô hạn)</label>
+                                    <input type="number" class="form-control pulse-param" id="pulseCount"
+                                        name="pulse_count" value="0" min="0">
+                                </div>
+                                <div class="col-12">
+                                    <!-- Waveform visualization -->
+                                    <label class="form-label">Dạng sóng mô phỏng</label>
+                                    <div style="background:#1a2332;border-radius:8px;padding:12px">
+                                        <svg id="waveformSvg" width="100%" height="60" viewBox="0 0 500 60">
+                                            <!-- Rendered by JS -->
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu cấu hình output thành công!', 'success');
+                        } else {
+                            alert('Đã lưu cấu hình output thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        let outputs = [
+            { id: 1, pin: 'DO0', name: 'Relay_01', desc: 'Relay đầu ra 1', state: false, mode: 'hold', on_time: 500, off_time: 500, pulse_count: 0 },
+            { id: 2, pin: 'DO1', name: 'Valve_01', desc: 'Van điện từ xả', state: true, mode: 'non-hold', on_time: 1000, off_time: 1000, pulse_count: 3 },
+        ];
+
+        function renderOutputs() {
+            const $list = $('#outputList');
+            $list.empty();
+            const on = outputs.filter(o => o.state).length;
+            $('#onCount').text(on);
+            $('#offCount').text(outputs.length - on);
+            $('#totalDOCount').text(outputs.length);
+
+            outputs.forEach(o => {
+                $list.append(`
+                <div class="output-item ms-3 mt-3 me-3" data-id="${o.id}">
+                    <div class="output-indicator ${o.state ? 'on' : 'off'}"></div>
+                    <div style="min-width:50px;text-align:center">
+                        <div style="font-size:10px;font-weight:600;color:#9ca3af">${o.pin}</div>
+                    </div>
+                    <div style="flex:1">
+                        <div class="output-name fw-bold">${o.name}</div>
+                        <div class="output-desc text-muted" style="font-size:12px">${o.desc}</div>
+                    </div>
+                    <div style="width:100px; text-align:center;">
+                        <span class="badge bg-light text-dark border">${o.mode === 'hold' ? 'Hold' : 'Pulse'}</span>
+                    </div>
+                    <label class="big-toggle ms-2">
+                        <input type="checkbox" class="do-toggle" data-id="${o.id}" ${o.state ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge ms-2 ${o.state ? 'badge-good' : ''}" style="${!o.state ? 'background:#f3f4f6;color:#6b7280' : 'background:#dcfce7;color:#16a34a'}">${o.state ? 'ON' : 'OFF'}</span>
+                    <div class="ms-3 d-flex gap-1">
+                        <button class="btn btn-icon btn-sm btn-outline-primary btn-edit-do" data-id="${o.id}" title="Cấu hình">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </div>
+                </div>`);
+            });
+        }
+
+        /* Edit behaviour */
+        function activateDoEdit(id) {
+            const o = outputs.find(x => x.id === id);
+            if (!o) return;
+
+            // Highlight row
+            $('.output-item').removeClass('row-active');
+            $(`.output-item[data-id="${id}"]`).addClass('row-active');
+
+            // Highlight section
+            $('.form-section').removeClass('active-edit');
+            $('#sectionDoConfig').addClass('active-edit');
+
+            // Fill banner
+            $('#doEditLabel').text(o.pin + ' — ' + o.name);
+            $('#doEditBanner').fadeIn(250);
+
+            // Fill form
+            $('#do_id').val(o.id);
+            $('#doName').val(o.name);
+            $('#doDesc').val(o.desc);
+            $('#doMode').val(o.mode);
+
+            $('#pulseOnTime').val(o.on_time || 500);
+            $('#pulseOffTime').val(o.off_time || 500);
+            $('#pulseCount').val(o.pulse_count || 0);
+
+            drawWaveform();
+
+            const val = $('#doMode').val();
+            if (val === 'hold') {
+                $('.pulse-param').prop('disabled', true);
+            } else {
+                $('.pulse-param').prop('disabled', false);
+            }
+
+            // Scroll
+            const offset = $('#doEditBanner').offset().top - 80;
+            $('html, body').animate({ scrollTop: offset }, 400, 'swing');
+        }
+
+        function deactivateDoEdit() {
+            $('.output-item').removeClass('row-active');
+            $('.form-section').removeClass('active-edit');
+            $('#doEditBanner').fadeOut(200);
+            $('#do_id').val('');
+            $('#outputForm')[0].reset();
+            $('#outputForm').removeClass('was-validated');
+        }
+
+        // $(document).on('click', '.output-item', function (e) {
+        //     if ($(e.target).closest('.do-toggle, .btn-edit-do').length) return;
+        //     activateDoEdit($(this).data('id'));
+        // });
+
+        $('#doMode').on('change', function () {
+            const val = $(this).val();
+            if (val === 'hold') {
+                $('.pulse-param').prop('disabled', true);
+            } else {
+                $('.pulse-param').prop('disabled', false);
+            }
+        });
+
+
+        $(document).on('click', '.btn-edit-do', function (e) {
+            e.stopPropagation();
+            activateDoEdit($(this).data('id'));
+            showToast('Đang cấu hình: ' + $(this).closest('.output-item').find('.output-name').text(), 'info');
+        });
+
+        $('#doCancelBtn').on('click', function () {
+            deactivateDoEdit();
+            showToast('Đã huỷ chỉnh sửa.', 'warning');
+        });
+
+        /* Form submit */
+        $('#outputForm').on('submit', function (e) {
+            e.preventDefault();
+            if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+
+            sendPostRequest('output.html', 'outputForm', function (success) {
+                if (success) {
+                    const id = parseInt($('#do_id').val());
+                    const o = outputs.find(x => x.id === id);
+                    if (o) {
+                        o.name = $('#doName').val();
+                        o.desc = $('#doDesc').val();
+                        o.mode = $('#doMode').val();
+                        o.on_time = parseInt($('#pulseOnTime').val()) || 500;
+                        o.off_time = parseInt($('#pulseOffTime').val()) || 500;
+                        o.pulse_count = parseInt($('#pulseCount').val()) || 0;
+                        renderOutputs();
+                    }
+                    deactivateDoEdit();
+                }
+            });
+        });
+
+        /* Toggle ON/OFF */
+        $(document).on('change', '.do-toggle', function () {
+            const id = parseInt($(this).data('id'));
+            const o = outputs.find(x => x.id === id);
+            if (!o) return;
+            o.state = this.checked;
+            renderOutputs();
+            showToast(`${o.name}: ${o.state ? 'BẬT ✓' : 'TẮT'}`, o.state ? 'success' : 'warning');
+        });
+
+        /* All ON / All OFF */
+        $('#allOnBtn').on('click', function () {
+            outputs.forEach(o => o.state = true);
+            renderOutputs();
+            showToast('Đã bật tất cả output.', 'success');
+        });
+        $('#allOffBtn').on('click', function () {
+            outputs.forEach(o => o.state = false);
+            renderOutputs();
+            showToast('Đã tắt tất cả output.', 'warning');
+        });
+
+        function drawWaveform() {
+            let onTime = parseInt($('#pulseOnTime').val()) || 0;
+            let offTime = parseInt($('#pulseOffTime').val()) || 0;
+            let count = parseInt($('#pulseCount').val()) || 0;
+
+            if (onTime < 0) onTime = 0;
+            if (offTime < 0) offTime = 0;
+            if (onTime === 0 && offTime === 0) {
+                onTime = 500; offTime = 500;
+            }
+
+            const isInfinite = (count === 0);
+            const maxCycles = 4;
+            const showCycles = (!isInfinite && count <= maxCycles && count > 0) ? count : maxCycles;
+            const hasMore = (!isInfinite && count > maxCycles) || isInfinite;
+
+            const startX = 40;
+            const totalW = 380; // 500 max width, chừa không gian cho text "..."
+            const cycleW = totalW / showCycles;
+
+            const totalTime = onTime + offTime;
+            let onW = 0, offW = 0;
+            if (totalTime > 0) {
+                onW = cycleW * (onTime / totalTime);
+                offW = cycleW * (offTime / totalTime);
+            }
+
+            let svgHTML = `
+                <line x1="0" y1="45" x2="500" y2="45" stroke="#374151" stroke-width="1" stroke-dasharray="2,2"/>
+                <line x1="0" y1="15" x2="500" y2="15" stroke="#374151" stroke-width="1" stroke-dasharray="2,2"/>
+                <text x="5" y="48" fill="#9ca3af" font-size="10" font-weight="bold">LOW</text>
+                <text x="5" y="18" fill="#22c55e" font-size="10" font-weight="bold">HIGH</text>
+            `;
+
+            let x = startX;
+            for (let i = 0; i < showCycles; i++) {
+                let nextX = x + onW;
+                // ON part (Xanh lá)
+                svgHTML += `<polyline points="${x},45 ${x},15 ${nextX},15" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linejoin="round" />`;
+                if (onW > 30) {
+                    svgHTML += `<text x="${x + onW / 2}" y="10" fill="#22c55e" font-size="9" text-anchor="middle">ON ${onTime}ms</text>`;
+                }
+
+                // OFF part (Xám)
+                let endX = nextX + offW;
+                svgHTML += `<polyline points="${nextX},15 ${nextX},45 ${endX},45" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linejoin="round" />`;
+                if (offW > 30) {
+                    svgHTML += `<text x="${nextX + offW / 2}" y="56" fill="#9ca3af" font-size="9" text-anchor="middle">OFF ${offTime}ms</text>`;
+                }
+
+                x = endX;
+            }
+
+            if (hasMore) {
+                svgHTML += `<text x="${x + 5}" y="30" fill="#9ca3af" font-size="16">...</text>`;
+                if (isInfinite) {
+                    svgHTML += `<text x="${x + 25}" y="30" fill="#9ca3af" font-size="10">(Lặp vô hạn)</text>`;
+                } else {
+                    svgHTML += `<text x="${x + 25}" y="30" fill="#9ca3af" font-size="10">(${count} chu kỳ)</text>`;
+                }
+            } else {
+                // End at LOW line
+                svgHTML += `<line x1="${x}" y1="45" x2="${x + 10}" y2="45" stroke="#6b7280" stroke-width="2.5" stroke-linejoin="round" />`;
+            }
+
+            $('#waveformSvg').html(svgHTML);
+        }
+
+        $(document).ready(function () {
+            renderOutputs();
+            drawWaveform();
+
+            $('#pulseOnTime, #pulseOffTime, #pulseCount').on('input change', drawWaveform);
+        });
+    </script>
+</body>
+
+</html>

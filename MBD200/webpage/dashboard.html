@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard - Giám sát dữ liệu cảm biến thời gian thực">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .chart-type-btn {
+            border-radius: 20px;
+            font-size: 12px;
+            padding: 5px 14px;
+        }
+
+        .chart-type-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        #sensorGrid .col {
+            transition: all 0.3s;
+        }
+
+        .filter-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-badge.active {
+            border-color: #267dc1;
+            background: #e8f4fd;
+            color: #267dc1;
+        }
+
+        .filter-badge:hover {
+            border-color: #267dc1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn" title="Refresh" id="refreshBtn"><i
+                            class="bi bi-arrow-clockwise"></i></button>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <select class="form-select form-select-sm" style="width:140px;font-size:12px" id="timeRange">
+                        <option value="1h">Last 1 Hour</option>
+                        <option value="6h">Last 6 Hours</option>
+                        <option value="24h" selected>Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                    </select>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <!-- Page Header -->
+                <div class="page-header d-flex align-items-start justify-content-between">
+                    <div>
+                        <h1><i class="bi bi-grid-1x2-fill text-primary me-2"></i>Dashboard</h1>
+                        <p>Giám sát dữ liệu cảm biến theo thời gian thực</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="filter-badge active" data-filter="all"><i class="bi bi-layers"></i> Tất cả</span>
+                        <span class="filter-badge" data-filter="analog"><i class="bi bi-activity"></i> Analog</span>
+                        <span class="filter-badge" data-filter="modbus"><i class="bi bi-ethernet"></i> Modbus</span>
+                        <span class="filter-badge" data-filter="input"><i class="bi bi-alt"></i> Input
+                            Capture</span>
+                    </div>
+                </div>
+
+                <!-- Stat Cards Row -->
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+                    <div class="col">
+                        <div class="stat-card stat-purple">
+                            <div class="stat-header">
+                                <i class="bi bi-cpu-fill"></i>
+                                <span class="stat-label">Total Sensors</span>
+                            </div>
+                            <div class="stat-value" id="statTotal">0</div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="stat-card stat-success">
+                            <div class="stat-header">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span class="stat-label">Tốt</span>
+                            </div>
+                            <div class="stat-value" id="statGood">0</div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="stat-card stat-danger">
+                            <div class="stat-header">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span class="stat-label">Lỗi</span>
+                            </div>
+                            <div class="stat-value" id="statError">0</div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-header">
+                                <i class="bi bi-check2-circle"></i>
+                                <span class="stat-label">Đã hiệu chuẩn</span>
+                            </div>
+                            <div class="stat-value" id="statCalib">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sensor Card Grid -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                    class="bi bi-grid-fill"></i></div>
+                            <h6>Sensor Grid</h6>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="search" class="form-control form-control-sm" placeholder="Tìm sensor..."
+                                style="width:180px" id="sensorSearchInput">
+                            <button class="btn btn-sm btn-outline-primary" id="autoRefreshBtn" title="Auto refresh">
+                                <i class="bi bi-arrow-repeat me-1"></i>Auto
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3" id="sensorGrid">
+                            <!-- Rendered by JS -->
+                        </div>
+                        <div id="sensorEmpty" class="text-center py-5 d-none">
+                            <i class="bi bi-search" style="font-size:32px;color:#d1d5db"></i>
+                            <p class="mt-2 text-muted">Không tìm thấy sensor</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                            class="bi bi-graph-up-arrow"></i></div>
+                                    <h6>Biểu đồ giá trị theo thời gian</h6>
+                                </div>
+                                <div class="d-flex gap-2 align-items-center flex-wrap">
+                                    <!-- Sensor type selector -->
+                                    <select class="form-select form-select-sm" style="width:160px" id="chartTypeSelect">
+                                        <option value="analog">Analog Sensors</option>
+                                        <option value="modbus">Modbus Sensors</option>
+                                        <option value="input">Input Capture</option>
+                                    </select>
+                                    <!-- Specific sensor selector -->
+                                    <select class="form-select form-select-sm" style="width:160px"
+                                        id="chartSensorSelect">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="mainChart" height="85"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                            class="bi bi-pie-chart-fill"></i></div>
+                                    <h6>Phân loại Sensor</h6>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <canvas id="typeChart" style="max-height:200px;max-width:200px"></canvas>
+                                <div class="mt-3 w-100" id="typeLegend"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Sensor Detail Modal -->
+    <div class="modal fade" id="sensorDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sensorDetailTitle"><i
+                            class="bi bi-activity me-2 text-primary"></i>Sensor Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="sensorDetailBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <a href="sensor-general.html" class="btn btn-primary"><i class="bi bi-pencil-fill me-2"></i>Cấu
+                        hình</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* ====================================================
+           MOCK DATA
+           ==================================================== */
+        const SENSOR_DATA = [
+            { id: 1, name: 'Nhiệt độ_01', type: 'analog', value: 26.4, unit: '°C', status: 'good', min: 0, max: 100 },
+            { id: 2, name: 'Độ ẩm_01', type: 'analog', value: 68.2, unit: '%RH', status: 'good', min: 0, max: 100 },
+            { id: 3, name: 'Áp suất_01', type: 'analog', value: 1.025, unit: 'bar', status: 'calib', min: 0, max: 10 },
+            { id: 4, name: 'Điện áp_01', type: 'analog', value: 220.3, unit: 'V', status: 'good', min: 0, max: 500 },
+            { id: 5, name: 'Dòng điện_01', type: 'analog', value: 4.87, unit: 'A', status: 'error', min: 0, max: 20 },
+            { id: 6, name: 'pH_01', type: 'analog', value: 7.13, unit: 'pH', status: 'good', min: 0, max: 14 },
+            { id: 7, name: 'Modbus_T01', type: 'modbus', value: 28.1, unit: '°C', status: 'good', min: 0, max: 100 },
+            { id: 8, name: 'Modbus_P01', type: 'modbus', value: 2.34, unit: 'bar', status: 'calib', min: 0, max: 10 },
+            { id: 9, name: 'Modbus_V01', type: 'modbus', value: 380.1, unit: 'V', status: 'good', min: 0, max: 500 },
+            { id: 10, name: 'Modbus_I01', type: 'modbus', value: 12.5, unit: 'A', status: 'error', min: 0, max: 50 },
+            { id: 11, name: 'FlowMeter01', type: 'input', value: 1248, unit: 'L', status: 'good', min: 0, max: 9999 },
+            { id: 12, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 13, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 14, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 15, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 16, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 17, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 18, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 19, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 20, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+        ];
+
+        /* Chart time-series mock generator */
+        function genTimeSeries(baseVal, points = 20, range = 0.08) {
+            const labels = [], data = [];
+            const now = new Date();
+            for (let i = points - 1; i >= 0; i--) {
+                const t = new Date(now - i * 5 * 60000);
+                labels.push(t.getHours().toString().padStart(2, '0') + ':' + t.getMinutes().toString().padStart(2, '0'));
+                data.push(+(baseVal * (1 + (Math.random() - 0.5) * range)).toFixed(2));
+            }
+            return { labels, data };
+        }
+
+        /* Sensor series per type (for chart selector) */
+        const CHART_DATA = {
+            analog: [
+                { label: 'Nhiệt độ_01 (°C)', base: 26.4, color: '#267dc1' },
+                { label: 'Độ ẩm_01 (%RH)', base: 68.2, color: '#10b981' },
+                { label: 'Áp suất_01 (bar)', base: 1.025, color: '#f59e0b' },
+                { label: 'Điện áp_01 (V)', base: 220.3, color: '#8b5cf6' },
+                { label: 'Dòng điện_01 (A)', base: 4.87, color: '#ef4444' },
+                { label: 'pH_01', base: 7.13, color: '#06b6d4' },
+            ],
+            modbus: [
+                { label: 'Modbus_T01 (°C)', base: 28.1, color: '#267dc1' },
+                { label: 'Modbus_P01 (bar)', base: 2.34, color: '#10b981' },
+                { label: 'Modbus_V01 (V)', base: 380.1, color: '#f59e0b' },
+                { label: 'Modbus_I01 (A)', base: 12.5, color: '#ef4444' },
+            ],
+            input: [
+                { label: 'FlowMeter01 (L)', base: 1248, color: '#267dc1' },
+                { label: 'Encoder_01 (Hz)', base: 48.3, color: '#10b981' },
+            ]
+        };
+
+        /* ====================================================
+           RENDER SENSOR CARDS
+           ==================================================== */
+        let activeFilter = 'all';
+        let autoRefreshTimer = null;
+        let autoRefreshOn = false;
+
+        function statusLabel(s) {
+            const map = { good: 'Tốt', error: 'Lỗi', calib: 'Đã hiệu chuẩn', warning: 'Cảnh báo' };
+            return map[s] || s;
+        }
+
+        function statusIcon(s) {
+            const map = { good: 'bi-check-circle-fill', error: 'bi-x-circle-fill', calib: 'bi-patch-check-fill', warning: 'bi-exclamation-triangle-fill' };
+            return map[s] || 'bi-circle';
+        }
+
+        function typeLabel(t) {
+            const map = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
+            return map[t] || t;
+        }
+
+        function typeBadgeClass(t) {
+            const map = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
+            return map[t] || '';
+        }
+
+        function renderSensorGrid(sensors) {
+            const $grid = $('#sensorGrid');
+            $grid.empty();
+            const $empty = $('#sensorEmpty');
+
+            if (!sensors.length) {
+                $empty.removeClass('d-none');
+                return;
+            }
+            $empty.addClass('d-none');
+
+            sensors.forEach(s => {
+                const jitterVal = +(s.value * (1 + (Math.random() - 0.5) * 0.04)).toFixed(2);
+                const card = `
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6" data-id="${s.id}" data-type="${s.type}">
+                    <div class="sensor-card status-${s.status}" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#sensorDetailModal" data-sensor-id="${s.id}">
+                        <!-- Thêm d-flex và justify-content-between ở đây -->
+                        <div class="sensor-name d-flex justify-content-between align-items-center">
+                            <span>${s.name}</span>
+                            <span class="sensor-type-badge ${typeBadgeClass(s.type)}">${typeLabel(s.type)}</span>
+                        </div>
+                        <div class="sensor-value">${jitterVal} <small class="text-muted fs-5">${s.unit}</small></div>
+                        <div class="sensor-footer">
+                            <span class="sensor-status-badge badge-${s.status}">
+                                <i class="bi ${statusIcon(s.status)} me-1"></i>${statusLabel(s.status)}
+                            </span>
+                            <span class="sensor-updated">1s ago</span>
+                        </div>
+                    </div>
+                </div>`;
+                $grid.append(card);
+            });
+        }
+
+        function getFilteredSensors() {
+            let sensors = SENSOR_DATA;
+            if (activeFilter !== 'all') sensors = sensors.filter(s => s.type === activeFilter);
+            const q = $('#sensorSearchInput').val().toLowerCase();
+            if (q) sensors = sensors.filter(s => s.name.toLowerCase().includes(q));
+            return sensors;
+        }
+
+        function updateStatCards(sensors) {
+            const all = SENSOR_DATA;
+            $('#statTotal').text(all.length);
+            $('#statGood').text(all.filter(s => s.status === 'good').length);
+            $('#statError').text(all.filter(s => s.status === 'error').length);
+            $('#statCalib').text(all.filter(s => s.status === 'calib').length);
+        }
+
+        /* ====================================================
+           CHART
+           ==================================================== */
+        let mainChart = null;
+
+        function buildChartData(type, sensorIdx) {
+            const series = CHART_DATA[type];
+            const sensor = series[sensorIdx] || series[0];
+            const { labels, data } = genTimeSeries(sensor.base);
+            return { labels, sensor, data };
+        }
+
+        function initMainChart(type, sensorIdx) {
+            const { labels, sensor, data } = buildChartData(type, sensorIdx);
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (mainChart) mainChart.destroy();
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: sensor.label,
+                        data,
+                        borderColor: sensor.color,
+                        backgroundColor: sensor.color + '18',
+                        borderWidth: 2.5,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { font: { size: 12 }, boxWidth: 12 } },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: '#f1f5f9' }, beginAtZero: false }
+                    },
+                    animation: { duration: 600 }
+                }
+            });
+        }
+
+        function populateSensorSelector(type) {
+            const series = CHART_DATA[type];
+            const $sel = $('#chartSensorSelect');
+            $sel.empty();
+            series.forEach((s, i) => $sel.append(`<option value="${i}">${s.label}</option>`));
+        }
+
+        /* Type distribution donut */
+        function initTypeChart() {
+            const analog = SENSOR_DATA.filter(s => s.type === 'analog').length;
+            const modbus = SENSOR_DATA.filter(s => s.type === 'modbus').length;
+            const input = SENSOR_DATA.filter(s => s.type === 'input').length;
+
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Analog', 'Modbus', 'Input Capture'],
+                    datasets: [{ data: [analog, modbus, input], backgroundColor: ['#267dc1', '#10b981', '#f59e0b'], borderWidth: 2 }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    cutout: '68%'
+                }
+            });
+
+            const total = analog + modbus + input;
+            $('#typeLegend').html(`
+        <div class="d-flex flex-column gap-2">
+            ${[['Analog', '#267dc1', analog], ['Modbus', '#10b981', modbus], ['Input Capture', '#f59e0b', input]].map(([lbl, clr, cnt]) => `
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width:10px;height:10px;border-radius:50%;background:${clr};flex-shrink:0"></div>
+                    <span style="font-size:12.5px;color:#6b7280">${lbl}</span>
+                </div>
+                <div style="font-size:12px;font-weight:600;color:#374151">${cnt} <span style="color:#d1d5db">(${Math.round(cnt / total * 100)}%)</span></div>
+            </div>`).join('')}
+        </div>
+    `);
+        }
+
+        /* ====================================================
+           SENSOR DETAIL MODAL
+           ==================================================== */
+        $(document).on('click', '[data-sensor-id]', function () {
+            const id = parseInt($(this).data('sensor-id'));
+            const s = SENSOR_DATA.find(x => x.id === id);
+            if (!s) return;
+            const pct = Math.round((s.value / s.max) * 100);
+            $('#sensorDetailTitle').html(`<i class="bi bi-activity me-2 text-primary"></i>${s.name}`);
+            $('#sensorDetailBody').html(`
+        <div class="row g-3">
+            <div class="col-6">
+                <div style="font-size:11px;color:#9ca3af;text-transform:uppercase">Giá trị</div>
+                <div style="font-size:28px;font-weight:800;color:#1f2937">${s.value} <span style="font-size:14px;color:#9ca3af">${s.unit}</span></div>
+            </div>
+            <div class="col-6 text-end">
+                <span class="sensor-status-badge badge-${s.status}"><i class="bi ${statusIcon(s.status)} me-1"></i>${statusLabel(s.status)}</span>
+                <div style="font-size:11px;color:#9ca3af;margin-top:6px">Loại: ${typeLabel(s.type)}</div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex justify-content-between" style="font-size:12px;color:#9ca3af;margin-bottom:4px">
+                    <span>${s.min} ${s.unit}</span><span>${s.max} ${s.unit}</span>
+                </div>
+                <div class="progress" style="height:8px">
+                    <div class="progress-bar ${s.status === 'error' ? 'bg-danger' : s.status === 'calib' ? 'bg-primary' : 'bg-success'}" style="width:${Math.min(pct, 100)}%"></div>
+                </div>
+                <div style="font-size:11px;color:#9ca3af;margin-top:4px">Range: ${pct}%</div>
+            </div>
+            <div class="col-6"><div style="font-size:11px;color:#9ca3af">Min</div><div class="fw-600">${s.min} ${s.unit}</div></div>
+            <div class="col-6"><div style="font-size:11px;color:#9ca3af">Max</div><div class="fw-600">${s.max} ${s.unit}</div></div>
+        </div>
+    `);
+        });
+
+        /* ====================================================
+           INIT
+           ==================================================== */
+        $(document).ready(function () {
+            updateStatCards();
+            renderSensorGrid(getFilteredSensors());
+            initTypeChart();
+
+            populateSensorSelector('analog');
+            initMainChart('analog', 0);
+
+            /* Filter badges */
+            $('.filter-badge').on('click', function () {
+                $('.filter-badge').removeClass('active');
+                $(this).addClass('active');
+                activeFilter = $(this).data('filter');
+                renderSensorGrid(getFilteredSensors());
+            });
+
+            /* Search */
+            $('#sensorSearchInput').on('input', function () {
+                renderSensorGrid(getFilteredSensors());
+            });
+
+            /* Chart type selector */
+            $('#chartTypeSelect').on('change', function () {
+                const type = $(this).val();
+                populateSensorSelector(type);
+                initMainChart(type, 0);
+            });
+
+            /* Specific sensor selector */
+            $('#chartSensorSelect').on('change', function () {
+                const type = $('#chartTypeSelect').val();
+                initMainChart(type, parseInt($(this).val()));
+            });
+
+            /* Auto refresh toggle */
+            $('#autoRefreshBtn').on('click', function () {
+                autoRefreshOn = !autoRefreshOn;
+                if (autoRefreshOn) {
+                    $(this).html('<i class="bi bi-pause-fill me-1"></i>Pause').addClass('btn-primary').removeClass('btn-outline-primary');
+                    autoRefreshTimer = setInterval(() => {
+                        renderSensorGrid(getFilteredSensors());
+                        const type = $('#chartTypeSelect').val();
+                        initMainChart(type, parseInt($('#chartSensorSelect').val()));
+                    }, 3000);
+                } else {
+                    $(this).html('<i class="bi bi-arrow-repeat me-1"></i>Auto').removeClass('btn-primary').addClass('btn-outline-primary');
+                    clearInterval(autoRefreshTimer);
+                }
+            });
+
+            /* Manual refresh */
+            $('#refreshBtn').on('click', function () {
+                $(this).find('i').addClass('spin');
+                renderSensorGrid(getFilteredSensors());
+                const type = $('#chartTypeSelect').val();
+                initMainChart(type, parseInt($('#chartSensorSelect').val()));
+                setTimeout(() => $(this).find('i').removeClass('spin'), 500);
+            });
+        });
+    </script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spin {
+            animation: spin 0.5s linear infinite;
+        }
+    </style>
+</body>
+
+</html>

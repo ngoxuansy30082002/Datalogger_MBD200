@@ -928,11 +928,7 @@ void SYS_Initialize ( void* data )
     /* Following MISRA-C rules deviated in this block  */
     /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
     /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
-
-    /* Initialize SDSPI0 Driver Instance */
-    sysObj.drvSDSPI0 = DRV_SDSPI_Initialize(DRV_SDSPI_INDEX_0, (SYS_MODULE_INIT *)&drvSDSPI0InitData);
-
-
+    
     sysObj.drvMemory0 = DRV_MEMORY_Initialize((SYS_MODULE_INDEX)DRV_MEMORY_INDEX_0, (SYS_MODULE_INIT *)&drvMemory0InitData);
 
 
@@ -941,7 +937,9 @@ void SYS_Initialize ( void* data )
 
     sysObj.drvSST26 = DRV_SST26_Initialize((SYS_MODULE_INDEX)DRV_SST26_INDEX, (SYS_MODULE_INIT *)&drvSST26InitData);
 
-
+/* Initialize SDSPI0 Driver Instance */
+    sysObj.drvSDSPI0 = DRV_SDSPI_Initialize(DRV_SDSPI_INDEX_0, (SYS_MODULE_INIT *)&drvSDSPI0InitData);
+    
     /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
     H3_MISRAC_2012_R_11_3_DR_1 & H3_MISRAC_2012_R_11_8_DR_1*/
         
@@ -973,7 +971,7 @@ void SYS_Initialize ( void* data )
 
 
     /* MISRAC 2012 deviation block end */
-    APP_Initialize();
+    App_Initialize();
 
 
     EVIC_Initialize();

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HMI Display Configuration - Sắp xếp thứ tự hiển thị sensor">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .display-panel {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+
+        .display-panel-header {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed transparent;
+            border-radius: 6px;
+            transition: all 0.2s;
+            padding: 4px;
+        }
+
+        .drop-zone.drag-over-zone {
+            border-color: #267dc1;
+            background: #f0f8ff;
+        }
+
+        .sortable-item.dragging-active {
+            opacity: 0.4;
+        }
+
+        .drop-placeholder {
+            height: 44px;
+            border: 2px dashed #267dc1;
+            border-radius: 6px;
+            background: #e8f4fd;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Configuration</li>
+                        <li class="breadcrumb-item active">HMI Display Configuration</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-display-fill text-primary me-2"></i>Display Configuration</h1>
+                    <p>Cấu hình thứ tự hiển thị sensor chung cho toàn hệ thống</p>
+                </div>
+
+                <div class="alert alert-primary d-flex gap-2 mb-4">
+                    <i class="bi bi-info-circle-fill fs-5 flex-shrink-0"></i>
+                    <div>
+                        <strong>Hướng dẫn:</strong> Kéo thả (drag &amp; drop) các sensor để thay đổi thứ tự hiển thị.
+                        Thứ tự này sẽ áp dụng chung cho cả <strong>Dashboard Web</strong> và <strong>Màn hình
+                            HMI</strong>.
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="display-panel shadow-sm">
+                            <div class="display-panel-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div
+                                        style="width:32px;height:32px;border-radius:8px;background:#e8f4fd;display:flex;align-items:center;justify-content:center;color:#267dc1">
+                                        <i class="bi bi-list-ol"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:14px;">Cấu hình thứ tự hiển thị Sensor
+                                        </div>
+                                        <div style="font-size:11px;color:#9ca3af">Kéo thả để sắp xếp vị trí</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4" style="background:#f8fafc; border-bottom-left-radius:10px; border-bottom-right-radius:10px;">
+                                <div class="row g-3 sortable-grid" id="sensorList">
+                                    <!-- Rendered by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end mt-4">
+                            <button type="button" class="btn btn-primary" id="saveOrderBtn">
+                                <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* ===== DATA ===== */
+        const TYPE_CLASSES = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
+        const TYPE_LABELS = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
+
+        let sensors = [
+            { id: 1, name: "Temp 1", type: "analog" },
+            { id: 2, name: "Pressure 1", type: "modbus" },
+            { id: 3, name: "Flow Meter 1", type: "input" },
+            { id: 4, name: "Humidity 1", type: "analog" },
+            { id: 5, name: "Level 1", type: "modbus" },
+            { id: 6, name: "Temp 2", type: "analog" },
+            { id: 7, name: "Pressure 2", type: "modbus" },
+            { id: 8, name: "Flow Meter 2", type: "input" },
+            { id: 9, name: "Humidity 2", type: "analog" },
+            { id: 10, name: "Level 2", type: "modbus" },
+        ];
+
+        /* ===== RENDER ===== */
+        function renderList() {
+            const $grid = $('#sensorList');
+            $grid.empty();
+            sensors.forEach((s, i) => {
+                const tClass = TYPE_CLASSES[s.type.toLowerCase()] || 'bg-secondary';
+                const tLabel = TYPE_LABELS[s.type.toLowerCase()] || s.type;
+
+                $grid.append(`
+        <div class="col-lg-2 col-md-3 col-6 sortable-item-wrapper" draggable="true" data-id="${s.id}">
+            <div class="sensor-grid-card h-100 p-3 bg-white" style="border:1px solid #e5e7eb; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; cursor:grab; transition:all 0.2s;">
+                <div style="position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:50%; background:#e8f4fd; color:#267dc1; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">${i + 1}</div>
+                <div style="color:#9ca3af; font-size:22px; margin-bottom:8px"><i class="bi bi-arrows-move"></i></div>
+                <div style="font-weight:600; color:#1f2937; text-align:center; font-size:13px; line-height:1.3; margin-bottom:10px;">${s.name}</div>
+                <span class="badge ${tClass}" style="font-size:10px; padding:5px 8px">${tLabel}</span>
+            </div>
+        </div>`);
+            });
+            initDragDrop();
+        }
+
+        /* ===== NATIVE HTML5 DRAG & DROP ===== */
+        function initDragDrop() {
+            const $items = $('#sensorList .sortable-item-wrapper');
+            let dragSrcId = null;
+
+            $items.each(function () {
+                const el = this;
+
+                el.addEventListener('dragstart', function (e) {
+                    dragSrcId = parseInt(el.dataset.id);
+                    el.classList.add('dragging-active');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', dragSrcId);
+                });
+
+                el.addEventListener('dragend', function () {
+                    el.classList.remove('dragging-active');
+                    $('#sensorList .sortable-item-wrapper').removeClass('drag-over-item');
+                });
+
+                el.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    $('#sensorList .sortable-item-wrapper').removeClass('drag-over-item');
+                    el.classList.add('drag-over-item');
+                });
+
+                el.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    const targetId = parseInt(el.dataset.id);
+                    if (dragSrcId === null || dragSrcId === targetId) return;
+
+                    const srcIdx = sensors.findIndex(s => s.id === dragSrcId);
+                    const tgtIdx = sensors.findIndex(s => s.id === targetId);
+                    if (srcIdx === -1 || tgtIdx === -1) return;
+
+                    // Reorder array
+                    const [moved] = sensors.splice(srcIdx, 1);
+                    sensors.splice(tgtIdx, 0, moved);
+
+                    renderList();
+                    console.log('[Reorder] Đã đổi vị trí, danh sách mới:', sensors.map((s, i) => ({ index: i + 1, id: s.id, name: s.name })));
+                    dragSrcId = null;
+                });
+            });
+        }
+
+        $('#saveOrderBtn').on('click', function () {
+            console.log('[Save] Lưu cấu hình:', sensors);
+            if (typeof showToast === 'function') {
+                showToast('Đã lưu cấu hình thứ tự hiển thị!', 'success');
+            } else {
+                alert('Đã lưu cấu hình thứ tự hiển thị!');
+            }
+        });
+
+        $(document).ready(function () {
+            // Add hover styles dynamically
+            $('<style>')
+                .prop('type', 'text/css')
+                .html(`
+            .sensor-grid-card:hover { border-color: #267dc1 !important; box-shadow: 0 4px 12px rgba(38, 125, 193, 0.15) !important; transform: translateY(-2px); }
+            .sensor-grid-card:active { cursor: grabbing !important; transform: scale(0.98); }
+            .drag-over-item .sensor-grid-card { border: 2px dashed #267dc1 !important; background: #e8f4fd !important; transform: scale(1.05); }
+            .dragging-active { opacity: 0.4; }
+        `)
+                .appendTo('head');
+
+            renderList();
+        });
+    </script>
+</body>
+
+</html>

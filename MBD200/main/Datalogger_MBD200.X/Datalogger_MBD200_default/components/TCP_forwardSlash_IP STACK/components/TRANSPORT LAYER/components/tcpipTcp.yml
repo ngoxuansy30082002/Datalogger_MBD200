@@ -16,5 +16,16 @@ customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
 data:
   attachments: {}
   elementPosition: {}
-  symbols: {}
+  symbols:
+    TCPIP_TCP_HEAP_SIZE:
+      attributes:
+        id: TCPIP_TCP_HEAP_SIZE
+      children:
+      - children:
+        - attributes:
+            id: tcpipTcp
+            value: '44236'
+          type: Dynamic
+        type: Values
+      type: Integer
   userData: {}

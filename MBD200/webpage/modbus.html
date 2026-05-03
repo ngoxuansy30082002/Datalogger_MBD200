@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Modbus Sensor Configuration - Cấu hình cảm biến Modbus RTU/TCP">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Edit highlight for Modbus config sections */
+        .active-edit {
+            border: 2px solid #267dc1 !important;
+            background: rgba(38, 125, 193, 0.07) !important;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .active-edit .form-section-header {
+            background: linear-gradient(135deg, rgba(38, 125, 193, 0.12), rgba(38, 125, 193, 0.04));
+        }
+
+        #editingBanner {
+            display: none;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        #modbusTable tbody tr {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Types</li>
+                        <li class="breadcrumb-item active">Modbus Sensor</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1><i class="bi bi-hdd-network-fill text-primary me-2"></i>Modbus Sensor</h1>
+                        <p>Cấu hình cảm biến giao tiếp Modbus RTU (RS485) / Modbus TCP</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModbusModal">
+                        <i class="bi bi-plus-lg me-2"></i>Thêm thiết bị
+                    </button>
+                </div>
+
+                <!-- Modbus devices list -->
+                <div class="table-card mb-4">
+                    <div class="table-card-header">
+                        <h6>Danh sách thiết bị Modbus</h6>
+                        <div class="d-flex gap-2">
+                            <input type="search" class="form-control form-control-sm" placeholder="Tìm kiếm..."
+                                style="width:180px">
+                            <button class="btn btn-sm btn-outline-primary"><i
+                                    class="bi bi-arrow-clockwise"></i></button>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="table" id="modbusTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tên thiết bị</th>
+                                    <th>Giá trị</th>
+                                    <th>Đơn vị</th>
+                                    <th>Slave ID</th>
+                                    <th>Kết nối</th>
+                                    <th>Registers</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modbus-table-body">
+                                <!-- render bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Config Form -->
+                <!-- ===== EDITING BANNER ===== -->
+                <div id="editingBanner" class="alert alert-primary d-flex align-items-center gap-3 mb-3" role="alert">
+                    <i class="bi bi-pencil-square fs-5 flex-shrink-0"></i>
+                    <div>
+                        <strong>Đang chỉnh sửa thiết bị:</strong>
+                        <span id="editingDeviceName" class="ms-1 fw-600" style="color:#1d4ed8"></span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="cancelEditBtn">
+                        <i class="bi bi-x-lg me-1"></i>Huỷ chỉnh sửa
+                    </button>
+                </div>
+
+                <form class="needs-validation" id="modbusForm" novalidate>
+                    <input type="hidden" id="modbus_device_id" name="modbus_device_id">
+                    <input type="hidden" name="action" value="edit">
+                    <div class="row g-4">
+                        <!-- Left: Connection & Register -->
+                        <div class="col-lg-7">
+                            <div class="form-section" id="sectionConnection">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-plug-fill"></i></div>
+                                    <div>
+                                        <h6>Thông tin kết nối & cấu hình register</h6>
+                                        <p>Chế độ, tham số kết nối và cấu hình thanh ghi</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Chế độ Modbus <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="d-flex gap-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="modbus_mode"
+                                                        id="modeRTU" value="RTU" checked>
+                                                    <label class="form-check-label fw-500" for="modeRTU">
+                                                        <i class="bi bi-usb-plug me-1"></i>Modbus RTU (RS485)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="modbus_mode"
+                                                        id="modeTCP" value="TCP">
+                                                    <label class="form-check-label fw-500" for="modeTCP">
+                                                        <i class="bi bi-ethernet me-1"></i>Modbus TCP
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="deviceName">Tên thiết bị <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="deviceName" name="device_name"
+                                                placeholder="Ví dụ: Pressure_Meter_01" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="deviceUnit">Đơn vị</label>
+                                            <input type="text" class="form-control" id="deviceUnit" name="device_unit"
+                                                placeholder="Ví dụ: bar, °C">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="slaveId">Slave ID <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" id="slaveId" name="slave_id"
+                                                placeholder="1" min="1" max="247" required>
+                                        </div>
+
+                                        <!-- TCP Fields -->
+                                        <div class="col-md-12 d-none" id="tcpIpGroup">
+                                            <div class="row g-3">
+                                                <div class="col-md-8">
+                                                    <label class="form-label" for="tcpIp">IP Address</label>
+                                                    <input type="text" class="form-control ip-field" id="tcpIp"
+                                                        name="tcp_ip" placeholder="192.168.1.100">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="tcpPort">Port</label>
+                                                    <input type="number" class="form-control port-field" id="tcpPort"
+                                                        name="tcp_port" value="502" min="1" max="65535">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- RTU shared config note -->
+                                        <div class="col-12" id="rtuGroup">
+                                            <div class="alert alert-info d-flex gap-2 py-2 mb-0"
+                                                style="border-radius:8px">
+                                                <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
+                                                <div style="font-size:12.5px">
+                                                    <strong>Modbus RTU:</strong> Baudrate, parity, stop bits được dùng
+                                                    chung từ cấu hình cổng RS485 toàn hệ thống.<br>
+                                                    → Để thay đổi, vào <a href="serial-com.html" class="fw-600">System →
+                                                        RS485 Modbus Config</a>.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Register Config inside the same card -->
+                                        <div class="col-12 mt-4">
+                                            <div class="separator mb-3"></div>
+                                            <h6 class="fw-600 mb-2" style="font-size:13px;color:#374151"><i
+                                                    class="bi bi-table me-2 text-primary"></i>Cấu hình Register</h6>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="functionCode">Function Code <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="functionCode" name="function_code" required>
+                                                <option value="01">FC01 - Read Coils</option>
+                                                <option value="02">FC02 - Read Discrete Inputs</option>
+                                                <option value="03" selected>FC03 - Read Holding Registers</option>
+                                                <option value="04">FC04 - Read Input Registers</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="form-label" for="startAddress">Address <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="number" class="form-control" id="startAddress"
+                                                        name="register_address" placeholder="40001" required>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label" for="numRegisters">Quantity <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="number" class="form-control" id="numRegisters"
+                                                        name="register_length" value="1" min="1" max="125" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="dataType">Kiểu dữ liệu</label>
+                                            <select class="form-select" id="dataType" name="data_type" required>
+                                                <option value="INT16" selected>INT16 (2 bytes)</option>
+                                                <option value="UINT16">UINT16</option>
+                                                <option value="INT32">INT32 (4 bytes)</option>
+                                                <option value="UINT32">UINT32</option>
+                                                <option value="FLOAT32">FLOAT32</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="byteOrder">Byte Order</label>
+                                            <select class="form-select" id="byteOrder" name="byte_order">
+                                                <option value="AB_CD" selected>Big-Endian (ABCD)</option>
+                                                <option value="CD_AB">Little-Endian (CDAB)</option>
+                                                <option value="BA_DC">Big-Endian Swapped</option>
+                                                <option value="DC_BA">Little-Endian Swapped</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="separator mt-4"></div>
+                                        <div class="form-check form-switch d-flex align-items-center">
+                                            <input class="form-check-input mt-0" type="checkbox" id="enableDevice"
+                                                name="enabled" checked role="switch">
+                                            <label class="form-check-label fw-500 ms-2" for="enableDevice">Kích hoạt
+                                                thiết bị này</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Scaling -->
+                        <div class="col-lg-5">
+                            <div class="form-section" id="sectionScaling">
+                                <div class="form-section-header">
+                                    <div class="section-icon" style="background:#fef3c7; color:#d97706"><i
+                                            class="bi bi-sliders"></i></div>
+                                    <div>
+                                        <h6>Scaling & quy đổi giá trị</h6>
+                                        <p>Tỷ lệ và phương trình tính toán hiển thị</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <!-- Output Range -->
+                                    <h6 class="fw-600 mb-3" style="font-size:13px;color:#374151"><i
+                                            class="bi bi-arrows-expand me-2 text-primary"></i>Output Range</h6>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-6">
+                                            <label class="form-label">Output Min</label>
+                                            <input type="number" class="form-control" id="outMin" name="output_min"
+                                                value="0">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">Output Max</label>
+                                            <input type="number" class="form-control" id="outMax" name="output_max"
+                                                value="100">
+                                        </div>
+                                    </div>
+
+                                    <div class="separator mb-3"></div>
+                                    <!-- Advanced Scaling -->
+                                    <h6 class="fw-600 mb-3" style="font-size:13px;color:#374151"><i
+                                            class="bi bi-calculator me-2 text-primary"></i>Advanced Scaling</h6>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="scaleType">Scale Type</label>
+                                            <select class="form-select" id="scaleType" name="scale_type">
+                                                <option value="none">None</option>
+                                                <option value="linear">Linear</option>
+                                                <option value="sqrt">Square Root</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label" for="scaleDataType">Scale Data Type</label>
+                                            <select class="form-select scale-field" id="scaleDataType"
+                                                name="scale_data_type" disabled>
+                                                <option value="uint">Unsigned Int</option>
+                                                <option value="int">Integer</option>
+                                                <option value="float" selected>Float</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label" for="scaleValue">Scale Value</label>
+                                            <input type="number" class="form-control scale-field exp-input"
+                                                id="scaleValue" name="scale_value" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Expression (Phương trình)</label>
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <div class="input-group" style="flex:1; min-width:90px">
+                                                <span class="input-group-text bg-light px-2"
+                                                    style="font-size:12px">Offset 1</span>
+                                                <input type="number"
+                                                    class="form-control scale-field exp-input text-center px-1"
+                                                    id="offset1" name="offset_before" value="0" disabled>
+                                            </div>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op1"
+                                                name="operator_1" disabled style="width:100px">
+                                                <option value="+">+</option>
+                                                <option value="-">-</option>
+                                                <option value="*">*</option>
+                                                <option value="/">/</option>
+                                            </select>
+                                            <div class="input-group" style="width:50px">
+                                                <span
+                                                    class="input-group-text bg-white w-100 justify-content-center text-muted fw-600 px-1"
+                                                    style="font-size:12px">Val</span>
+                                            </div>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op2"
+                                                name="operator_2" disabled style="width:100px">
+                                                <option value="+">+</option>
+                                                <option value="-">-</option>
+                                                <option value="*">*</option>
+                                                <option value="/">/</option>
+                                            </select>
+                                            <div class="input-group" style="flex:1; min-width:90px">
+                                                <span class="input-group-text bg-light px-2"
+                                                    style="font-size:12px">Offset 2</span>
+                                                <input type="number"
+                                                    class="form-control scale-field exp-input text-center px-1"
+                                                    id="offset2" name="offset_after" value="0" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-light border p-2 text-center mb-0" style="font-size:13px;">
+                                        <code id="expressionPreview"
+                                            class="text-primary fs-6 fw-bold">Result = Value</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Action buttons -->
+                    <div class="d-flex flex-wrap gap-3 justify-content-end mt-4 pt-2 border-top"
+                        style="border-color:#f1f5f9!important">
+                        <button type="button" class="btn btn-secondary btn-reset">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
+                        </button>
+                    </div>
+                </form>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Add Modbus Device Modal -->
+    <div class="modal fade" id="addModbusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="addModbusForm" class="needs-validation" novalidate>
+                    <input type="hidden" name="action" value="add">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-plus-circle me-2 text-primary"></i>Thêm thiết bị Modbus
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label" for="addDeviceName">Tên thiết bị <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addDeviceName" name="device_name"
+                                placeholder="Ví dụ: Pressure_02" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="addDeviceUnit">Đơn vị</label>
+                            <input type="text" class="form-control" id="addDeviceUnit" name="device_unit"
+                                placeholder="Ví dụ: bar, °C">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="addSlaveId">Slave ID <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="addSlaveId" name="slave_id" placeholder="1"
+                                min="1" max="247" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Loại Modbus <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3 mt-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="modbus_mode" id="addModeRTU"
+                                        value="RTU" checked>
+                                    <label class="form-check-label" for="addModeRTU">Modbus RTU</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="modbus_mode" id="addModeTCP"
+                                        value="TCP">
+                                    <label class="form-check-label" for="addModeTCP">Modbus TCP</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-lg me-2"></i>Thêm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) { // status 0 có thể xảy ra khi chạy local file://
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu dữ liệu thành công!', 'success');
+                        } else {
+                            alert('Đã lưu dữ liệu thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        $(document).ready(function () {
+
+            /* ===== MOCK DATA ===== */
+            const modbusDevices = [
+                { id: 1, name: "Temp Sensor 1", value: 11.2, unit: "°C", slaveId: 1, connection: "RTU", registers: "40001-40002", status: "good" },
+                { id: 2, name: "Pressure", value: 11.3, unit: "bar", slaveId: 2, connection: "TCP", registers: "40010", status: "error" },
+                { id: 3, name: "Flow", value: 11.4, unit: "L/min", slaveId: 3, connection: "RTU", registers: "40100", status: "disabled" },
+                { id: 4, name: "Level", value: 11.5, unit: "%", slaveId: 4, connection: "TCP", registers: "40200", status: "pending" }
+            ];
+
+            const STATUS_CFG = {
+                good: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
+                error: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
+                disabled: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
+                pending: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
+            };
+
+            function renderModbusTable() {
+                let html = "";
+                modbusDevices.forEach((device, index) => {
+                    const s = STATUS_CFG[device.status];
+                    html += `
+                        <tr>
+                            <td class="text-muted fw-bold">${index + 1}</td>
+                            <td><strong>${device.name}</strong></td>
+                            <td><strong>${device.value.toFixed(2)}</strong> <small class="text-muted">${device.unit}</small></td>
+                            <td>${device.unit}</td>
+                            <td>ID: ${device.slaveId}</td>
+                            <td>${device.connection}</td>
+                            <td>${device.registers}</td>
+                            <td>
+                                    <span class="badge ${s.cls}">
+                                    <i class="bi ${s.icon} me-1"></i>${s.text}
+                                    </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-icon btn-sm btn-outline-primary btn-edit-device btn-edit" title="Sửa" data-id="${device.id}" data-device-name="${device.name}">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-sm btn-outline-danger btn-delete-modbus" title="Xóa" data-id="${device.id}">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                $("#modbus-table-body").html(html);
+            }
+
+            // Gọi render khi vừa load
+            renderModbusTable();
+
+            /* ── 2. Edit device highlight + scroll ── */
+            function activateEdit(deviceId) {
+                $('.form-section').removeClass('active-edit');
+                $('#sectionConnection, #sectionScaling').addClass('active-edit');
+
+                // Load mock data if matches
+                const device = modbusDevices.find(d => d.id === deviceId);
+                if (!device) return;
+
+                console.log(device);
+                $('#editingDeviceName').text(device.name);
+                $('#editingBanner').fadeIn(250);
+
+                $('#modbus_device_id').val(device.id);
+                $('#deviceName').val(device.name);
+                $('#deviceUnit').val(device.unit);
+                $('#slaveId').val(device.slaveId);
+
+                const modeVal = (device.connection === "RTU" || device.connection === "Disconnected") ? "RTU" : "TCP";
+                $(`input[name="modbus_mode"][value="${modeVal}"]`).prop('checked', true).trigger('change');
+                if (modeVal === "TCP") {
+                    $('#tcpIpGroup').removeClass('d-none');
+                    $('#rtuGroup').addClass('d-none');
+                } else {
+                    $('#tcpIpGroup').addClass('d-none');
+                    $('#rtuGroup').removeClass('d-none');
+                }
+
+                let addr = device.registers;
+                let qty = 1;
+                if (addr && addr.includes("-")) {
+                    let parts = addr.split("-");
+                    addr = parts[0];
+                    qty = parseInt(parts[1]) - parseInt(parts[0]) + 1;
+                }
+                $('#startAddress').val(addr);
+                $('#numRegisters').val(qty);
+
+                // Reset scale tab
+                $('#scaleType').val('none').trigger('change');
+
+                const offset = $('#editingBanner').offset().top - 80;
+                $('html, body').animate({ scrollTop: offset }, 400, 'swing');
+            }
+
+            function deactivateEdit() {
+                $('.form-section').removeClass('active-edit');
+                $('#editingBanner').fadeOut(200);
+                $('#editingDeviceName').text('');
+            }
+
+            /* Row click also triggers edit */
+            $(document).on('click', '#modbusTable tbody tr', function () {
+                const id = $(this).find('.btn-edit-device').data('id');
+                if (id) activateEdit(id);
+            });
+
+            $(document).on('click', '.btn-edit-device', function (e) {
+                e.stopPropagation();
+                const id = $(this).data('id');
+                $('#modbusTable tbody tr').removeClass('table-active');
+                $(this).closest('tr').addClass('table-active');
+                activateEdit(id);
+                showToast('Đang chỉnh sửa thiết bị', 'info');
+            });
+
+            $('#cancelEditBtn').on('click', function () {
+                $('#modbusTable tbody tr').removeClass('table-active');
+                deactivateEdit();
+                showToast('Đã huỷ chỉnh sửa.', 'warning');
+            });
+
+            /* ── 3. Scaling Expression Preview ── */
+            function updateExpressionPreview() {
+                const type = $('#scaleType').val();
+                if (type === 'none') {
+                    $('#expressionPreview').text('Result = Value');
+                    return;
+                }
+
+                const off1 = $('#offset1').val() || '0';
+                const op1 = $('#op1').val();
+                const op2 = $('#op2').val();
+                const off2 = $('#offset2').val() || '0';
+                const scaleVal = $('#scaleValue').val();
+
+                let valStr = 'Value';
+                if (type === 'sqrt') valStr = 'sqrt(Value)';
+
+                let expStr = `Result = (${off1} ${op1} ${valStr}) ${op2} ${off2}`;
+                if (scaleVal) {
+                    expStr = `Result = ((${off1} ${op1} ${valStr}) ${op2} ${off2}) * ${scaleVal}`;
+                }
+
+                $('#expressionPreview').text(expStr);
+            }
+
+            $('#scaleType').on('change', function () {
+                const val = $(this).val();
+                if (val === 'none') {
+                    $('.scale-field').prop('disabled', true);
+                } else {
+                    $('.scale-field').prop('disabled', false);
+                }
+                updateExpressionPreview();
+            });
+
+            $('.exp-input, #scaleType, #scaleValue').on('input change', updateExpressionPreview);
+
+            /* ── 4. Delete row ── */
+            $(document).on('click', '.btn-delete-modbus', function (e) {
+                e.stopPropagation();
+                const $row = $(this).closest('tr');
+                const name = $row.find('strong').first().text();
+                const id = $(this).data('id');
+
+                if (!confirm('Bạn có chắc muốn xóa thiết bị "' + name + '"?')) return;
+
+                var params = 'action=delete&device_id=' + encodeURIComponent(id);
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "modbus.html", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200 || xhr.status === 0) {
+                            $row.fadeOut(300, function () { $(this).remove(); });
+                            // Update mock data
+                            const idx = modbusDevices.findIndex(x => x.id == id);
+                            if (idx > -1) modbusDevices.splice(idx, 1);
+                            if (typeof showToast === 'function') {
+                                showToast('Đã xóa ' + name, 'success');
+                            }
+                        } else {
+                            if (typeof showToast === 'function') {
+                                showToast('Lỗi khi xóa thiết bị!', 'error');
+                            }
+                        }
+                    }
+                };
+                xhr.send(params);
+            });
+
+
+            /* ── 5. Form submit (Edit) ── */
+            $('#modbusForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) {
+                    $(this).addClass('was-validated');
+                    return;
+                }
+
+                sendPostRequest('modbus.html', 'modbusForm', function (success) {
+                    if (success) {
+                        const name = $('#deviceName').val() || 'thiết bị';
+                        const id = parseInt($('#modbus_device_id').val());
+                        const device = modbusDevices.find(d => d.id === id);
+                        if (device) {
+                            device.name = name;
+                            device.unit = $('#deviceUnit').val();
+                            device.slaveId = $('#slaveId').val();
+                            device.connection = $('input[name="modbus_mode"]:checked').val() === 'TCP' ? 'TCP' : 'RTU';
+                            device.registers = $('#startAddress').val();
+                            renderModbusTable();
+                        }
+                        deactivateEdit();
+                        $('#modbusTable tbody tr').removeClass('table-active');
+                    }
+                });
+            });
+
+            /* ── 6. Form submit (Add) ── */
+            $('#addModbusForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) {
+                    $(this).addClass('was-validated');
+                    return;
+                }
+
+                sendPostRequest('modbus.html', 'addModbusForm', function (success) {
+                    if (success) {
+                        $('#addModbusModal').modal('hide');
+                        // Thêm mock data
+                        const newId = Date.now();
+                        modbusDevices.push({
+                            id: newId,
+                            name: $('#addDeviceName').val(),
+                            value: 0,
+                            unit: $('#addDeviceUnit').val(),
+                            slaveId: $('#addSlaveId').val(),
+                            connection: $('input[name="modbus_mode"]:checked', '#addModbusForm').val(),
+                            registers: "40001",
+                            status: "pending"
+                        });
+                        renderModbusTable();
+                        $('#addModbusForm')[0].reset();
+                        $('#addModbusForm').removeClass('was-validated');
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

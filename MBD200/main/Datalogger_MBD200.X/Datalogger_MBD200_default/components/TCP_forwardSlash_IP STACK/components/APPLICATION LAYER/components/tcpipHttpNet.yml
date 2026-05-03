@@ -375,4 +375,103 @@ data:
           type: Boolean
         type: Attributes
       type: File
+    TCPIP_HTTP_NET_SKT_RX_BUFF_SIZE:
+      attributes:
+        id: TCPIP_HTTP_NET_SKT_RX_BUFF_SIZE
+      children:
+      - children:
+        - attributes:
+            value: '1500'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_SKT_TX_BUFF_SIZE:
+      attributes:
+        id: TCPIP_HTTP_NET_SKT_TX_BUFF_SIZE
+      children:
+      - children:
+        - attributes:
+            value: '10240'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_HEAP_SIZE:
+      attributes:
+        id: TCPIP_HTTP_NET_HEAP_SIZE
+      children:
+      - children:
+        - attributes:
+            id: tcpipHttpNet
+            value: '10636'
+          type: Dynamic
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_MAX_CONNECTIONS:
+      attributes:
+        id: TCPIP_HTTP_NET_MAX_CONNECTIONS
+      children:
+      - children:
+        - attributes:
+            value: '3'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_TASK_RATE:
+      attributes:
+        id: TCPIP_HTTP_NET_TASK_RATE
+      children:
+      - children:
+        - attributes:
+            value: '10'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_FILE_PROCESS_BUFFER_SIZE:
+      attributes:
+        id: TCPIP_HTTP_NET_FILE_PROCESS_BUFFER_SIZE
+      children:
+      - children:
+        - attributes:
+            value: '2048'
+          type: User
+        type: Values
+      type: Integer
+    TCPIP_HTTP_NET_MPFS_NVM_VOL:
+      attributes:
+        id: TCPIP_HTTP_NET_MPFS_NVM_VOL
+      children:
+      - children:
+        - attributes:
+            id: visible
+          children:
+          - type: Value
+            value: 'true'
+          type: Boolean
+        type: Attributes
+      - children:
+        - attributes:
+            value: /dev/mtda1
+          type: User
+        type: Values
+      type: String
+    TCPIP_HTTP_NET_WEB_DIR:
+      attributes:
+        id: TCPIP_HTTP_NET_WEB_DIR
+      children:
+      - children:
+        - attributes:
+            value: /mnt/web/
+          type: User
+        type: Values
+      type: String
+    TCPIP_HTTP_NET_DEFAULT_FILE:
+      attributes:
+        id: TCPIP_HTTP_NET_DEFAULT_FILE
+      children:
+      - children:
+        - attributes:
+            value: index.html
+          type: User
+        type: Values
+      type: String
   userData: {}

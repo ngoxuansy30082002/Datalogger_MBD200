@@ -342,6 +342,11 @@
           <itemPath>../src/config/default/user_settings.h</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="console_logs"
+                     displayName="console_logs"
+                     projectFiles="true">
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/console_logs/debug_uart.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.h</itemPath>
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.h</itemPath>
@@ -571,6 +576,7 @@
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.h</itemPath>
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/generic_types.h</itemPath>
       <itemPath>../src/app_mqtt_task.h</itemPath>
+      <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/http_net_print.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -891,6 +897,10 @@
           <itemPath>../src/config/default/tasks.c</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="console_logs"
+                     displayName="console_logs"
+                     projectFiles="true">
+      </logicalFolder>
       <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.c</itemPath>
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.c</itemPath>
@@ -1070,6 +1080,8 @@
       <itemPath>../src/app.c</itemPath>
       <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/boot_config.c</itemPath>
       <itemPath>../src/app_mqtt_task.c</itemPath>
+      <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/http_net_print.c</itemPath>
+      <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/custom_http_net_app.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -1083,7 +1095,7 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>snap</platformTool>
+        <platformTool>pickitbasic</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.60</languageToolchainVersion>
         <platform>3</platform>

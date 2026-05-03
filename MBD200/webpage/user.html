@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User Management - Quản lý người dùng hệ thống DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout-wrapper">
+    <div id="sidebarMount"></div>
+    <div class="main-wrapper" id="mainWrapper">
+
+        <header class="top-header">
+            <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+            <div class="header-breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item">System Configuration</li>
+                    <li class="breadcrumb-item active">User Management</li>
+                </ol>
+            </div>
+            <div class="header-actions">
+                <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                <div class="header-divider"></div>
+                <div class="user-info dropdown" data-bs-toggle="dropdown">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <main class="page-content">
+            <div class="page-header d-flex align-items-center justify-content-between">
+                <div>
+                    <h1><i class="bi bi-people-fill text-primary me-2"></i>User Management</h1>
+                    <p>Quản lý tài khoản và phân quyền người dùng hệ thống</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi bi-person-plus-fill me-2"></i>Thêm người dùng
+                </button>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-sm-3">
+                    <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                        <div class="icon-box" style="background:#e8f4fd;color:#267dc1;width:48px;height:48px;font-size:20px"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <div style="font-size:24px;font-weight:700;color:#1f2937">4</div>
+                            <div style="font-size:13px;color:#9ca3af">Tổng người dùng</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                        <div class="icon-box" style="background:#f0fdf4;color:#059669;width:48px;height:48px;font-size:20px"><i class="bi bi-shield-fill-check"></i></div>
+                        <div>
+                            <div style="font-size:24px;font-weight:700;color:#1f2937">1</div>
+                            <div style="font-size:13px;color:#9ca3af">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                        <div class="icon-box" style="background:#fffbeb;color:#d97706;width:48px;height:48px;font-size:20px"><i class="bi bi-person-fill-gear"></i></div>
+                        <div>
+                            <div style="font-size:24px;font-weight:700;color:#1f2937">3</div>
+                            <div style="font-size:13px;color:#9ca3af">Operator</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card p-3 d-flex flex-row align-items-center gap-3">
+                        <div class="icon-box" style="background:#f3f4f6;color:#6b7280;width:48px;height:48px;font-size:20px"><i class="bi bi-eye-fill"></i></div>
+                        <div>
+                            <div style="font-size:24px;font-weight:700;color:#1f2937">3</div>
+                            <div style="font-size:13px;color:#9ca3af">Viewer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Table -->
+            <div class="table-card mb-4">
+                <div class="table-card-header">
+                    <h6>Danh sách người dùng</h6>
+                    <div class="d-flex gap-2">
+                        <input type="search" class="form-control form-control-sm" placeholder="Tìm theo tên/email..." style="width:220px" id="userSearch">
+                        <select class="form-select form-select-sm" style="width:130px" id="roleFilter">
+                            <option value="">Tất cả quyền</option>
+                            <option>Administrator</option>
+                            <option>Operator</option>
+                            <option>Viewer</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="overflow-x:auto">
+                    <table class="table" id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Người dùng</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th>Đăng nhập cuối</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Role Permissions -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i class="bi bi-shield-fill-check"></i></div>
+                        <h6>Phân quyền theo vai trò</h6>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div style="overflow-x:auto">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Chức năng</th>
+                                    <th class="text-center">Administrator</th>
+                                    <th class="text-center">Operator</th>
+                                    <th class="text-center">Viewer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Xem Dashboard</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td></tr>
+                                <tr><td>Cấu hình Sensor</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td></tr>
+                                <tr><td>Xem dữ liệu lịch sử</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td></tr>
+                                <tr><td>Xuất dữ liệu</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td></tr>
+                                <tr><td>Cấu hình hệ thống</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td></tr>
+                                <tr><td>Quản lý người dùng</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td></tr>
+                                <tr><td>Cập nhật firmware</td><td class="text-center text-success"><i class="bi bi-check-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td><td class="text-center text-danger"><i class="bi bi-x-circle-fill"></i></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="page-footer">
+            <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+            <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+        </footer>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Thêm người dùng mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="addUserForm" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="fullName" placeholder="Nguyễn Văn A" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="username" placeholder="nguyenvana" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="email" placeholder="user@company.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Vai trò <span class="text-danger">*</span></label>
+                            <select class="form-select" name="role" required>
+                                <option value="">-- Chọn vai trò --</option>
+                                <option>Administrator</option>
+                                <option>Operator</option>
+                                <option>Viewer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" name="password" placeholder="Ít nhất 8 ký tự" required>
+                                <button type="button" class="btn btn-outline-secondary toggle-password"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                                <button type="button" class="btn btn-outline-secondary toggle-password"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="$('#addUserForm').submit()">
+                    <i class="bi bi-person-plus-fill me-2"></i>Thêm người dùng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil-fill me-2 text-primary"></i>Chỉnh sửa người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Họ tên</label>
+                        <input type="text" class="form-control" value="Admin">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="admin" readonly>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="admin@datalogger.local">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Vai trò</label>
+                        <select class="form-select">
+                            <option selected>Administrator</option>
+                            <option>Operator</option>
+                            <option>Viewer</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select">
+                            <option selected>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="showToast('Đã cập nhật người dùng!','success')">
+                    <i class="bi bi-floppy-fill me-2"></i>Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/layout.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+$(document).ready(function(){
+    // Mock Data
+    let usersData = [
+        { id: 1, name: "Admin", username: "admin", email: "admin@datalogger.local", role: "Administrator", status: "Active", lastLogin: "Vừa xong" },
+        { id: 2, name: "Operator1", username: "operator1", email: "operator1@company.com", role: "Operator", status: "Active", lastLogin: "2 giờ trước" },
+        { id: 3, name: "Technician", username: "tech01", email: "tech01@company.com", role: "Operator", status: "Idle", lastLogin: "1 ngày trước" },
+        { id: 4, name: "Viewer01", username: "viewer1", email: "viewer@company.com", role: "Viewer", status: "Inactive", lastLogin: "7 ngày trước" },
+        { id: 5, name: "Ngo Xuan Sy", username: "syngo", email: "syngo@company.com", role: "Viewer", status: "Inactive", lastLogin: "7 ngày trước" }
+    ];
+
+    // Get 2 characters for avatar
+    function getAvatarText(name) {
+        let cleanName = name.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+        let parts = cleanName.split(' ');
+        if (parts.length > 1) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return cleanName.substring(0, 2).toUpperCase();
+    }
+
+    // Generate nice gradient color from string hash
+    function getAvatarGradient(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const h = Math.abs(hash) % 360;
+        // Make it vibrant but not too bright to ensure white text contrast
+        return `linear-gradient(135deg, hsl(${h}, 65%, 45%), hsl(${(h + 20) % 360}, 65%, 55%))`;
+    }
+
+    // Role badge renderer
+    function renderRoleBadge(role) {
+        if (role === 'Administrator') {
+            return `<span class="badge" style="background:#f0fdf4;color:#059669"><i class="bi bi-shield-fill me-1"></i>Administrator</span>`;
+        } else if (role === 'Operator') {
+            return `<span class="badge" style="background:#fef3c7;color:#d97706"><i class="bi bi-person-fill-gear me-1"></i>Operator</span>`;
+        }
+        return `<span class="badge" style="background:#f3f4f6;color:#6b7280"><i class="bi bi-eye-fill me-1"></i>Viewer</span>`;
+    }
+
+    // Status badge renderer
+    function renderStatusBadge(status) {
+        if (status === 'Active') return `<span class="badge badge-status-active">Active</span>`;
+        if (status === 'Idle') return `<span class="badge badge-status-warning">Idle</span>`;
+        return `<span class="badge badge-status-inactive">Inactive</span>`;
+    }
+
+    // Render Table
+    function renderUserTable() {
+        const tbody = $('#userTableBody');
+        tbody.empty();
+
+        usersData.forEach(user => {
+            const avatarText = getAvatarText(user.name);
+            const avatarGrad = getAvatarGradient(user.name);
+            const isSelf = user.username === 'admin'; // Admin is disabled for deletion
+
+            const tr = `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:34px;height:34px;border-radius:50%;background:${avatarGrad};display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:600">${avatarText}</div>
+                            <div>
+                                <div style="font-weight:600;color:#1f2937">${user.name}</div>
+                                <div style="font-size:11px;color:#9ca3af">@${user.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${renderRoleBadge(user.role)}</td>
+                    <td>${renderStatusBadge(user.status)}</td>
+                    <td style="font-size:12px;color:#9ca3af">${user.lastLogin}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-icon btn-sm btn-outline-primary" title="Sửa" data-bs-toggle="modal" data-bs-target="#editUserModal"><i class="bi bi-pencil-fill"></i></button>
+                            <button class="btn btn-icon btn-sm btn-outline-danger btn-delete-row" title="Xóa" ${isSelf ? 'disabled' : ''}><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tbody.append(tr);
+        });
+    }
+
+    // Initial render
+    renderUserTable();
+
+    // Search filter
+    $('#userSearch').on('input', function(){
+        const q = $(this).val().toLowerCase();
+        $('#userTable tbody tr').each(function(){
+            $(this).toggle($(this).text().toLowerCase().includes(q));
+        });
+    });
+
+    // Role filter
+    $('#roleFilter').on('change', function(){
+        const role = $(this).val().toLowerCase();
+        $('#userTable tbody tr').each(function(){
+            if (!role) {
+                $(this).show();
+            } else {
+                // Ensure precise match for Operator vs Administrator if both have 'operator' text?
+                // Text contains "Administrator", "Operator", "Viewer"
+                // Actually `role` here is the text value of select option
+                const trText = $(this).find('td:nth-child(3)').text().toLowerCase();
+                $(this).toggle(trText.includes(role));
+            }
+        });
+    });
+
+    // Delete row event delegation
+    $('#userTableBody').on('click', '.btn-delete-row', function() {
+        const tr = $(this).closest('tr');
+        const username = tr.find('.text-muted, [style*="11px"]').text().replace('@', '');
+        if (confirm('Xóa người dùng @' + username + '?')) {
+            usersData = usersData.filter(u => u.username !== username);
+            renderUserTable();
+            if (typeof showToast === 'function') showToast('Đã xóa ' + username, 'warning');
+        }
+    });
+});
+</script>
+</body>
+</html>

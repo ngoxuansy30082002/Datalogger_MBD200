@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="General Sensor Settings - Quản lý danh sách cảm biến">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Configuration</li>
+                        <li class="breadcrumb-item active">General Sensor Settings</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1><i class="bi bi-sliders text-primary me-2"></i>General Sensor Settings</h1>
+                        <p>Quản lý danh sách cảm biến trong hệ thống</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSensorModal"
+                        id="addSensorBtn">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add Sensor
+                    </button>
+                </div>
+
+                <!-- Sensor List Table -->
+                <div class="table-card mb-4">
+                    <div class="table-card-header">
+                        <h6>Danh sách Sensor (<span id="sensorCount">0</span>)</h6>
+                        <div class="d-flex gap-2">
+                            <input type="search" class="form-control form-control-sm" placeholder="Tìm sensor..."
+                                style="width:200px" id="sensorTableSearch">
+                            <select class="form-select form-select-sm" style="width:140px" id="typeTableFilter">
+                                <option value="">Tất cả loại</option>
+                                <option value="analog">Analog</option>
+                                <option value="modbus">Modbus</option>
+                                <option value="input">Input Capture</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="table" id="sensorTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px">#</th>
+                                    <th>Tên sensor</th>
+                                    <th>Loại</th>
+                                    <th>Đơn vị</th>
+                                    <th class="text-center">Nguồn trạng thái</th>
+                                    <th class="text-center">Kích hoạt</th>
+                                    <th class="text-center">Hiệu chuẩn</th>
+                                    <th style="width:110px">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensorTableBody">
+                                <!-- Rendered by JS -->
+                            </tbody>
+                        </table>
+                        <div id="sensorTableEmpty" class="text-center py-5 d-none">
+                            <i class="bi bi-inbox" style="font-size:40px;color:#d1d5db"></i>
+                            <p class="mt-2 text-muted">Chưa có sensor nào. Nhấn "Add Sensor" để thêm mới.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Sensor Options -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="section-icon"><i class="bi bi-gear-wide-connected"></i></div>
+                        <div>
+                            <h6>Cài đặt xuất file</h6>
+                            <p>Định dạng, chu kỳ và tên file</p>
+                        </div>
+                    </div>
+                    <div class="form-section-body">
+                        <form id="globalSettingsForm">
+                            <div class="row g-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="globalLogInterval">Chu kỳ ghi log (giây)</label>
+                                    <input type="number" class="form-control" id="globalLogInterval" name="logInterval"
+                                        value="60" min="1">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="globalDecimal">Số chữ số thập phân</label>
+                                    <input type="number" class="form-control" id="globalDecimal" name="decimalPlaces"
+                                        value="2" min="0" max="5">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="globalDataFormat">Định dạng dữ liệu</label>
+                                    <select class="form-select" id="globalDataFormat" name="dataFormat">
+                                        <option value="json">JSON</option>
+                                        <option value="csv" selected>CSV</option>
+                                        <option value="text">Plain Text</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="fileName">Tên file (template)</label>
+                                    <input type="text" class="form-control" id="fileName" name="fileName"
+                                        value="datalogger_{YYYY}{MM}{DD}_{HH}{mm}.csv">
+                                    <div class="form-text">Hỗ trợ: {YYYY} {MM} {DD} {HH} {mm} {SS} {device}</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="globalFileType">Định dạng file</label>
+                                    <select class="form-select" id="globalFileType" name="fileType">
+                                        <option value="csv" selected>CSV</option>
+                                        <option value="txt">TXT</option>
+                                    </select>
+                                </div>
+
+                                <div class="separator"></div>
+
+                                <div class="col-md-3">
+                                    <div class="form-check form-switch  d-flex align-items-center">
+                                        <input class="form-check-input" type="checkbox" id="ftpCompress"
+                                            name="ftpCompress">
+                                        <label class="form-check-label fw-500 ms-2" for="ftpCompress">Nén file
+                                            (.gz)</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input mt-0" type="checkbox" id="ftpEnable"
+                                            name="ftpEnable" checked role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="ftpEnable">Gửi dữ liệu cảm biến
+                                            lên
+                                            FTP</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input mt-0" type="checkbox" id="mqttEnable"
+                                            name="mqttEnable" role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="mqttEnable">Gửi dữ liệu cảm
+                                            biến
+                                            lên MQTT</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input mt-0" type="checkbox" id="sdEnable"
+                                            name="sdEnable" role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="sdEnable">Lưu vào SD
+                                            card</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary" id="saveGlobalSettings">
+                                    <i class="bi bi-floppy-fill me-2"></i>Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ADD SENSOR MODAL -->
+    <div class="modal fade" id="addSensorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle-fill me-2 text-primary"></i>Thêm Sensor mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="addSensorForm" novalidate>
+                        <div class="row g-3">
+
+                            <!-- Nhóm 1: Thông tin sensor -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">1. Thông tin sensor</h6>
+                            </div>
+
+                            <!-- Sensor type selector cards -->
+                            <div class="col-md-6">
+                                <label class="form-label">Loại Sensor <span class="text-danger">*</span></label>
+                                <div class="row g-2" id="sensorTypeCards">
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="analog"
+                                            style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-activity" style="font-size:24px;color:#267dc1"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Analog</div>
+                                            <div style="font-size:11px;color:#9ca3af">4-20mA, 0-10V</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="modbus"
+                                            style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-ethernet" style="font-size:24px;color:#10b981"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus</div>
+                                            <div style="font-size:11px;color:#9ca3af">RTU / TCP</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="input"
+                                            style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-lightning-charge-fill"
+                                                style="font-size:24px;color:#f59e0b"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Input Capture
+                                            </div>
+                                            <div style="font-size:11px;color:#9ca3af">Counter / Freq</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selectedSensorType" name="sensorType" required>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label" for="sensorIdSelect">ID của sensor <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="sensorIdSelect" name="sensorId" required>
+                                    <option value="" disabled selected>Vui lòng chọn Loại Sensor</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-2">
+                            </div>
+
+                            <!-- Nhóm 2: Nguồn trạng thái -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">2. Nguồn trạng thái</h6>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Loại nguồn trạng thái</label>
+                                <select class="form-select" id="addSourceType" name="sourceType">
+                                    <option value="auto">Tự động</option>
+                                    <option value="modbus_tag">Modbus Tag</option>
+                                    <option value="input">Digital Input</option>
+                                </select>
+                            </div>
+
+                            <!-- Source ID fields -->
+                            <div class="col-12 d-none" id="addSourceIdContainer">
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Success</label>
+                                        <select class="form-select" id="addSuccessId" name="successId"></select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Error</label>
+                                        <select class="form-select" id="addErrorId" name="errorId"></select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Calibration</label>
+                                        <select class="form-select" id="addCalibId" name="calibId"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-2">
+                            </div>
+
+                            <!-- Nhóm 3: Trạng thái hoạt động -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">3. Trạng thái hoạt động</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch d-flex align-items-center mb-3">
+                                    <input class="form-check-input mt-0" type="checkbox" id="sensorActive"
+                                        name="sensorActive" checked role="switch">
+                                    <label class="form-check-label fw-500 ms-2" for="sensorActive">Kích hoạt
+                                        (Active)</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch d-flex align-items-center mb-3">
+                                    <input class="form-check-input mt-0" type="checkbox" id="sensorCalibrated"
+                                        name="sensorCalibrated" role="switch">
+                                    <label class="form-check-label fw-500 ms-2" for="sensorCalibrated">Đã được hiệu
+                                        chuẩn</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddSensor">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Thêm sensor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SENSOR MODAL -->
+    <div class="modal fade" id="editSensorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-fill me-2 text-primary"></i>Chỉnh sửa Sensor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="editSensorForm" novalidate>
+                        <input type="hidden" id="editSensorIdHidden" name="id">
+                        <div class="row g-3">
+                            <!-- Nhóm 1: Thông tin sensor -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">1. Thông tin sensor</h6>
+                            </div>
+
+                            <!-- Sensor type selector cards -->
+                            <div class="col-md-6">
+                                <label class="form-label">Loại Sensor <span class="text-danger">*</span></label>
+                                <div class="row g-2" id="editSensorTypeCards">
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
+                                            data-stype="analog" style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-activity" style="font-size:24px;color:#267dc1"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Analog</div>
+                                            <div style="font-size:11px;color:#9ca3af">4-20mA, 0-10V</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
+                                            data-stype="modbus" style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-ethernet" style="font-size:24px;color:#10b981"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus</div>
+                                            <div style="font-size:11px;color:#9ca3af">RTU / TCP</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
+                                            data-stype="input" style="cursor:pointer;transition:all 0.2s">
+                                            <i class="bi bi-lightning-charge-fill"
+                                                style="font-size:24px;color:#f59e0b"></i>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Input Capture
+                                            </div>
+                                            <div style="font-size:11px;color:#9ca3af">Counter / Freq</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="editSelectedSensorType" name="sensorType" required>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label" for="editSensorIdSelect">ID của sensor <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="editSensorIdSelect" name="sensorId" required>
+                                    <option value="" disabled selected>Vui lòng chọn Loại Sensor</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-2">
+                            </div>
+
+                            <!-- Nhóm 2: Nguồn trạng thái -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">2. Nguồn trạng thái</h6>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Loại nguồn trạng thái</label>
+                                <select class="form-select" id="editSourceType" name="sourceType">
+                                    <option value="auto">Tự động</option>
+                                    <option value="modbus_tag">Modbus Tag</option>
+                                    <option value="input">Digital Input</option>
+                                </select>
+                            </div>
+
+                            <!-- Source ID fields -->
+                            <div class="col-12 d-none" id="editSourceIdContainer">
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Success</label>
+                                        <select class="form-select" id="editSuccessId" name="successId"></select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Error</label>
+                                        <select class="form-select" id="editErrorId" name="errorId"></select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted"
+                                            style="font-size:13px;font-weight:600">Calibration</label>
+                                        <select class="form-select" id="editCalibId" name="calibId"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-2">
+                            </div>
+
+                            <!-- Nhóm 3: Trạng thái hoạt động -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary border-bottom pb-2">3. Trạng thái hoạt động</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch d-flex align-items-center mb-3">
+                                    <input class="form-check-input mt-0" type="checkbox" id="editSensorActive"
+                                        name="sensorActive" role="switch">
+                                    <label class="form-check-label fw-500 ms-2" for="editSensorActive">Kích hoạt
+                                        (Active)</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch d-flex align-items-center mb-3">
+                                    <input class="form-check-input mt-0" type="checkbox" id="editSensorCalibrated"
+                                        name="sensorCalibrated" role="switch">
+                                    <label class="form-check-label fw-500 ms-2" for="editSensorCalibrated">Đã được hiệu
+                                        chuẩn</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="confirmEditSensor">
+                        <i class="bi bi-floppy-fill me-2"></i>Lưu thay đổi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* ===== MOCK DATA ===== */
+        let sensors = [
+            { id: 1, type: 'analog', sensorId: 'ADC1', unit: 'm3/h', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: true, calib: true },
+            { id: 2, type: 'analog', sensorId: 'ADC2', unit: 'm3/h', sourceType: 'input', successId: 'DI1', errorId: 'DI2', calibId: 'DI3', active: true, calib: false },
+            { id: 3, type: 'analog', sensorId: 'ADC3', unit: 'm3/h', sourceType: 'modbus_tag', successId: 'MB_Tag1', errorId: 'MB_Tag2', calibId: 'MB_Tag3', active: false, calib: true },
+            { id: 4, type: 'modbus', sensorId: 'Modbus_Dev1', unit: 'V', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: true, calib: false },
+            { id: 5, type: 'modbus', sensorId: 'Modbus_Dev2', unit: 'A', sourceType: 'modbus_tag', successId: 'MB_Tag4', errorId: 'MB_Tag5', calibId: 'MB_Tag6', active: true, calib: true },
+            { id: 6, type: 'input', sensorId: 'DI1', unit: 'Hz', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: false, calib: false },
+        ];
+        let nextId = 7;
+        let editingId = null;
+
+        const TYPE_LABELS = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
+        const TYPE_CLASSES = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
+        const SRC_LABELS = { auto: 'Tự động', input: 'Input (DI)', modbus_tag: 'Modbus Tag' };
+
+        function renderTable() {
+            let list = sensors;
+            const q = $('#sensorTableSearch').val().toLowerCase();
+            const tf = $('#typeTableFilter').val();
+            if (q) list = list.filter(s => s.sensorId.toLowerCase().includes(q));
+            if (tf) list = list.filter(s => s.type === tf);
+
+            $('#sensorCount').text(sensors.length);
+            const $body = $('#sensorTableBody');
+            $body.empty();
+
+            if (!list.length) {
+                $('#sensorTableEmpty').removeClass('d-none');
+                return;
+            }
+            $('#sensorTableEmpty').addClass('d-none');
+
+            list.forEach((s, i) => {
+                const checkedActive = s.active ? 'checked' : '';
+                const calibBadge = s.calib ?
+                    ` <span class="badge badge-calib">
+                        <i class="bi bi-patch-check-fill me-1"></i>Đã hiệu chuẩn
+                    </span>` :
+                    ``;
+
+                $body.append(`
+                <tr data-id="${s.id}">
+                <td style="font-weight:600;color:#9ca3af">${i + 1}</td>
+                <td style="font-weight:600;color:#1f2937">${s.sensorId}</td>
+                <td><span class="badge sensor-type-badge ${TYPE_CLASSES[s.type]}">${TYPE_LABELS[s.type]}</span></td>
+                <td>${s.unit}</td>
+                <td class="text-center"><span style="font-size:12px;color:#6b7280">${SRC_LABELS[s.sourceType] || SRC_LABELS['auto']}</span></td>
+                <td class="text-center">
+                    <div class="form-check form-switch d-flex justify-content-center m-0">
+                        <input class="form-check-input toggle-active" type="checkbox" data-id="${s.id}" ${checkedActive}>
+                    </div>
+                </td>
+                <td class="text-center">${calibBadge}</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-icon btn-sm btn-outline-primary btn-edit-sensor" title="Sửa"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-icon btn-sm btn-outline-danger btn-delete-sensor" title="Xóa"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                </td>
+                </tr>`);
+            });
+        }
+
+        /* Sensor type card selection - Add */
+        $(document).on('click', '#addSensorModal .sensor-type-card', function () {
+            $('#addSensorModal .sensor-type-card').removeClass('border-primary').css({ background: '', borderColor: '' });
+            $(this).addClass('border-primary').css({ background: '#e8f4fd' });
+            const type = $(this).data('stype');
+            $('#selectedSensorType').val(type);
+
+            const $idSelect = $('#sensorIdSelect');
+            $idSelect.empty();
+
+            if (type === 'analog') {
+                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="ADC${i}">ADC${i}</option>`);
+            } else if (type === 'modbus') {
+                for (let i = 1; i <= 32; i++) $idSelect.append(`<option value="Modbus_Dev${i}">Modbus Device ${i}</option>`);
+            } else if (type === 'input') {
+                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="DI${i}">DI${i}</option>`);
+            }
+        });
+
+        /* Sensor type card selection - Edit */
+        $(document).on('click', '#editSensorModal .edit-sensor-type-card', function () {
+            $('#editSensorModal .edit-sensor-type-card').removeClass('border-primary').css({ background: '', borderColor: '' });
+            $(this).addClass('border-primary').css({ background: '#e8f4fd' });
+            const type = $(this).data('stype');
+            $('#editSelectedSensorType').val(type);
+
+            const $idSelect = $('#editSensorIdSelect');
+            $idSelect.empty();
+
+            if (type === 'analog') {
+                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="ADC${i}">ADC${i}</option>`);
+            } else if (type === 'modbus') {
+                for (let i = 1; i <= 32; i++) $idSelect.append(`<option value="Modbus_Dev${i}">Modbus Device ${i}</option>`);
+            } else if (type === 'input') {
+                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="DI${i}">DI${i}</option>`);
+            }
+        });
+
+        function populateSourceIds($typeSelect, $container, $successId, $errorId, $calibId, currentSuccess = '', currentError = '', currentCalib = '') {
+            const type = $typeSelect.val();
+            if (type === 'auto') {
+                $container.addClass('d-none');
+            } else {
+                $container.removeClass('d-none');
+                $successId.empty();
+                $errorId.empty();
+                $calibId.empty();
+
+                if (type === 'modbus_tag') {
+                    for (let i = 1; i <= 32; i++) {
+                        const val = `MB_Tag${i}`;
+                        $successId.append(`<option value="${val}" ${currentSuccess === val ? 'selected' : ''}>${val}</option>`);
+                        $errorId.append(`<option value="${val}" ${currentError === val ? 'selected' : ''}>${val}</option>`);
+                        $calibId.append(`<option value="${val}" ${currentCalib === val ? 'selected' : ''}>${val}</option>`);
+                    }
+                } else if (type === 'input') {
+                    for (let i = 1; i <= 8; i++) {
+                        const val = `DI${i}`;
+                        $successId.append(`<option value="${val}" ${currentSuccess === val ? 'selected' : ''}>${val}</option>`);
+                        $errorId.append(`<option value="${val}" ${currentError === val ? 'selected' : ''}>${val}</option>`);
+                        $calibId.append(`<option value="${val}" ${currentCalib === val ? 'selected' : ''}>${val}</option>`);
+                    }
+                }
+            }
+        }
+
+        $('#addSourceType').on('change', function () {
+            populateSourceIds($(this), $('#addSourceIdContainer'), $('#addSuccessId'), $('#addErrorId'), $('#addCalibId'));
+        });
+
+        $('#editSourceType').on('change', function () {
+            populateSourceIds($(this), $('#editSourceIdContainer'), $('#editSuccessId'), $('#editErrorId'), $('#editCalibId'));
+        });
+
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+
+            // Collect params (không hardcode)
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            if (formId === "addSensorForm")
+                params.append('action', 'add');
+            else if (formId === "editSensorForm")
+                params.append('action', 'edit');
+
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) { // status 0 có thể xảy ra khi chạy local file://
+                        if (typeof showToast === 'function') {
+                            showToast('Đã gửi dữ liệu thành công!', 'success');
+                        } else {
+                            alert('Đã gửi dữ liệu thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        /* Add sensor confirm */
+        $('#confirmAddSensor').on('click', function (e) {
+            e.preventDefault();
+            const type = $('#selectedSensorType').val();
+            const sensorId = $('#sensorIdSelect').val();
+
+            if (!type || !sensorId) {
+                if (typeof showToast === 'function') {
+                    showToast('Vui lòng chọn Loại và ID sensor.', 'error');
+                } else {
+                    alert('Vui lòng chọn Loại và ID sensor.');
+                }
+                return;
+            }
+
+            sendPostRequest('sensor-general.html', 'addSensorForm', function (success) {
+                // Update mockup data cho UI local
+                if (success) {
+                    sensors.push({
+                        id: nextId++, type, sensorId,
+                        sourceType: $('#addSourceType').val(),
+                        successId: $('#addSuccessId').val(),
+                        errorId: $('#addErrorId').val(),
+                        calibId: $('#addCalibId').val(),
+                        active: $('#sensorActive').is(':checked'),
+                        calib: $('#sensorCalibrated').is(':checked')
+                    });
+                    renderTable();
+                    bootstrap.Modal.getInstance($('#addSensorModal')[0]).hide();
+                    $('#addSensorForm')[0].reset();
+                    $('#addSensorModal .sensor-type-card').removeClass('border-primary').css({ background: '' });
+                    $('#selectedSensorType').val('');
+                    $('#sensorIdSelect').html('<option value="" disabled selected>Vui lòng chọn Loại Sensor trước</option>');
+                    $('#addSourceType').trigger('change');
+                }
+            });
+        });
+
+        /* Edit sensor */
+        $(document).on('click', '.btn-edit-sensor', function () {
+            const id = parseInt($(this).closest('tr').data('id'));
+            const s = sensors.find(x => x.id === id);
+            if (!s) return;
+            editingId = id;
+
+            // Set hidden ID for form
+            $('#editSensorIdHidden').val(s.id);
+
+            // Trigger type selection to populate sensor IDs
+            $(`#editSensorModal .edit-sensor-type-card[data-stype="${s.type}"]`).trigger('click');
+            $('#editSensorIdSelect').val(s.sensorId);
+
+            $('#editSourceType').val(s.sourceType);
+            populateSourceIds($('#editSourceType'), $('#editSourceIdContainer'), $('#editSuccessId'), $('#editErrorId'), $('#editCalibId'), s.successId, s.errorId, s.calibId);
+
+            $('#editSensorActive').prop('checked', s.active);
+            $('#editSensorCalibrated').prop('checked', s.calib);
+
+            new bootstrap.Modal($('#editSensorModal')[0]).show();
+        });
+
+        $('#confirmEditSensor').on('click', function (e) {
+            e.preventDefault();
+            const s = sensors.find(x => x.id === editingId);
+            if (!s) return;
+
+            const type = $('#editSelectedSensorType').val();
+            const sensorId = $('#editSensorIdSelect').val();
+            if (!type || !sensorId) {
+                if (typeof showToast === 'function') showToast('Vui lòng chọn Loại và ID sensor.', 'error');
+                else alert('Vui lòng chọn Loại và ID sensor.');
+                return;
+            }
+
+            sendPostRequest('sensor-general.html', 'editSensorForm', function (success) {
+                if (success) {
+                    s.type = type;
+                    s.sensorId = sensorId;
+                    s.sourceType = $('#editSourceType').val();
+                    s.successId = $('#editSuccessId').val();
+                    s.errorId = $('#editErrorId').val();
+                    s.calibId = $('#editCalibId').val();
+                    s.active = $('#editSensorActive').is(':checked');
+                    s.calib = $('#editSensorCalibrated').is(':checked');
+
+                    renderTable();
+                    bootstrap.Modal.getInstance($('#editSensorModal')[0]).show();
+                    bootstrap.Modal.getInstance($('#editSensorModal')[0]).hide();
+                }
+            });
+        });
+
+        /* Delete sensor */
+        $(document).on('click', '.btn-delete-sensor', function (e) {
+            e.preventDefault();
+            const id = parseInt($(this).closest('tr').data('id'));
+            const s = sensors.find(x => x.id === id);
+            if (!s) return;
+            if (!confirm(`Xóa sensor "${s.sensorId}"?`)) return;
+
+            // Gửi DELETE request (XHR)
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "sensor-general.html", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)) {
+                    sensors = sensors.filter(x => x.id !== id);
+                    renderTable();
+                    showToast(`Đã xóa sensor "${s.sensorId}".`, 'warning');
+                }
+            };
+            xhr.send("action=delete&id=" + id);
+        });
+
+        /* Settings events */
+        $(document).on('change', '.toggle-active', function () {
+            const id = $(this).data('id');
+            const checked = $(this).is(':checked');
+            const s = sensors.find(x => x.id === id);
+            if (s) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "sensor-general.html", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)) {
+                        s.active = checked;
+                    } else if (xhr.readyState === 4) {
+                        // Revert on error
+                        $(this).prop('checked', !checked);
+                    }
+                };
+                xhr.send("action=toggle_active&id=" + id + "&active=" + (checked ? 'on' : 'off'));
+            }
+        });
+
+        $('#globalSettingsForm').on('submit', function (e) {
+            e.preventDefault();
+            sendPostRequest('sensor-general.html', 'globalSettingsForm', null);
+        });
+
+        /* Search & filter */
+        $('#sensorTableSearch, #typeTableFilter').on('input change', renderTable);
+
+        $(document).ready(function () {
+            renderTable();
+        });
+    </script>
+</body>
+
+</html>

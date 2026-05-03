@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analog Sensor Configuration - Cấu hình cảm biến tương tự cho DataLogger">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ── Highlight active edit sections ── */
+        .active-edit {
+            border: 2px solid #267dc1 !important;
+            background: rgba(38, 125, 193, 0.08) !important;
+            transition: all 0.2s ease;
+        }
+
+        .active-edit .form-section-header {
+            background: linear-gradient(135deg, rgba(38, 125, 193, 0.14), rgba(38, 125, 193, 0.04));
+        }
+
+        /* ── Editing banner (hidden by default) ── */
+        #analogEditBanner {
+            display: none;
+        }
+
+        /* ── Channel list table row hover ── */
+        #analogChannelTable tbody tr {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        #analogChannelTable tbody tr:hover {
+            background: #f0f7ff;
+        }
+
+        #analogChannelTable tbody tr.row-active {
+            background: rgba(38, 125, 193, 0.1);
+        }
+
+        /* ── Live value animation ── */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #analogEditBanner {
+            animation: fadeInDown 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <!-- ===== HEADER ===== -->
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Types</li>
+                        <li class="breadcrumb-item active">Analog Sensor</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <!-- ===== MAIN CONTENT ===== -->
+            <main class="page-content">
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <h1><i class="bi bi-activity text-primary me-2"></i>Analog Sensor Configuration</h1>
+                    <p>Danh sách 8 kênh ADC — nhấn <strong>Edit</strong> để cấu hình từng kênh</p>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                 SECTION 1 – Channel List Table
+                 ══════════════════════════════════════ -->
+                <div class="table-card mb-4">
+                    <div class="table-card-header">
+                        <h6><i class="bi bi-list-ul me-2 text-primary"></i>Danh sách kênh Analog (ADC1 – ADC8)</h6>
+                        <div class="d-flex gap-2">
+                            <input type="search" id="analogSearch" class="form-control form-control-sm"
+                                placeholder="Tìm kênh..." style="width:160px">
+                            <button class="btn btn-sm btn-outline-primary" id="refreshAnalog" title="Làm mới">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="table" id="analogChannelTable">
+                            <thead>
+                                <tr>
+                                    <th>Kênh</th>
+                                    <th>Tên sensor</th>
+                                    <th>Giá trị</th>
+                                    <th>Đơn vị</th>
+                                    <th>Loại tín hiệu</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analogChannelBody">
+                                <!-- Rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                 EDITING BANNER (hidden until edit)
+                 ══════════════════════════════════════ -->
+                <div id="analogEditBanner" class="alert alert-primary d-flex align-items-center gap-3 mb-3"
+                    role="alert">
+                    <i class="bi bi-pencil-square fs-5 flex-shrink-0"></i>
+                    <div>
+                        <strong>Đang cấu hình:</strong>
+                        <span id="analogEditLabel" class="ms-1 fw-600" style="color:#1d4ed8"></span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="analogCancelBtn">
+                        <i class="bi bi-x-lg me-1"></i>Huỷ chỉnh sửa
+                    </button>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                 SECTION 2 – Config + Live (2 cards)
+                 ══════════════════════════════════════ -->
+                <form class="needs-validation" id="analogForm" novalidate>
+                    <input type="hidden" id="analog_channel_id" name="analog_channel_id">
+                    <div class="row g-4">
+
+                        <!-- LEFT: Signal Config card -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="form-section" id="sectionAnalogConfig">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-radioactive"></i></div>
+                                    <div>
+                                        <h6>Cấu hình tín hiệu Analog</h6>
+                                        <p>Loại tín hiệu, scaling Min/Max và đơn vị</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+
+                                    <!-- Tên + Đơn vị -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="sensorName">
+                                                Tên cảm biến <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" id="sensorName" name="sensor_name"
+                                                placeholder="Ví dụ: Temperature_01" required>
+                                            <div class="invalid-feedback">Vui lòng nhập tên cảm biến.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="sensorUnit">
+                                                Đơn vị <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" id="sensorUnit" name="unit"
+                                                placeholder="Ví dụ: °C, bar, %RH" required>
+                                            <div class="invalid-feedback">Vui lòng nhập đơn vị.</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Loại tín hiệu + Sample rate -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="signalType">
+                                                Loại tín hiệu <span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-select" id="signalType" name="signal_type" required>
+                                                <option value="">-- Chọn loại --</option>
+                                                <option value="4_20mA">4-20 mA</option>
+                                                <option value="0_10V">0-10 V</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="sampleRate">Chu kỳ lấy mẫu (ms)</label>
+                                            <input type="number" class="form-control" id="sampleRate" name="sample_rate" value="500"
+                                                min="10" max="60000">
+                                            <div class="form-text">Tối thiểu 10ms</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Scaling -->
+                                    <div class="separator"></div>
+                                    <h6 class="fw-600 mb-3" style="font-size:13px;color:#374151">
+                                        <i class="bi bi-arrow-left-right me-2 text-primary"></i>Scaling / Quy đổi giá
+                                        trị
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Đầu vào Min (Raw)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-arrow-bar-down"></i></span>
+                                                <input type="number" class="form-control" id="rawMin" name="raw_min" value="4"
+                                                    step="0.01">
+                                                <span class="input-group-text" id="rawUnit">mA</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Đầu vào Max (Raw)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
+                                                <input type="number" class="form-control" id="rawMax" name="raw_max" value="20"
+                                                    step="0.01">
+                                                <span class="input-group-text" id="rawUnit2">mA</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Giá trị đầu ra Min (EU)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-arrow-bar-down"></i></span>
+                                                <input type="number" class="form-control" id="euMin" name="eu_min" value="0">
+                                                <span class="input-group-text" id="euUnit1">°C</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Giá trị đầu ra Max (EU)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
+                                                <input type="number" class="form-control" id="euMax" name="eu_max" value="100">
+                                                <span class="input-group-text" id="euUnit2">°C</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Advanced Scaling -->
+                                    <div class="separator mt-4 mb-3"></div>
+                                    <h6 class="fw-600 mb-3" style="font-size:13px;color:#374151">
+                                        <i class="bi bi-calculator me-2 text-primary"></i>Advanced Scaling
+                                    </h6>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="scaleType" data-bs-toggle="tooltip"
+                                                title="Loại hình tính toán scaling">Scale Type</label>
+                                            <select class="form-select" id="scaleType" name="scale_type">
+                                                <option value="none" selected>None</option>
+                                                <option value="linear">Linear</option>
+                                                <option value="sqrt">Square Root</option>
+                                            </select>
+                                            <div class="form-text text-primary d-none" id="scaleHint"
+                                                style="font-size:11px; margin-top:6px;"><i
+                                                    class="bi bi-info-circle me-1"></i>Áp dụng sqrt(value) trước khi
+                                                scale</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="scaleDataType" data-bs-toggle="tooltip"
+                                                title="Kiểu dữ liệu sau khi scale">Scale Data Type</label>
+                                            <select class="form-select scale-field" id="scaleDataType" name="scale_data_type" disabled>
+                                                <option value="uint">Unsigned Integer</option>
+                                                <option value="int">Integer</option>
+                                                <option value="float" selected>Float</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="scaleValue">Scale Value</label>
+                                            <input type="number" class="form-control scale-field exp-input"
+                                                id="scaleValue" name="scale_value" placeholder="Nhập hệ số scale" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Offset &amp; Expression (Phương trình)</label>
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <div class="input-group" style="flex:1; min-width:110px">
+                                                <span class="input-group-text bg-light" style="font-size:12px">Offset
+                                                    1</span>
+                                                <input type="number"
+                                                    class="form-control scale-field exp-input text-center px-1"
+                                                    id="offset1" name="offset_before" value="0" disabled>
+                                            </div>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op1" name="operator_1"
+                                                style="width:100px" disabled>
+                                                <option value="+">+</option>
+                                                <option value="-">-</option>
+                                                <option value="*">*</option>
+                                                <option value="/">/</option>
+                                            </select>
+                                            <div class="input-group" style="width:70px">
+                                                <span
+                                                    class="input-group-text bg-white w-100 justify-content-center text-muted fw-600 px-1"
+                                                    style="font-size:12px">Value</span>
+                                            </div>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op2" name="operator_2"
+                                                style="width:100px" disabled>
+                                                <option value="+">+</option>
+                                                <option value="-">-</option>
+                                                <option value="*">*</option>
+                                                <option value="/">/</option>
+                                            </select>
+                                            <div class="input-group" style="flex:1; min-width:110px">
+                                                <span class="input-group-text bg-light" style="font-size:12px">Offset
+                                                    2</span>
+                                                <input type="number"
+                                                    class="form-control scale-field exp-input text-center px-1"
+                                                    id="offset2" name="offset_after" value="0" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-light border p-2 text-center mb-0" style="font-size:13px;">
+                                        <code id="expressionPreview"
+                                            class="text-primary fs-6 fw-bold">Result = Value</code>
+                                    </div>
+
+                                    <!-- Enable switch -->
+                                    <div class="separator mt-4"></div>
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input mt-0" type="checkbox" id="chEnable" name="enabled" checked
+                                            role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="chEnable">
+                                            Kích hoạt kênh này
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Live value card -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="form-section" id="sectionAnalogLive">
+                                <div class="form-section-header">
+                                    <div class="section-icon"
+                                        style="background:linear-gradient(135deg,#059669,#10b981)">
+                                        <i class="bi bi-lightning-fill"></i>
+                                    </div>
+                                    <div>
+                                        <h6>Giá trị hiện tại</h6>
+                                        <p id="liveChannelLabel">Chọn kênh để xem</p>
+                                    </div>
+                                </div>
+                                <div class="p-4 text-center">
+                                    <!-- Big live number -->
+                                    <div id="liveVal" style="font-size:58px;font-weight:800;color:#267dc1;
+                                            line-height:1;letter-spacing:-2px;transition:all 0.4s">
+                                        --
+                                    </div>
+                                    <div id="liveUnit"
+                                        style="font-size:20px;color:#9ca3af;margin:6px 0;font-weight:500">
+                                        --
+                                    </div>
+                                    <span id="liveStatusBadge" class="badge badge-disabled mb-3">
+                                        Chưa chọn kênh
+                                    </span>
+
+                                    <div class="separator"></div>
+
+                                    <!-- Stats -->
+                                    <div class="row g-2 text-start mb-3">
+                                        <div class="col-6">
+                                            <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">Raw Input</div>
+                                            <div id="rawInputVal" style="font-size:14px;font-weight:600;color:#374151">
+                                                --</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">ADC Count</div>
+                                            <div id="adcCountVal" style="font-size:14px;font-weight:600;color:#374151">
+                                                --</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">Min (24h)</div>
+                                            <div id="minVal" style="font-size:14px;font-weight:600;color:#3b82f6">--
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">Max (24h)</div>
+                                            <div id="maxVal" style="font-size:14px;font-weight:600;color:#ef4444">--
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator"></div>
+
+                                    <!-- Progress -->
+                                    <div class="d-flex justify-content-between mb-1"
+                                        style="font-size:12px;color:#6b7280">
+                                        <span>Tỷ lệ phạm vi</span>
+                                        <span id="pctLabel">0%</span>
+                                    </div>
+                                    <div class="progress" style="height:10px;border-radius:5px">
+                                        <div class="progress-bar" id="liveBar" style="width:0%;background:#267dc1;border-radius:5px;
+                                                transition:width 0.9s ease">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-1"
+                                        style="font-size:11px;color:#9ca3af">
+                                        <span id="euMinLabel">--</span>
+                                        <span id="euMaxLabel">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end row -->
+
+                    <!-- Action buttons -->
+                    <div class="d-flex flex-wrap gap-3 justify-content-end mt-4 pt-2 border-top"
+                        style="border-color:#f1f5f9!important">
+                        <button type="button" class="btn btn-secondary btn-reset">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
+                        </button>
+                    </div>
+                </form>
+
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* ═══════════════════════════════════════════════
+           MOCK DATA – 8 Analog Channels
+           ═══════════════════════════════════════════════ */
+        const SIGNAL_RAW_UNIT = {
+            '4_20mA': 'mA', '0_20mA': 'mA',
+            '0_10V': 'V', '0_5V': 'V', '1_5V': 'V',
+            'thermocouple_K': 'mV', 'thermocouple_J': 'mV',
+            'pt100': 'Ω', 'pt1000': 'Ω'
+        };
+
+        const analogData = {
+            ADC1: { name: 'Temperature_01', value: 26.4, unit: '°C', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '12.3 mA', adcCount: '2048', min24: '22.1', max24: '31.7' },
+            ADC2: { name: 'Pressure_01', value: 3.2, unit: 'bar', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 10, status: 'disabled', sampleRate: 200, rawInput: '9.1 mA', adcCount: '1843', min24: '2.8', max24: '4.1' },
+            ADC3: { name: 'Humidity_01', value: 65.5, unit: '%RH', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 1000, rawInput: '6.55 V', adcCount: '2678', min24: '60.2', max24: '71.3' },
+            ADC4: { name: 'Flow_01', value: 12.8, unit: 'L/s', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 50, status: 'error', sampleRate: 100, rawInput: '8.1 mA', adcCount: '1652', min24: '11.0', max24: '18.5' },
+            ADC5: { name: 'Level_01', value: 78.2, unit: '%', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '7.82 V', adcCount: '3196', min24: '74.0', max24: '82.1' },
+            ADC6: { name: 'Temp_Boiler', value: 89.1, unit: '°C', signal: 'pt100', rawMin: 0, rawMax: 400, euMin: -50, euMax: 200, status: 'good', sampleRate: 500, rawInput: '124.5 Ω', adcCount: '2981', min24: '85.0', max24: '92.3' },
+            ADC7: { name: 'Voltage_Bus', value: 24.1, unit: 'V', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 30, status: 'disabled', sampleRate: 250, rawInput: '8.03 V', adcCount: '3282', min24: '23.8', max24: '24.3' },
+            ADC8: { name: '–', value: null, unit: '–', signal: '', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'pending', sampleRate: 1000, rawInput: '–', adcCount: '–', min24: '–', max24: '–' },
+        };
+
+        /* ── Status config ── */
+        /* ── Status config ── */
+        const STATUS_CFG = {
+            good: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
+            error: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
+            disabled: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
+            pending: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
+        };
+
+        /* ═══════════════════════════════════════════════
+           BUILD TABLE
+           ═══════════════════════════════════════════════ */
+        function buildAnalogTable() {
+            const $tbody = $('#analogChannelBody').empty();
+            Object.entries(analogData).forEach(([ch, d]) => {
+                const s = STATUS_CFG[d.status];
+                const valHtml = d.value !== null
+                    ? `<strong>${d.value}</strong> <small class="text-muted">${d.unit}</small>`
+                    : `<span class="text-muted">–</span>`;
+                const signalLabel = d.signal
+                    ? d.signal.replace('_', '-').replace('thermocouple', 'TC ')
+                    : '–';
+
+                $tbody.append(`
+        <tr data-channel="${ch}">
+            <td>
+                <span class="badge" style="background:#e8f4fd;color:#267dc1;font-size:12px">${ch}</span>
+            </td>
+            <td><strong>${d.name}</strong></td>
+            <td>${valHtml}</td>
+            <td>${d.unit}</td>
+            <td>${signalLabel}</td>
+            <td>
+                <span class="badge ${s.cls}">
+                    <i class="bi ${s.icon} me-1"></i>${s.text}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-icon btn-sm btn-outline-primary btn-analog-edit"
+                        data-channel="${ch}" title="Sửa">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+            </td>
+        </tr>`);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════
+           ACTIVATE / DEACTIVATE EDIT
+           ═══════════════════════════════════════════════ */
+        let liveTimer = null;
+
+        function activateAnalogEdit(ch) {
+            const d = analogData[ch];
+            if (!d) return;
+
+            // Highlight row
+            $('#analogChannelTable tbody tr').removeClass('row-active');
+            $(`#analogChannelTable tbody tr[data-channel="${ch}"]`).addClass('row-active');
+
+            // Highlight sections
+            $('.form-section').removeClass('active-edit');
+            $('#sectionAnalogConfig, #sectionAnalogLive').addClass('active-edit');
+
+            // Show banner
+            $('#analogEditLabel').text(ch + ' — ' + d.name);
+            $('#analogEditBanner').fadeIn(250);
+
+            // Load form fields
+            $('#analog_channel_id').val(ch);
+            $('#sensorName').val(d.name);
+            $('#sensorUnit').val(d.unit);
+            $('#signalType').val(d.signal);
+            $('#sampleRate').val(d.sampleRate);
+            $('#rawMin').val(d.rawMin);
+            $('#rawMax').val(d.rawMax);
+            $('#euMin').val(d.euMin);
+            $('#euMax').val(d.euMax);
+            $('#chEnable').prop('checked', d.status !== 'disabled');
+
+            // Reset scaling
+            $('#scaleType').val('none').trigger('change');
+            $('#scaleDataType').val('float');
+            $('#scaleValue').val('');
+            $('#offset1').val('0');
+            $('#offset2').val('0');
+            $('#op1').val('+');
+            $('#op2').val('+');
+
+            // Update raw unit labels
+            const ru = SIGNAL_RAW_UNIT[d.signal] || '';
+            $('#rawUnit, #rawUnit2').text(ru);
+            $('#euUnit1, #euUnit2').text(d.unit);
+
+            // Update live panel header
+            $('#liveChannelLabel').text(`Đọc live từ ${ch}`);
+
+            // Update static stats
+            $('#rawInputVal').text(d.rawInput);
+            $('#adcCountVal').text(d.adcCount);
+            $('#minVal').text(d.min24 !== '–' ? d.min24 + ' ' + d.unit : '–');
+            $('#maxVal').text(d.max24 !== '–' ? d.max24 + ' ' + d.unit : '–');
+            $('#euMinLabel').text(d.euMin + ' ' + d.unit);
+            $('#euMaxLabel').text(d.euMax + ' ' + d.unit);
+
+            // Live value simulation
+            clearInterval(liveTimer);
+            if (d.value !== null) {
+                const range = d.euMax - d.euMin;
+                const s = STATUS_CFG[d.status];
+                $('#liveStatusBadge').attr('class', 'badge mb-3 ' + s.cls).text(s.text);
+                $('#liveUnit').text(d.unit);
+
+                function updateLive() {
+                    const delta = (Math.random() - 0.5) * range * 0.05;
+                    const val = Math.max(d.euMin, Math.min(d.euMax, d.value + delta)).toFixed(1);
+                    const pct = range > 0 ? Math.min(100, ((val - d.euMin) / range * 100)).toFixed(1) : 0;
+                    $('#liveVal').text(val);
+                    $('#liveBar').css('width', pct + '%');
+                    $('#pctLabel').text(pct + '%');
+                }
+                updateLive();
+                liveTimer = setInterval(updateLive, 2000);
+            } else {
+                $('#liveVal').text('–');
+                $('#liveUnit').text('–');
+                $('#liveBar').css('width', '0%');
+                $('#pctLabel').text('0%');
+                $('#liveStatusBadge').attr('class', 'badge mb-3 badge-disabled').text('Chưa cấu hình');
+            }
+
+            // Smooth scroll to banner
+            const offset = $('#analogEditBanner').offset().top - 80;
+            $('html, body').animate({ scrollTop: offset }, 400, 'swing');
+        }
+
+        function deactivateAnalogEdit() {
+            clearInterval(liveTimer);
+            $('.form-section').removeClass('active-edit');
+            $('#analogEditBanner').fadeOut(200);
+            $('#analogChannelTable tbody tr').removeClass('row-active');
+            $('#analogEditLabel').text('');
+        }
+
+        /* ═══════════════════════════════════════════════
+           DOCUMENT READY
+           ═══════════════════════════════════════════════ */
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+            
+            // Collect params (không hardcode)
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) { // status 0 có thể xảy ra khi chạy local file://
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu dữ liệu thành công!', 'success');
+                        } else {
+                            alert('Đã lưu dữ liệu thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
+        }
+
+        $(document).ready(function () {
+
+            buildAnalogTable();
+
+            /* Edit button click */
+            $(document).on('click', '.btn-analog-edit', function (e) {
+                e.stopPropagation();
+                activateAnalogEdit($(this).data('channel'));
+                showToast('Đang cấu hình: ' + $(this).data('channel'), 'info');
+            });
+
+            /* Row click also triggers edit */
+            $(document).on('click', '#analogChannelTable tbody tr', function () {
+                activateAnalogEdit($(this).data('channel'));
+            });
+
+            /* Cancel edit */
+            $('#analogCancelBtn').on('click', function () {
+                deactivateAnalogEdit();
+                showToast('Đã huỷ chỉnh sửa.', 'warning');
+            });
+
+            /* ===== ADVANCED SCALING LOGIC ===== */
+            function updateExpressionPreview() {
+                const type = $('#scaleType').val();
+                if (type === 'none') {
+                    $('#expressionPreview').text('Result = Value');
+                    return;
+                }
+
+                const off1 = $('#offset1').val() || '0';
+                const op1 = $('#op1').val();
+                const op2 = $('#op2').val();
+                const off2 = $('#offset2').val() || '0';
+                const scaleVal = $('#scaleValue').val();
+
+                let valStr = 'Value';
+                if (type === 'sqrt') valStr = 'sqrt(Value)';
+
+                let expStr = `Result = (${off1} ${op1} ${valStr}) ${op2} ${off2}`;
+
+                if (scaleVal) {
+                    expStr = `Result = ((${off1} ${op1} ${valStr}) ${op2} ${off2}) * ${scaleVal}`;
+                }
+
+                $('#expressionPreview').text(expStr);
+                console.log('[Expression Preview Updated]', expStr);
+            }
+
+            $('#scaleType').on('change', function () {
+                const val = $(this).val();
+                if (val === 'none') {
+                    $('.scale-field').prop('disabled', true);
+                    $('#scaleHint').addClass('d-none');
+                } else {
+                    $('.scale-field').prop('disabled', false);
+                    if (val === 'sqrt') {
+                        $('#scaleHint').removeClass('d-none');
+                    } else {
+                        $('#scaleHint').addClass('d-none');
+                    }
+                }
+                updateExpressionPreview();
+            });
+
+            $('.exp-input, #scaleType').on('input change', updateExpressionPreview);
+
+            // Init tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
+            /* Unit input → update EU labels */
+            $('#sensorUnit').on('input', function () {
+                const unit = $(this).val() || '?';
+                $('#euUnit1, #euUnit2, #liveUnit').text(unit);
+                $('#euMinLabel').text($('#euMin').val() + ' ' + unit);
+                $('#euMaxLabel').text($('#euMax').val() + ' ' + unit);
+            });
+
+            /* Signal type → update raw unit */
+            $('#signalType').on('change', function () {
+                const ru = SIGNAL_RAW_UNIT[$(this).val()] || '';
+                $('#rawUnit, #rawUnit2').text(ru);
+            });
+
+            /* Search / filter table */
+            $('#analogSearch').on('input', function () {
+                const q = $(this).val().toLowerCase();
+                $('#analogChannelTable tbody tr').each(function () {
+                    $(this).toggle($(this).text().toLowerCase().includes(q));
+                });
+            });
+
+            /* Refresh button */
+            $('#refreshAnalog').on('click', function () {
+                buildAnalogTable();
+                showToast('Đã làm mới danh sách kênh.', 'success');
+            });
+
+            /* Form submit */
+            $('#analogForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                
+                // Mở khoá tạm thời các input bị disabled (scale) để FormData có thể lấy value của chúng nếu backend cần (tuỳ chọn)
+                // Tuy nhiên ở đây theo chuẩn web form: field disabled sẽ không được gửi.
+                
+                sendPostRequest('analog.html', 'analogForm', function(success) {
+                    if (success) {
+                        const ch = $('#analog_channel_id').val();
+                        if (ch && analogData[ch]) {
+                            analogData[ch].name = $('#sensorName').val();
+                            analogData[ch].unit = $('#sensorUnit').val();
+                            analogData[ch].signal = $('#signalType').val();
+                            analogData[ch].sampleRate = parseInt($('#sampleRate').val()) || 500;
+                            analogData[ch].rawMin = parseFloat($('#rawMin').val()) || 0;
+                            analogData[ch].rawMax = parseFloat($('#rawMax').val()) || 10;
+                            analogData[ch].euMin = parseFloat($('#euMin').val()) || 0;
+                            analogData[ch].euMax = parseFloat($('#euMax').val()) || 100;
+                            buildAnalogTable();
+                        }
+                        deactivateAnalogEdit();
+                    }
+                });
+            });
+
+            /* Reset */
+            $('.btn-reset').on('click', function () {
+                $('#analogForm')[0].reset();
+                $('#analogForm').removeClass('was-validated');
+                showToast('Đã đặt lại form.', 'warning');
+            });
+
+        });
+    </script>
+</body>
+
+</html>

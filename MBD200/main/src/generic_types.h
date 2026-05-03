@@ -77,7 +77,7 @@
 #define SYS_FS_SPIFLASH_TYPE_STRING          "MPFS"
 #else
 #define SYS_FS_SPIFLASH_VOL                  "/dev/mtda1"
-#define SYS_FS_SPIFLASH_MOUNT_POINT          "/mnt/webpage"
+#define SYS_FS_SPIFLASH_MOUNT_POINT          "/mnt/web"
 #define SYS_FS_SPIFLASH_TYPE                 MPFS2
 #define SYS_FS_SPIFLASH_TYPE_STRING          "MPFS"
 #endif

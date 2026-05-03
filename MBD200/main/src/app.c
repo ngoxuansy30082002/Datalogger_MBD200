@@ -1,116 +1,29 @@
-/*******************************************************************************
-  MPLAB Harmony Application Source File
-
-  Company:
-    Microchip Technology Inc.
-
-  File Name:
-    app.c
-
-  Summary:
-    This file contains the source code for the MPLAB Harmony application.
-
-  Description:
-    This file contains the source code for the MPLAB Harmony application.  It
-    implements the logic of the application's state machine and it may call
-    API routines of other MPLAB Harmony modules in the system, such as drivers,
-    system services, and middleware.  However, it does not call any of the
-    system interfaces (such as the "Initialize" and "Tasks" functions) of any of
-    the modules in the system or make any assumptions about when those functions
-    are called.  That is the responsibility of the configuration-specific system
-    files.
- *******************************************************************************/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
-
 #include "app.h"
+#include "http_net_print.h"
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Global Data Definitions
-// *****************************************************************************
-// *****************************************************************************
+static const char * __TAG__ = "APP";
+static APP_STATES _state = 0;
+static DEVICE_INFO _deviceInfo = {0};
 
-// *****************************************************************************
-/* Application Data
-
-  Summary:
-    Holds application data
-
-  Description:
-    This structure holds the application's data.
-
-  Remarks:
-    This structure should be initialized by the APP_Initialize function.
-
-    Application strings and buffers are be defined outside this structure.
- */
-
-APP_DATA appData;
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Callback Functions
-// *****************************************************************************
-// *****************************************************************************
-
-/* TODO:  Add any necessary callback functions.
- */
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Local Functions
-// *****************************************************************************
-// *****************************************************************************
-
-
-/* TODO:  Add any necessary local functions.
- */
-
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Application Initialization and State Machine Functions
-// *****************************************************************************
-// *****************************************************************************
-
-/*******************************************************************************
-  Function:
-    void APP_Initialize ( void )
-
-  Remarks:
-    See prototype in app.h.
- */
-
-void APP_Initialize(void) {
+void App_Initialize(void) {
     /* Place the App state machine in its initial state. */
-    appData.state = APP_STATE_INIT;
-
-
 
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
 }
 
-/******************************************************************************
-  Function:
-    void APP_Tasks ( void )
-
-  Remarks:
-    See prototype in app.h.
- */
-
-void APP_Tasks(void) {
+void App_Tasks(void) {
+    static const uint8_t numAttemps = 30;
+    static uint8_t attempCount = 0;
+    static IPV4_ADDR dwLastIP[2] = {
+        {-1},
+        {-1}
+    };
 
     /* Check the application's current state. */
-    switch (appData.state) {
-            /* Application's initial state. */
-        case APP_STATE_INIT:
+    switch (_state) {
+        case APP_INIT_MODULE:
         {
             bool appInitialized = true;
             Rtc_Initialize();
@@ -119,42 +32,130 @@ void APP_Tasks(void) {
             BootConfig_Initialize();
             ExtFlash_Initialize();
             Fram_Initialize();
+            HTTP_APP_Initialize();
 
             if (appInitialized) {
-
-                appData.state = APP_STATE_BOOT_CONFIG;
+                LOG_SUCCESS("%s:\t Module Init SUCCESS!", __TAG__);
+                _state = APP_BOOT_CONFIG;
             }
             break;
         }
 
-        case APP_STATE_BOOT_CONFIG:
+        case APP_BOOT_CONFIG:
         {
             ExtFlash_Task();
             if (BootConfig_Task())
-                appData.state = APP_STATE_SERVICE_TASKS;
-            
+                _state = APP_MOUNT_DISK;
+
             break;
         }
 
-        case APP_STATE_SERVICE_TASKS:
+        case APP_MOUNT_DISK:
         {
-            Rtc_Task();
-            SIMMain_Task();
-            SDcard_Task();
-            ExtFlash_Task();
-            Fram_Task();
+            if (SYS_FS_Mount(SYS_FS_SPIFLASH_VOL, SYS_FS_SPIFLASH_MOUNT_POINT, SYS_FS_SPIFLASH_TYPE, 0, NULL) == 0) {
+                LOG_INFO("%s:\t Flash %s File System is mounted", __TAG__, SYS_FS_SPIFLASH_TYPE_STRING);
+                _state = APP_LOAD_DEVICE_INFO;
+            } else {
+                if (++attempCount > numAttemps) {
+                    LOG_ERROR("%s:\t Flash %s File System mount failed", __TAG__, SYS_FS_SPIFLASH_TYPE_STRING);
+                    attempCount = 0;
+                    _state = APP_LOAD_DEVICE_INFO;
+                }
+            }
             break;
         }
 
-            /* TODO: implement your application state machine.*/
-
-
-            /* The default state should never be executed. */
-        default:
+        case APP_LOAD_DEVICE_INFO:
         {
-            /* TODO: Handle error in application's state machine. */
+            //            bool ret = InFlash_LoadDeviceInfo((uint8_t *) & _deviceInfo, sizeof (DEVICE_INFO));
+            //            LOG_DEBUG("%s:\t APP_LOAD_DEVICE_INFO ret=%u", __TAG__, ret);
+            //
+            //            uint32_t crc = Helpers_CRC32Calculate((uint8_t *) & _deviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (_deviceInfo.crc));
+            //            if (crc != _deviceInfo.crc)
+            _state = APP_SAVE_DEVICE_INFO;
+            //            else
+            //                _state = APP_TCPIP_INIT;
+            //            break;
+        }
+
+        case APP_SAVE_DEVICE_INFO:
+        {
+            //            snprintf(_deviceInfo.manufacturer, MANUFACTURER_LEN, "%s", MANUFACTURER);
+            //            snprintf(_deviceInfo.fwVer, FW_VER_LEN, "%s", FIRMWARE_VERSION);
+            //            snprintf(_deviceInfo.hwVer, HW_VER_LEN, "%s", HARDWARE_VERSION);
+            //            snprintf(_deviceInfo.dateTime, DATE_LEN, "%s", DATE_TIME);
+            //            snprintf(_deviceInfo.model, MODEL_LEN, "%s", MODEL);
+            //            snprintf(_deviceInfo.serial, SERIAL_LEN, "%s", SERIAL_NUMBER);
+            //            _deviceInfo.crc = Helpers_CRC32Calculate((uint8_t *) & _deviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (_deviceInfo.crc));
+            //
+            //            bool ret = InFlash_SaveDeviceInfo((uint8_t *) & _deviceInfo, sizeof (DEVICE_INFO));
+            //            LOG_DEBUG("%s:\t APP_SAVE_DEVICE_INFO ret=%u", __TAG__, ret);
+            //            if (++attempCount > numAttemps)
+            _state = APP_TCPIP_INIT;
+            //            else
+            //                _state = APP_LOAD_DEVICE_INFO;
+            //            break;
+        }
+
+        case APP_TCPIP_INIT:
+        {
+            SYS_STATUS tcpipStat = TCPIP_STACK_Status(sysObj.tcpip);
+            if (tcpipStat < 0) { // some error occurred
+                LOG_ERROR("%s:\t TCP/IP stack\t initialization FAILED!", __TAG__);
+                _state = APP_TCPIP_ERROR;
+            }
+
+            if (tcpipStat == SYS_STATUS_READY) {
+                LOG_SUCCESS("%s:\t TCP/IP stack\t Init SUCCESS!", __TAG__);
+                _state = APP_TCPIP_WAIT_INIT;
+            }
             break;
         }
+
+        case APP_TCPIP_WAIT_INIT:
+        {
+            int nNets = TCPIP_STACK_NumberOfNetworksGet();
+            const char *netName, *netBiosName;
+            for (int i = 0; i < nNets; i++) {
+                TCPIP_NET_HANDLE netH = TCPIP_STACK_IndexToNet(i);
+                netName = TCPIP_STACK_NetNameGet(netH);
+                netBiosName = TCPIP_STACK_NetBIOSName(netH);
+
+                LOG_DEBUG("%s:\t TCP/IP stack\t Interface %s on host %s - NBNS disabled", __TAG__, netName, netBiosName);
+            }
+
+            HTTP_APP_Initialize();
+            _state = APP_TCPIP_TRANSACT;
+
+            break;
+        }
+
+        case APP_TCPIP_TRANSACT:
+        {
+            int nNets = TCPIP_STACK_NumberOfNetworksGet();
+            IPV4_ADDR ipAddr;
+
+            for (int i = 0; i < nNets; i++) {
+                TCPIP_NET_HANDLE netH = TCPIP_STACK_IndexToNet(i);
+                ipAddr.Val = TCPIP_STACK_NetAddress(netH);
+                if (dwLastIP[i].Val != ipAddr.Val) {
+                    dwLastIP[i].Val = ipAddr.Val;
+                    LOG_INFO("%s:\t TCP/IP stack \t %s IP Address: %d.%d.%d.%d "
+                            , __TAG__, TCPIP_STACK_NetNameGet(netH), ipAddr.v[0], ipAddr.v[1], ipAddr.v[2], ipAddr.v[3]);
+                }
+            }
+            break;
+        }
+
+        default: break;
+    }
+
+    if (_state > APP_BOOT_CONFIG) {
+        Rtc_Task();
+        SIMMain_Task();
+        SDcard_Task();
+        ExtFlash_Task();
+        Fram_Task();
     }
 }
 
