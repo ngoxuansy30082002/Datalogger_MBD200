@@ -198,16 +198,15 @@
                                             <label class="form-label" for="signalType">
                                                 Loại tín hiệu <span class="text-danger">*</span>
                                             </label>
-                                            <select class="form-select" id="signalType" name="signal_type" required>
-                                                <option value="">-- Chọn loại --</option>
-                                                <option value="4_20mA">4-20 mA</option>
-                                                <option value="0_10V">0-10 V</option>
+                                            <select class="form-select" id="signalType" name="signal_type" disabled>
+                                                <option value="0">4-20 mA</option>
+                                                <option value="1">0-10 V</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="sampleRate">Chu kỳ lấy mẫu (ms)</label>
-                                            <input type="number" class="form-control" id="sampleRate" name="sample_rate" value="500"
-                                                min="10" max="60000">
+                                            <input type="number" class="form-control" id="sampleRate" name="sample_rate"
+                                                value="500" min="10" max="60000">
                                             <div class="form-text">Tối thiểu 10ms</div>
                                         </div>
                                     </div>
@@ -224,18 +223,16 @@
                                             <div class="input-group">
                                                 <span class="input-group-text"><i
                                                         class="bi bi-arrow-bar-down"></i></span>
-                                                <input type="number" class="form-control" id="rawMin" name="raw_min" value="4"
-                                                    step="0.01">
-                                                <span class="input-group-text" id="rawUnit">mA</span>
+                                                <input type="number" class="form-control" id="rawMin" name="raw_min"
+                                                    value="4" step="0.01">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Đầu vào Max (Raw)</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
-                                                <input type="number" class="form-control" id="rawMax" name="raw_max" value="20"
-                                                    step="0.01">
-                                                <span class="input-group-text" id="rawUnit2">mA</span>
+                                                <input type="number" class="form-control" id="rawMax" name="raw_max"
+                                                    value="20" step="0.01">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -243,16 +240,16 @@
                                             <div class="input-group">
                                                 <span class="input-group-text"><i
                                                         class="bi bi-arrow-bar-down"></i></span>
-                                                <input type="number" class="form-control" id="euMin" name="eu_min" value="0">
-                                                <span class="input-group-text" id="euUnit1">°C</span>
+                                                <input type="number" class="form-control" id="euMin" name="eu_min"
+                                                    value="0">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Giá trị đầu ra Max (EU)</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
-                                                <input type="number" class="form-control" id="euMax" name="eu_max" value="100">
-                                                <span class="input-group-text" id="euUnit2">°C</span>
+                                                <input type="number" class="form-control" id="euMax" name="eu_max"
+                                                    value="100">
                                             </div>
                                         </div>
                                     </div>
@@ -268,9 +265,9 @@
                                             <label class="form-label" for="scaleType" data-bs-toggle="tooltip"
                                                 title="Loại hình tính toán scaling">Scale Type</label>
                                             <select class="form-select" id="scaleType" name="scale_type">
-                                                <option value="none" selected>None</option>
-                                                <option value="linear">Linear</option>
-                                                <option value="sqrt">Square Root</option>
+                                                <option value="0" selected>None</option>
+                                                <option value="1">Linear</option>
+                                                <option value="2">Square Root</option>
                                             </select>
                                             <div class="form-text text-primary d-none" id="scaleHint"
                                                 style="font-size:11px; margin-top:6px;"><i
@@ -280,16 +277,18 @@
                                         <div class="col-md-4">
                                             <label class="form-label" for="scaleDataType" data-bs-toggle="tooltip"
                                                 title="Kiểu dữ liệu sau khi scale">Scale Data Type</label>
-                                            <select class="form-select scale-field" id="scaleDataType" name="scale_data_type" disabled>
-                                                <option value="uint">Unsigned Integer</option>
-                                                <option value="int">Integer</option>
-                                                <option value="float" selected>Float</option>
+                                            <select class="form-select scale-field" id="scaleDataType"
+                                                name="scale_data_type" disabled>
+                                                <option value="0">Unsigned Integer</option>
+                                                <option value="1">Signed Integer</option>
+                                                <option value="2" selected>Float</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label" for="scaleValue">Scale Value</label>
-                                            <input type="number" class="form-control scale-field exp-input"
-                                                id="scaleValue" name="scale_value" placeholder="Nhập hệ số scale" disabled>
+                                            <input type="number" step="0.001" class="form-control scale-field exp-input"
+                                                id="scaleValue" name="scale_value" placeholder="Nhập hệ số scale"
+                                                disabled>
                                         </div>
                                     </div>
 
@@ -303,24 +302,24 @@
                                                     class="form-control scale-field exp-input text-center px-1"
                                                     id="offset1" name="offset_before" value="0" disabled>
                                             </div>
-                                            <select class="form-select scale-field exp-input text-center px-1" id="op1" name="operator_1"
-                                                style="width:100px" disabled>
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op1"
+                                                name="operator_1" style="width:100px" disabled>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="width:70px">
                                                 <span
                                                     class="input-group-text bg-white w-100 justify-content-center text-muted fw-600 px-1"
                                                     style="font-size:12px">Value</span>
                                             </div>
-                                            <select class="form-select scale-field exp-input text-center px-1" id="op2" name="operator_2"
-                                                style="width:100px" disabled>
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                            <select class="form-select scale-field exp-input text-center px-1" id="op2"
+                                                name="operator_2" style="width:100px" disabled>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="flex:1; min-width:110px">
                                                 <span class="input-group-text bg-light" style="font-size:12px">Offset
@@ -340,8 +339,8 @@
                                     <!-- Enable switch -->
                                     <div class="separator mt-4"></div>
                                     <div class="form-check form-switch d-flex align-items-center">
-                                        <input class="form-check-input mt-0" type="checkbox" id="chEnable" name="enabled" checked
-                                            role="switch">
+                                        <input class="form-check-input mt-0" type="checkbox" id="chEnable"
+                                            name="enabled" checked role="switch">
                                         <label class="form-check-label fw-500 ms-2" for="chEnable">
                                             Kích hoạt kênh này
                                         </label>
@@ -459,21 +458,37 @@
            MOCK DATA – 8 Analog Channels
            ═══════════════════════════════════════════════ */
         const SIGNAL_RAW_UNIT = {
-            '4_20mA': 'mA', '0_20mA': 'mA',
-            '0_10V': 'V', '0_5V': 'V', '1_5V': 'V',
-            'thermocouple_K': 'mV', 'thermocouple_J': 'mV',
-            'pt100': 'Ω', 'pt1000': 'Ω'
+            0: 'mA',
+            1: 'V',
+        };
+
+        const SIGNAL_RAW_TYPE = {
+            0: '4-10mA',
+            1: '0-10V',
+        };
+
+        const OPERATION_TYPE = {
+            0: '+',
+            1: '-',
+            2: '*',
+            3: '/',
+        };
+
+        const SCALE_DATA_TYPE = {
+            0: 'uint',
+            1: 'int',
+            2: 'float',
         };
 
         const analogData = {
-            ADC1: { name: 'Temperature_01', value: 26.4, unit: '°C', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '12.3 mA', adcCount: '2048', min24: '22.1', max24: '31.7' },
-            ADC2: { name: 'Pressure_01', value: 3.2, unit: 'bar', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 10, status: 'disabled', sampleRate: 200, rawInput: '9.1 mA', adcCount: '1843', min24: '2.8', max24: '4.1' },
-            ADC3: { name: 'Humidity_01', value: 65.5, unit: '%RH', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 1000, rawInput: '6.55 V', adcCount: '2678', min24: '60.2', max24: '71.3' },
-            ADC4: { name: 'Flow_01', value: 12.8, unit: 'L/s', signal: '4_20mA', rawMin: 4, rawMax: 20, euMin: 0, euMax: 50, status: 'error', sampleRate: 100, rawInput: '8.1 mA', adcCount: '1652', min24: '11.0', max24: '18.5' },
-            ADC5: { name: 'Level_01', value: 78.2, unit: '%', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '7.82 V', adcCount: '3196', min24: '74.0', max24: '82.1' },
-            ADC6: { name: 'Temp_Boiler', value: 89.1, unit: '°C', signal: 'pt100', rawMin: 0, rawMax: 400, euMin: -50, euMax: 200, status: 'good', sampleRate: 500, rawInput: '124.5 Ω', adcCount: '2981', min24: '85.0', max24: '92.3' },
-            ADC7: { name: 'Voltage_Bus', value: 24.1, unit: 'V', signal: '0_10V', rawMin: 0, rawMax: 10, euMin: 0, euMax: 30, status: 'disabled', sampleRate: 250, rawInput: '8.03 V', adcCount: '3282', min24: '23.8', max24: '24.3' },
-            ADC8: { name: '–', value: null, unit: '–', signal: '', rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'pending', sampleRate: 1000, rawInput: '–', adcCount: '–', min24: '–', max24: '–' },
+            1: { name: 'Temperature_01', value: 26.4, unit: '°C', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '12.3 mA', adcCount: '2048', min24: '22.1', max24: '31.7', scaleType: 1, scaleDataType: 2, scaleValue: 1.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            2: { name: 'Pressure_01', value: 3.2, unit: 'bar', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 10, status: 'disabled', sampleRate: 200, rawInput: '9.1 mA', adcCount: '1843', min24: '2.8', max24: '4.1', scaleType: 1, scaleDataType: 2, scaleValue: 1.6, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            3: { name: 'Humidity_01', value: 65.5, unit: '%RH', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 1000, rawInput: '6.55 V', adcCount: '2678', min24: '60.2', max24: '71.3', scaleType: 1, scaleDataType: 2, scaleValue: 1.7, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            4: { name: 'Flow_01', value: 12.8, unit: 'L/s', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 50, status: 'error', sampleRate: 100, rawInput: '8.1 mA', adcCount: '1652', min24: '11.0', max24: '18.5', scaleType: 1, scaleDataType: 2, scaleValue: 1.8, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            5: { name: 'Level_01', value: 78.2, unit: '%', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '7.82 V', adcCount: '3196', min24: '74.0', max24: '82.1', scaleType: 1, scaleDataType: 2, scaleValue: 1.9, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            6: { name: 'Temp_Boiler', value: 89.1, unit: '°C', signal: 0, rawMin: 0, rawMax: 400, euMin: -50, euMax: 200, status: 'good', sampleRate: 500, rawInput: '124.5 Ω', adcCount: '2981', min24: '85.0', max24: '92.3', scaleType: 1, scaleDataType: 2, scaleValue: 2.0, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            7: { name: 'Voltage_Bus', value: 24.1, unit: 'V', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 30, status: 'disabled', sampleRate: 250, rawInput: '8.03 V', adcCount: '3282', min24: '23.8', max24: '24.3', scaleType: 1, scaleDataType: 2, scaleValue: 2.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
+            8: { name: '–', value: null, unit: '–', signal: 0, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'disabled', sampleRate: 1000, rawInput: '–', adcCount: '–', min24: '–', max24: '–', scaleType: 1, scaleDataType: 2, scaleValue: 2.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
         };
 
         /* ── Status config ── */
@@ -495,31 +510,31 @@
                 const valHtml = d.value !== null
                     ? `<strong>${d.value}</strong> <small class="text-muted">${d.unit}</small>`
                     : `<span class="text-muted">–</span>`;
-                const signalLabel = d.signal
-                    ? d.signal.replace('_', '-').replace('thermocouple', 'TC ')
+                const signalLabel = (d.signal !== undefined && SIGNAL_RAW_TYPE[d.signal])
+                    ? SIGNAL_RAW_TYPE[d.signal]
                     : '–';
 
                 $tbody.append(`
-        <tr data-channel="${ch}">
-            <td>
-                <span class="badge" style="background:#e8f4fd;color:#267dc1;font-size:12px">${ch}</span>
-            </td>
-            <td><strong>${d.name}</strong></td>
-            <td>${valHtml}</td>
-            <td>${d.unit}</td>
-            <td>${signalLabel}</td>
-            <td>
-                <span class="badge ${s.cls}">
-                    <i class="bi ${s.icon} me-1"></i>${s.text}
-                </span>
-            </td>
-            <td>
-                <button class="btn btn-icon btn-sm btn-outline-primary btn-analog-edit"
-                        data-channel="${ch}" title="Sửa">
-                    <i class="bi bi-pencil-fill"></i>
-                </button>
-            </td>
-        </tr>`);
+                <tr data-channel="${ch}">
+                    <td>
+                        <span class="badge" style="background:#e8f4fd;color:#267dc1;font-size:12px">AI - ${ch}</span>
+                    </td>
+                    <td><strong>${d.name}</strong></td>
+                    <td>${valHtml}</td>
+                    <td>${d.unit}</td>
+                    <td>${signalLabel}</td>
+                    <td>
+                        <span class="badge ${s.cls}">
+                            <i class="bi ${s.icon} me-1"></i>${s.text}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-icon btn-sm btn-outline-primary btn-analog-edit"
+                                data-channel="${ch}" title="Sửa">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                </tr>`);
             });
         }
 
@@ -557,13 +572,13 @@
             $('#chEnable').prop('checked', d.status !== 'disabled');
 
             // Reset scaling
-            $('#scaleType').val('none').trigger('change');
-            $('#scaleDataType').val('float');
-            $('#scaleValue').val('');
-            $('#offset1').val('0');
-            $('#offset2').val('0');
-            $('#op1').val('+');
-            $('#op2').val('+');
+            $('#scaleType').val(d.scaleType).trigger('change');
+            $('#scaleDataType').val(d.scaleDataType);
+            $('#scaleValue').val(d.scaleValue);
+            $('#offset1').val(d.offsetBefore);
+            $('#offset2').val(d.offsetAfter);
+            $('#op1').val(d.operator1);
+            $('#op2').val(d.operator2);
 
             // Update raw unit labels
             const ru = SIGNAL_RAW_UNIT[d.signal] || '';
@@ -627,7 +642,7 @@
         function sendPostRequest(url, formId, callback) {
             var form = document.getElementById(formId);
             if (!form) return;
-            
+
             // Collect params (không hardcode)
             var formData = new FormData(form);
             var params = new URLSearchParams();
@@ -639,7 +654,7 @@
             var xhr = new XMLHttpRequest();
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200 || xhr.status === 0) { // status 0 có thể xảy ra khi chạy local file://
                         if (typeof showToast === 'function') {
@@ -692,18 +707,18 @@
                 }
 
                 const off1 = $('#offset1').val() || '0';
-                const op1 = $('#op1').val();
-                const op2 = $('#op2').val();
+                const op1 = OPERATION_TYPE[$('#op1').val()];
+                const op2 = OPERATION_TYPE[$('#op2').val()];
                 const off2 = $('#offset2').val() || '0';
                 const scaleVal = $('#scaleValue').val();
+                const scaleDataType = SCALE_DATA_TYPE[$('#scaleDataType').val()];
 
                 let valStr = 'Value';
                 if (type === 'sqrt') valStr = 'sqrt(Value)';
 
-                let expStr = `Result = (${off1} ${op1} ${valStr}) ${op2} ${off2}`;
-
+                let expStr = `Result = (${scaleDataType})((${off1} ${op1} ${valStr}) ${op2} ${off2})`;
                 if (scaleVal) {
-                    expStr = `Result = ((${off1} ${op1} ${valStr}) ${op2} ${off2}) * ${scaleVal}`;
+                    expStr = `Result = (${scaleDataType})(((${off1} ${op1} ${valStr} * ${scaleVal}) ${op2} ${off2}))`;
                 }
 
                 $('#expressionPreview').text(expStr);
@@ -726,7 +741,7 @@
                 updateExpressionPreview();
             });
 
-            $('.exp-input, #scaleType').on('input change', updateExpressionPreview);
+            $('.exp-input, #scaleType, #scaleDataType').on('input change', updateExpressionPreview);
 
             // Init tooltips
             $('[data-bs-toggle="tooltip"]').tooltip();
@@ -763,11 +778,11 @@
             $('#analogForm').on('submit', function (e) {
                 e.preventDefault();
                 if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
-                
+
                 // Mở khoá tạm thời các input bị disabled (scale) để FormData có thể lấy value của chúng nếu backend cần (tuỳ chọn)
                 // Tuy nhiên ở đây theo chuẩn web form: field disabled sẽ không được gửi.
-                
-                sendPostRequest('analog.html', 'analogForm', function(success) {
+
+                sendPostRequest('analog.html', 'analogForm', function (success) {
                     if (success) {
                         const ch = $('#analog_channel_id').val();
                         if (ch && analogData[ch]) {

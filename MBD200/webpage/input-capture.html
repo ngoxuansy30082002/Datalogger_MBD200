@@ -211,18 +211,18 @@
                                         <div class="col-4">
                                             <label class="form-label" for="scaleType">Scale Type</label>
                                             <select class="form-select" id="scaleType" name="scale_type">
-                                                <option value="none">None</option>
-                                                <option value="linear">Linear</option>
-                                                <option value="sqrt">Square Root</option>
+                                                <option value="0">None</option>
+                                                <option value="1">Linear</option>
+                                                <option value="2">Square Root</option>
                                             </select>
                                         </div>
                                         <div class="col-4">
                                             <label class="form-label" for="scaleDataType">Scale Data Type</label>
                                             <select class="form-select scale-field" id="scaleDataType"
                                                 name="scale_data_type" disabled>
-                                                <option value="uint">Unsigned Int</option>
-                                                <option value="int">Integer</option>
-                                                <option value="float" selected>Float</option>
+                                                <option value="0">Unsigned Integer</option>
+                                                <option value="1">Signed Integer</option>
+                                                <option value="2" selected>Float</option>
                                             </select>
                                         </div>
                                         <div class="col-4">
@@ -244,10 +244,10 @@
                                             </div>
                                             <select class="form-select scale-field exp-input text-center px-1" id="op1"
                                                 name="operator_1" disabled style="width:100px">
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="width:50px">
                                                 <span
@@ -256,10 +256,10 @@
                                             </div>
                                             <select class="form-select scale-field exp-input text-center px-1" id="op2"
                                                 name="operator_2" disabled style="width:100px">
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="flex:1; min-width:90px">
                                                 <span class="input-group-text bg-light px-2"
@@ -417,14 +417,34 @@
             xhr.send(encodedParams);
         }
 
+        const OPERATION_TYPE = {
+            0: '+',
+            1: '-',
+            2: '*',
+            3: '/',
+        };
+
+        const SCALE_DATA_TYPE = {
+            0: 'uint',
+            1: 'int',
+            2: 'float',
+        };
+
+        const INPUT_CAPTURE_CHANNEL_NAME = {
+            0: 'DI 1 - Pulse rate',
+            1: 'DI 1 - Counter',
+            2: 'DI 2 - Pulse rate',
+            3: 'DI 2 - Counter',
+        };
+
         /* ═══════════════════════════════════════════════
            MOCK DATA – 8 Digital IO / Counter
            ═══════════════════════════════════════════════ */
         const diData = {
-            "DI 1 - Pulse rate": { name: 'FlowMeter_Outlet', value: 123, state: false, counter: 84310, ppu: 100, unit: 'm3/h', status: 'good', freq: 0.0 },
-            "DI 1 - Counter": { name: 'FlowMeter_Inlet', value: 124850, state: true, counter: 124850, ppu: 100, unit: 'm3', status: 'good', freq: 45.3 },
-            "DI 2 - Pulse rate": { name: 'FlowMeter_Drain', value: 12345, state: false, counter: 12345, ppu: 100, unit: 'm3/h', status: 'disabled', freq: 0.0 },
-            "DI 2 - Counter": { name: 'FlowMeter_Recirculation', value: 56789, state: true, counter: 56789, ppu: 100, unit: 'm3', status: 'disabled', freq: 32.1 },
+            0: { name: 'FlowMeter_Outlet', value: 123, state: false, counter: 84310, ppu: 100, unit: 'm3/h', status: 'good', freq: 0.0, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 0, operator2: 1, offsetAfter: 0 },
+            1: { name: 'FlowMeter_Inlet', value: 124850, state: true, counter: 124850, ppu: 100, unit: 'm3', status: 'good', freq: 45.3, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 1, operator2: 0, offsetAfter: 0 },
+            2: { name: 'FlowMeter_Drain', value: 12345, state: false, counter: 12345, ppu: 100, unit: 'm3/h', status: 'disabled', freq: 0.0, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 2, operator2: 3, offsetAfter: 0 },
+            3: { name: 'FlowMeter_Recirculation', value: 56789, state: true, counter: 56789, ppu: 100, unit: 'm3', status: 'disabled', freq: 32.1, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 3, operator2: 2, offsetAfter: 0 },
         };
 
         /* ═══════════════════════════════════════════════
@@ -445,7 +465,7 @@
 
                 $tbody.append(`
                 <tr data-channel="${ch}">
-                    <td><span class="badge" style="background:#f3e8fd;color:#7c3aed;font-size:12px">${ch}</span></td>
+                    <td><span class="badge" style="background:#f3e8fd;color:#7c3aed;font-size:12px">${INPUT_CAPTURE_CHANNEL_NAME[ch]}</span></td>
                     <td><strong>${d.name}</strong></td>
                      <td><strong>${d.value.toFixed(2)}</strong> <small class="text-muted">${d.unit}</small></td>
                     <td>${d.unit}</td>
@@ -599,17 +619,18 @@
                 }
 
                 const off1 = $('#offset1').val() || '0';
-                const op1 = $('#op1').val();
-                const op2 = $('#op2').val();
+                const op1 = OPERATION_TYPE[$('#op1').val()];
+                const op2 = OPERATION_TYPE[$('#op2').val()];
                 const off2 = $('#offset2').val() || '0';
                 const scaleVal = $('#scaleValue').val();
+                const scaleDataType = SCALE_DATA_TYPE[$('#scaleDataType').val()];
 
                 let valStr = 'Value';
                 if (type === 'sqrt') valStr = 'sqrt(Value)';
 
-                let expStr = `Result = (${off1} ${op1} ${valStr}) ${op2} ${off2}`;
+                let expStr = `Result = (${scaleDataType})((${off1} ${op1} ${valStr}) ${op2} ${off2})`;
                 if (scaleVal) {
-                    expStr = `Result = ((${off1} ${op1} ${valStr}) ${op2} ${off2}) * ${scaleVal}`;
+                    expStr = `Result = (${scaleDataType})(((${off1} ${op1} ${valStr} * ${scaleVal}) ${op2} ${off2}))`;
                 }
 
                 $('#expressionPreview').text(expStr);
@@ -625,7 +646,7 @@
                 updateExpressionPreview();
             });
 
-            $('.exp-input, #scaleType, #scaleValue').on('input change', updateExpressionPreview);
+            $('.exp-input, #scaleType, #scaleValue, #scaleDataType').on('input change', updateExpressionPreview);
 
             /* Submit Form */
             $('#inputCaptureForm').on('submit', function (e) {

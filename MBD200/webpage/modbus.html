@@ -184,7 +184,7 @@
                                             <input type="text" class="form-control" id="deviceUnit" name="device_unit"
                                                 placeholder="Ví dụ: bar, °C">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" id="rtuSlaveIdGroup">
                                             <label class="form-label" for="slaveId">Slave ID <span
                                                     class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="slaveId" name="slave_id"
@@ -230,10 +230,10 @@
                                             <label class="form-label" for="functionCode">Function Code <span
                                                     class="text-danger">*</span></label>
                                             <select class="form-select" id="functionCode" name="function_code" required>
-                                                <option value="01">FC01 - Read Coils</option>
-                                                <option value="02">FC02 - Read Discrete Inputs</option>
-                                                <option value="03" selected>FC03 - Read Holding Registers</option>
-                                                <option value="04">FC04 - Read Input Registers</option>
+                                                <option value="1">FC01 - Read Coils</option>
+                                                <option value="2">FC02 - Read Discrete Inputs</option>
+                                                <option value="3" selected>FC03 - Read Holding Registers</option>
+                                                <option value="4">FC04 - Read Input Registers</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6">
@@ -248,27 +248,25 @@
                                                     <label class="form-label" for="numRegisters">Quantity <span
                                                             class="text-danger">*</span></label>
                                                     <input type="number" class="form-control" id="numRegisters"
-                                                        name="register_length" value="1" min="1" max="125" required>
+                                                        name="quantity" value="1" min="1" max="125" required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="dataType">Kiểu dữ liệu</label>
                                             <select class="form-select" id="dataType" name="data_type" required>
-                                                <option value="INT16" selected>INT16 (2 bytes)</option>
-                                                <option value="UINT16">UINT16</option>
-                                                <option value="INT32">INT32 (4 bytes)</option>
-                                                <option value="UINT32">UINT32</option>
-                                                <option value="FLOAT32">FLOAT32</option>
+                                                <option value="0" selected>Unsigned Integer</option>
+                                                <option value="1">Signed Integer</option>
+                                                <option value="2">Float</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="byteOrder">Byte Order</label>
                                             <select class="form-select" id="byteOrder" name="byte_order">
-                                                <option value="AB_CD" selected>Big-Endian (ABCD)</option>
-                                                <option value="CD_AB">Little-Endian (CDAB)</option>
-                                                <option value="BA_DC">Big-Endian Swapped</option>
-                                                <option value="DC_BA">Little-Endian Swapped</option>
+                                                <option value="0" selected>Big-Endian (ABCD)</option>
+                                                <option value="1">Little-Endian (CDAB)</option>
+                                                <option value="2">Big-Endian Swapped (BADC)</option>
+                                                <option value="3">Little-Endian Swapped (DCBA)</option>
                                             </select>
                                         </div>
 
@@ -298,17 +296,47 @@
                                 <div class="form-section-body">
                                     <!-- Output Range -->
                                     <h6 class="fw-600 mb-3" style="font-size:13px;color:#374151"><i
-                                            class="bi bi-arrows-expand me-2 text-primary"></i>Output Range</h6>
-                                    <div class="row g-3 mb-4">
+                                            class="bi bi-arrows-expand me-2 text-primary"></i>Scaling / Quy đổi giá trị
+                                    </h6>
+                                    <div class="form-check form-switch d-flex align-items-center mt-4">
+                                        <input class="form-check-input mt-0" type="checkbox" id="enableScale"
+                                            name="scale_enable" checked role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="enableScale">Quy đổi </label>
+                                    </div>
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Đầu vào Min (Raw)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-arrow-bar-down"></i></span>
+                                                <input type="number" class="form-control" id="rawMin" name="raw_min"
+                                                    value="4" step="0.01">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Đầu vào Max (Raw)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
+                                                <input type="number" class="form-control" id="rawMax" name="raw_max"
+                                                    value="20" step="0.01">
+                                            </div>
+                                        </div>
                                         <div class="col-6">
                                             <label class="form-label">Output Min</label>
-                                            <input type="number" class="form-control" id="outMin" name="output_min"
-                                                value="0">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-arrow-bar-down"></i></span>
+                                                <input type="number" class="form-control" id="outMin" name="output_min"
+                                                    value="0">
+                                            </div>
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label">Output Max</label>
-                                            <input type="number" class="form-control" id="outMax" name="output_max"
-                                                value="100">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-arrow-bar-up"></i></span>
+                                                <input type="number" class="form-control" id="outMax" name="output_max"
+                                                    value="100">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -320,23 +348,23 @@
                                         <div class="col-12">
                                             <label class="form-label" for="scaleType">Scale Type</label>
                                             <select class="form-select" id="scaleType" name="scale_type">
-                                                <option value="none">None</option>
-                                                <option value="linear">Linear</option>
-                                                <option value="sqrt">Square Root</option>
+                                                <option value="0">None</option>
+                                                <option value="1">Linear</option>
+                                                <option value="2">Square Root</option>
                                             </select>
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label" for="scaleDataType">Scale Data Type</label>
                                             <select class="form-select scale-field" id="scaleDataType"
                                                 name="scale_data_type" disabled>
-                                                <option value="uint">Unsigned Int</option>
-                                                <option value="int">Integer</option>
-                                                <option value="float" selected>Float</option>
+                                                <option value="0">Unsigned Integer</option>
+                                                <option value="1">Signed Integer</option>
+                                                <option value="2" selected>Float</option>
                                             </select>
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label" for="scaleValue">Scale Value</label>
-                                            <input type="number" class="form-control scale-field exp-input"
+                                            <input type="number" step="0.001" class="form-control scale-field exp-input"
                                                 id="scaleValue" name="scale_value" disabled>
                                         </div>
                                     </div>
@@ -353,10 +381,10 @@
                                             </div>
                                             <select class="form-select scale-field exp-input text-center px-1" id="op1"
                                                 name="operator_1" disabled style="width:100px">
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="width:50px">
                                                 <span
@@ -365,10 +393,10 @@
                                             </div>
                                             <select class="form-select scale-field exp-input text-center px-1" id="op2"
                                                 name="operator_2" disabled style="width:100px">
-                                                <option value="+">+</option>
-                                                <option value="-">-</option>
-                                                <option value="*">*</option>
-                                                <option value="/">/</option>
+                                                <option value="0">+</option>
+                                                <option value="1">-</option>
+                                                <option value="2">*</option>
+                                                <option value="3">/</option>
                                             </select>
                                             <div class="input-group" style="flex:1; min-width:90px">
                                                 <span class="input-group-text bg-light px-2"
@@ -432,7 +460,7 @@
                             <input type="text" class="form-control" id="addDeviceUnit" name="device_unit"
                                 placeholder="Ví dụ: bar, °C">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3" id="addRtuSlaveIdGroup">
                             <label class="form-label" for="addSlaveId">Slave ID <span
                                     class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="addSlaveId" name="slave_id" placeholder="1"
@@ -442,15 +470,27 @@
                             <label class="form-label">Loại Modbus <span class="text-danger">*</span></label>
                             <div class="d-flex gap-3 mt-1">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="modbus_mode" id="addModeRTU"
+                                    <input class="form-check-input" type="radio" name="add_modbus_mode" id="addModeRTU"
                                         value="RTU" checked>
                                     <label class="form-check-label" for="addModeRTU">Modbus RTU</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="modbus_mode" id="addModeTCP"
+                                    <input class="form-check-input" type="radio" name="add_modbus_mode" id="addModeTCP"
                                         value="TCP">
                                     <label class="form-check-label" for="addModeTCP">Modbus TCP</label>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 d-none mb-3" id="addTcpIpGroup">
+                            <div class="col-md-8">
+                                <label class="form-label" for="addTcpIp">IP Address</label>
+                                <input type="text" class="form-control" id="addTcpIp" name="tcp_ip"
+                                    placeholder="192.168.1.100">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="addTcpPort">Port</label>
+                                <input type="number" class="form-control" id="addTcpPort" name="tcp_port" value="502"
+                                    min="1" max="65535">
                             </div>
                         </div>
                     </div>
@@ -507,14 +547,63 @@
             xhr.send(encodedParams);
         }
 
+        const OPERATION_TYPE = {
+            0: '+',
+            1: '-',
+            2: '*',
+            3: '/',
+        };
+
+        const SCALE_DATA_TYPE = {
+            0: 'uint',
+            1: 'int',
+            2: 'float',
+        };
+
         $(document).ready(function () {
 
             /* ===== MOCK DATA ===== */
             const modbusDevices = [
-                { id: 1, name: "Temp Sensor 1", value: 11.2, unit: "°C", slaveId: 1, connection: "RTU", registers: "40001-40002", status: "good" },
-                { id: 2, name: "Pressure", value: 11.3, unit: "bar", slaveId: 2, connection: "TCP", registers: "40010", status: "error" },
-                { id: 3, name: "Flow", value: 11.4, unit: "L/min", slaveId: 3, connection: "RTU", registers: "40100", status: "disabled" },
-                { id: 4, name: "Level", value: 11.5, unit: "%", slaveId: 4, connection: "TCP", registers: "40200", status: "pending" }
+                {
+                    id: 1, name: "Temp Sensor 1", value: 11.2, unit: "°C",
+                    modbusType: "RTU", slaveId: 1, tcpIp: "", tcpPort: 502,
+                    status: "good",
+                    functionCode: "3", registerAddress: "40001", registerLength: 1,
+                    dataType: 2, byteOrder: 0, enableDevice: true,
+                    scaleEnable: true, rawMin: 0, rawMax: 100, outputMin: -20, outputMax: 100,
+                    scaleType: 0, scaleDataType: 0, scaleValue: 1.5,
+                    offsetBefore: 0, operator1: 0, operator2: 0, offsetAfter: 10
+                },
+                {
+                    id: 2, name: "Pressure", value: 11.3, unit: "bar",
+                    modbusType: "TCP", slaveId: 1, tcpIp: "192.168.1.100", tcpPort: 502,
+                    status: "error",
+                    functionCode: "4", registerAddress: "30010", registerLength: 2,
+                    dataType: 2, byteOrder: 1, enableDevice: true,
+                    scaleEnable: false, rawMin: 4, rawMax: 20, outputMin: 0, outputMax: 10,
+                    scaleType: 1, scaleDataType: 2, scaleValue: 12,
+                    offsetBefore: 0, operator1: 0, operator2: 0, offsetAfter: 0
+                },
+                {
+                    id: 3, name: "Flow", value: 11.4, unit: "L/min",
+                    modbusType: "RTU", slaveId: 3, tcpIp: "", tcpPort: 502,
+                    status: "disabled",
+                    functionCode: "3", registerAddress: "40100", registerLength: 2,
+                    dataType: 2, byteOrder: 0, enableDevice: false,
+                    scaleEnable: true, rawMin: 0, rawMax: 4000, outputMin: 0, outputMax: 100,
+                    scaleType: 2, scaleDataType: 2, scaleValue: 1,
+                    offsetBefore: -400, operator1: 0, operator2: 2, offsetAfter: 0
+                },
+                {
+                    id: 4, name: "Level", value: 11.5, unit: "%",
+                    modbusType: "TCP", slaveId: 1, tcpIp: "192.168.1.101", tcpPort: 502,
+                    status: "pending",
+                    functionCode: "4", registerAddress: "30200", registerLength: 1,
+                    dataType: 0, byteOrder: 0, enableDevice: true,
+                    scaleEnable: true, rawMin: 0, rawMax: 100, outputMin: 0, outputMax: 100,
+                    scaleType: 1, scaleDataType: 0, scaleValue: 0.1,
+                    offsetBefore: 0, operator1: 0, operator2: 0, offsetAfter: 0
+                }
             ];
 
             const STATUS_CFG = {
@@ -528,15 +617,21 @@
                 let html = "";
                 modbusDevices.forEach((device, index) => {
                     const s = STATUS_CFG[device.status];
+                    const connInfo = device.modbusType === "TCP" ? `IP: ${device.tcpIp}:${device.tcpPort}` : `ID: ${device.slaveId}`;
                     html += `
                         <tr>
-                            <td class="text-muted fw-bold">${index + 1}</td>
+                            <td>
+                                <span class="badge" style="background:#e8f4fd;color:#267dc1;font-size:12px">Tag - ${device.id}</span>
+                            </td>
                             <td><strong>${device.name}</strong></td>
                             <td><strong>${device.value.toFixed(2)}</strong> <small class="text-muted">${device.unit}</small></td>
                             <td>${device.unit}</td>
-                            <td>ID: ${device.slaveId}</td>
-                            <td>${device.connection}</td>
-                            <td>${device.registers}</td>
+                            <td>${device.modbusType === 'RTU' ? device.slaveId : '-'}</td>
+                            <td>
+                                <div class="fw-bold">${device.modbusType}</div>
+                                <div class="text-muted" style="font-size:0.85em">${connInfo}</div>
+                            </td>
+                            <td>${device.registerAddress} (x${device.registerLength})</td>
                             <td>
                                     <span class="badge ${s.cls}">
                                     <i class="bi ${s.icon} me-1"></i>${s.text}
@@ -561,6 +656,42 @@
             // Gọi render khi vừa load
             renderModbusTable();
 
+            // Toggle Modbus type visibility for main form
+            $('input[name="modbus_mode"]').on('change', function () {
+                const modeVal = $(this).val();
+                if (modeVal === "TCP") {
+                    $('#tcpIpGroup').removeClass('d-none');
+                    $('#rtuGroup, #rtuSlaveIdGroup').addClass('d-none');
+                    $('#slaveId').prop('required', false);
+                    $('#tcpIp').prop('required', true);
+                    $('#tcpPort').prop('required', true);
+                } else {
+                    $('#tcpIpGroup').addClass('d-none');
+                    $('#rtuGroup, #rtuSlaveIdGroup').removeClass('d-none');
+                    $('#slaveId').prop('required', true);
+                    $('#tcpIp').prop('required', false);
+                    $('#tcpPort').prop('required', false);
+                }
+            });
+
+            // Toggle Modbus type visibility for Add Modal
+            $('input[name="add_modbus_mode"]').on('change', function () {
+                const modeVal = $(this).val();
+                if (modeVal === "TCP") {
+                    $('#addTcpIpGroup').removeClass('d-none');
+                    $('#addRtuSlaveIdGroup').addClass('d-none');
+                    $('#addSlaveId').prop('required', false);
+                    $('#addTcpIp').prop('required', true);
+                    $('#addTcpPort').prop('required', true);
+                } else {
+                    $('#addTcpIpGroup').addClass('d-none');
+                    $('#addRtuSlaveIdGroup').removeClass('d-none');
+                    $('#addSlaveId').prop('required', true);
+                    $('#addTcpIp').prop('required', false);
+                    $('#addTcpPort').prop('required', false);
+                }
+            });
+
             /* ── 2. Edit device highlight + scroll ── */
             function activateEdit(deviceId) {
                 $('.form-section').removeClass('active-edit');
@@ -577,30 +708,38 @@
                 $('#modbus_device_id').val(device.id);
                 $('#deviceName').val(device.name);
                 $('#deviceUnit').val(device.unit);
-                $('#slaveId').val(device.slaveId);
 
-                const modeVal = (device.connection === "RTU" || device.connection === "Disconnected") ? "RTU" : "TCP";
+                // RTU fields
+                $('#slaveId').val(device.slaveId || 1);
+
+                // TCP fields
+                $('#tcpIp').val(device.tcpIp || '');
+                $('#tcpPort').val(device.tcpPort || 502);
+
+                const modeVal = device.modbusType || "RTU";
                 $(`input[name="modbus_mode"][value="${modeVal}"]`).prop('checked', true).trigger('change');
-                if (modeVal === "TCP") {
-                    $('#tcpIpGroup').removeClass('d-none');
-                    $('#rtuGroup').addClass('d-none');
-                } else {
-                    $('#tcpIpGroup').addClass('d-none');
-                    $('#rtuGroup').removeClass('d-none');
-                }
 
-                let addr = device.registers;
-                let qty = 1;
-                if (addr && addr.includes("-")) {
-                    let parts = addr.split("-");
-                    addr = parts[0];
-                    qty = parseInt(parts[1]) - parseInt(parts[0]) + 1;
-                }
-                $('#startAddress').val(addr);
-                $('#numRegisters').val(qty);
+                $('#functionCode').val(device.functionCode || "3");
+                $('#startAddress').val(device.registerAddress || "40001");
+                $('#numRegisters').val(device.registerLength || 1);
+                $('#dataType').val(device.dataType || "0");
+                $('#byteOrder').val(device.byteOrder || "0");
+                $('#enableDevice').prop('checked', device.enableDevice !== false);
 
-                // Reset scale tab
-                $('#scaleType').val('none').trigger('change');
+                // Scaling
+                $('#enableScale').prop('checked', device.scaleEnable !== false);
+                $('#rawMin').val(device.rawMin !== undefined ? device.rawMin : 4);
+                $('#rawMax').val(device.rawMax !== undefined ? device.rawMax : 20);
+                $('#outMin').val(device.outputMin !== undefined ? device.outputMin : 0);
+                $('#outMax').val(device.outputMax !== undefined ? device.outputMax : 100);
+
+                $('#scaleType').val(device.scaleType).trigger('change');
+                $('#scaleDataType').val(device.scaleDataType);
+                $('#scaleValue').val(device.scaleValue !== undefined ? device.scaleValue : 1);
+                $('#offset1').val(device.offsetBefore !== undefined ? device.offsetBefore : 0);
+                $('#op1').val(device.operator1);
+                $('#op2').val(device.operator2);
+                $('#offset2').val(device.offsetAfter !== undefined ? device.offsetAfter : 0);
 
                 const offset = $('#editingBanner').offset().top - 80;
                 $('html, body').animate({ scrollTop: offset }, 400, 'swing');
@@ -642,19 +781,19 @@
                 }
 
                 const off1 = $('#offset1').val() || '0';
-                const op1 = $('#op1').val();
-                const op2 = $('#op2').val();
+                const op1 = OPERATION_TYPE[$('#op1').val()];
+                const op2 = OPERATION_TYPE[$('#op2').val()];
                 const off2 = $('#offset2').val() || '0';
                 const scaleVal = $('#scaleValue').val();
+                const scaleDataType = SCALE_DATA_TYPE[$('#scaleDataType').val()];
 
                 let valStr = 'Value';
                 if (type === 'sqrt') valStr = 'sqrt(Value)';
 
-                let expStr = `Result = (${off1} ${op1} ${valStr}) ${op2} ${off2}`;
+                let expStr = `Result = (${scaleDataType})((${off1} ${op1} ${valStr}) ${op2} ${off2})`;
                 if (scaleVal) {
-                    expStr = `Result = ((${off1} ${op1} ${valStr}) ${op2} ${off2}) * ${scaleVal}`;
+                    expStr = `Result = (${scaleDataType})(((${off1} ${op1} ${valStr} * ${scaleVal}) ${op2} ${off2}))`;
                 }
-
                 $('#expressionPreview').text(expStr);
             }
 
@@ -668,7 +807,7 @@
                 updateExpressionPreview();
             });
 
-            $('.exp-input, #scaleType, #scaleValue').on('input change', updateExpressionPreview);
+            $('.exp-input, #scaleType, #scaleValue, #scaleDataType').on('input change', updateExpressionPreview);
 
             /* ── 4. Delete row ── */
             $(document).on('click', '.btn-delete-modbus', function (e) {
@@ -707,6 +846,7 @@
             /* ── 5. Form submit (Edit) ── */
             $('#modbusForm').on('submit', function (e) {
                 e.preventDefault();
+                // Remove HTML5 validation temporarily for hidden fields if needed, but here we just check normally
                 if (!this.checkValidity()) {
                     $(this).addClass('was-validated');
                     return;
@@ -720,9 +860,13 @@
                         if (device) {
                             device.name = name;
                             device.unit = $('#deviceUnit').val();
+                            device.modbusType = $('input[name="modbus_mode"]:checked').val();
                             device.slaveId = $('#slaveId').val();
-                            device.connection = $('input[name="modbus_mode"]:checked').val() === 'TCP' ? 'TCP' : 'RTU';
-                            device.registers = $('#startAddress').val();
+                            device.tcpIp = $('#tcpIp').val();
+                            device.tcpPort = $('#tcpPort').val();
+                            device.registerAddress = $('#startAddress').val();
+                            device.registerLength = $('#numRegisters').val();
+                            device.status = "pending";
                             renderModbusTable();
                         }
                         deactivateEdit();
@@ -749,9 +893,12 @@
                             name: $('#addDeviceName').val(),
                             value: 0,
                             unit: $('#addDeviceUnit').val(),
+                            modbusType: $('input[name="add_modbus_mode"]:checked', '#addModbusForm').val(),
                             slaveId: $('#addSlaveId').val(),
-                            connection: $('input[name="modbus_mode"]:checked', '#addModbusForm').val(),
-                            registers: "40001",
+                            tcpIp: $('#addTcpIp').val() || "",
+                            tcpPort: $('#addTcpPort').val() || 502,
+                            registerAddress: "40001",
+                            registerLength: 1,
                             status: "pending"
                         });
                         renderModbusTable();
