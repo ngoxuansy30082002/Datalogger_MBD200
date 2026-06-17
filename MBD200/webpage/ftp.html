@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- This project runs fully offline (no CDN required) -->
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,59 +11,308 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
 </head>
+
 <body>
-<div class="layout-wrapper">
-    <div id="sidebarMount"></div>
-    <div class="main-wrapper" id="mainWrapper">
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
 
-        <header class="top-header">
-            <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
-            <div class="header-breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                    <li class="breadcrumb-item">System Configuration</li>
-                    <li class="breadcrumb-item active">FTP Configuration</li>
-                </ol>
-            </div>
-            <div class="header-actions">
-                <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
-                <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
-                <div class="header-divider"></div>
-                <div class="user-info dropdown" data-bs-toggle="dropdown">
-                    <div class="user-avatar">AD</div>
-                    <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">FTP Configuration</li>
+                    </ol>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
-                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
-        </header>
-
-        <main class="page-content">
-            <div class="page-header">
-                <h1><i class="bi bi-folder-fill text-primary me-2"></i>FTP Configuration</h1>
-                <p>Cấu hình kết nối FTP/SFTP để tự động xuất dữ liệu cảm biến</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-8" id="ftpServersContainer">
-                    <!-- FTP Servers will be rendered here by JavaScript -->
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
                 </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-folder-fill text-primary me-2"></i>FTP Configuration</h1>
+                    <p>Cấu hình kết nối FTP/SFTP để tự động xuất dữ liệu cảm biến</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8" id="ftpServersContainer">
+                        <div id="ftpServer1Card">
+                            <form class="needs-validation ftp-form" id="ftpForm_1" novalidate>
+                                <input type="hidden" name="ftp_id" value="1">
+                                <div class="form-section mb-4">
+                                    <div class="form-section-header d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="section-icon" style="background:#e8f4fd;color:#267dc1"><i
+                                                    class="bi bi-server"></i></div>
+                                            <div>
+                                                <h6 class="mb-0">FTP Server 1</h6>
+                                                <p class="mb-0" style="font-size:12px;color:#6b7280">Máy chủ FTP chính
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-check form-switch m-0">
+                                            <input class="form-check-input ftp-enable-toggle" type="checkbox"
+                                                id="ftpEnable_1" name="ftp_enable" value="true" data-target="ftpBody_1"
+                                                style="width:40px;height:20px;cursor:pointer">
+                                        </div>
+                                    </div>
+                                    <div class="form-section-body" id="ftpBody_1">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Giao thức</label>
+                                                <select class="form-select protocol-select keep-disabled"
+                                                    id="ftpProtocol_1" name="ftp_protocol" data-target-port="ftpPort_1"
+                                                    disabled>
+                                                    <option value="0" selected="">FTP</option>
+                                                    <option value="1">FTPS (TLS)</option>
+                                                    <option value="2">SFTP (SSH)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Host / IP <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i
+                                                            class="bi bi-hdd-network"></i></span>
+                                                    <input type="text" class="form-control" id="ftpHost_1"
+                                                        name="ftp_host" placeholder="ftp.example.com" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Port</label>
+                                                <input type="number" class="form-control" id="ftpPort_1" name="ftp_port"
+                                                    required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Username <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                                    <input type="text" class="form-control" id="ftpUsername_1"
+                                                        name="ftp_username" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Password <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                                    <input type="password" class="form-control" id="ftpPassword_1"
+                                                        name="ftp_password" value="......" required>
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary pwd-toggle"><i
+                                                            class="bi bi-eye"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Remote Path</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i
+                                                            class="bi bi-folder2-open"></i></span>
+                                                    <input type="text" class="form-control" id="ftpRemotePath_1"
+                                                        name="ftp_remote_path">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Tổ chức thư mục remote</label>
+                                                <select class="form-select" id="ftpFolderStructure_1"
+                                                    name="folder_structure">
+                                                    <option value="0" selected="">Không tạo thêm (mặc định)</option>
+                                                    <option value="1">Tạo folder theo ngày (YYYY-MM-DD)</option>
+                                                    <option value="2">Tạo folder theo tháng (YYYY-MM/YYYY-MM-DD)
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Chế độ kết nối</label>
+                                                <select class="form-select keep-disabled" id="ftpPassive_1"
+                                                    name="ftp_passive" disabled>
+                                                    <option value="0" selected="">Passive (PASV)</option>
+                                                    <option value="1">Active (PORT)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Timeout (s)</label>
+                                                <input type="number" class="form-control keep-disabled"
+                                                    id="ftpTimeout_1" name="ftp_timeout" min="5" max="300" value="10"
+                                                    disabled>
+                                            </div>
+                                            <div class="col-12 mt-3 text-end">
+                                                <button type="submit" class="btn btn-primary btn-sm"><i
+                                                        class="bi bi-floppy-fill me-2"></i>Lưu cấu hình FTP Server
+                                                    1</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="ftpServer2Card">
+                            <form class="needs-validation ftp-form" id="ftpForm_2" novalidate>
+                                <input type="hidden" name="ftp_id" value="2">
+                                <div class="form-section mb-4">
+                                    <div class="form-section-header d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="section-icon" style="background:#fef3c7;color:#d97706"><i
+                                                    class="bi bi-server"></i></div>
+                                            <div>
+                                                <h6 class="mb-0">FTP Server 2</h6>
+                                                <p class="mb-0" style="font-size:12px;color:#6b7280">Máy chủ FTP dự
+                                                    phòng (Backup)</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-check form-switch m-0">
+                                            <input class="form-check-input ftp-enable-toggle" type="checkbox"
+                                                id="ftpEnable_2" name="ftp_enable" value="true" data-target="ftpBody_2"
+                                                style="width:40px;height:20px;cursor:pointer">
+                                        </div>
+                                    </div>
+                                    <div class="form-section-body" id="ftpBody_2">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Giao thức</label>
+                                                <select class="form-select protocol-select keep-disabled"
+                                                    id="ftpProtocol_2" name="ftp_protocol" data-target-port="ftpPort_2"
+                                                    disabled>
+                                                    <option value="0" selected="">FTP</option>
+                                                    <option value="1">FTPS (TLS)</option>
+                                                    <option value="2">SFTP (SSH)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Host / IP <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i
+                                                            class="bi bi-hdd-network"></i></span>
+                                                    <input type="text" class="form-control" id="ftpHost_2"
+                                                        name="ftp_host" placeholder="ftp.example.com" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Port</label>
+                                                <input type="number" class="form-control" id="ftpPort_2" name="ftp_port"
+                                                    required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Username <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                                    <input type="text" class="form-control" id="ftpUsername_2"
+                                                        name="ftp_username" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Password <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                                    <input type="password" class="form-control" id="ftpPassword_2"
+                                                        name="ftp_password" value="......" required>
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary pwd-toggle"><i
+                                                            class="bi bi-eye"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Remote Path</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i
+                                                            class="bi bi-folder2-open"></i></span>
+                                                    <input type="text" class="form-control" id="ftpRemotePath_2"
+                                                        name="ftp_remote_path">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Tổ chức thư mục remote</label>
+                                                <select class="form-select" id="ftpFolderStructure_2"
+                                                    name="folder_structure">
+                                                    <option value="0" selected="">Không tạo thêm (mặc định)</option>
+                                                    <option value="1">Tạo folder theo ngày (YYYY-MM-DD)</option>
+                                                    <option value="2">Tạo folder theo tháng (YYYY-MM/YYYY-MM-DD)
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Chế độ kết nối</label>
+                                                <select class="form-select keep-disabled" id="ftpPassive_2"
+                                                    name="ftp_passive" disabled>
+                                                    <option value="0" selected="">Passive (PASV)</option>
+                                                    <option value="1">Active (PORT)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Timeout (s)</label>
+                                                <input type="number" class="form-control keep-disabled"
+                                                    id="ftpTimeout_2" name="ftp_timeout" min="5" max="300" value="10"
+                                                    disabled>
+                                            </div>
+                                            <div class="col-12 mt-3 text-end">
+                                                <button type="submit" class="btn btn-primary btn-sm"><i
+                                                        class="bi bi-floppy-fill me-2"></i>Lưu cấu hình FTP Server
+                                                    2</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Right Panel -->
                     <div class="col-lg-4">
                         <!-- Connection Status -->
                         <div class="form-section mb-4">
                             <div class="form-section-header">
-                                <div class="section-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="bi bi-plug-fill"></i></div>
+                                <div class="section-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i
+                                        class="bi bi-plug-fill"></i></div>
                                 <div>
                                     <h6>Trạng thái kết nối</h6>
                                 </div>
                             </div>
                             <div class="p-4">
                                 <div class="text-center mb-4">
-                                    <div style="width:64px;height:64px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;color:#22c55e">
+                                    <div
+                                        style="width:64px;height:64px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;color:#22c55e">
                                         <i class="bi bi-folder-fill"></i>
                                     </div>
                                     <div style="font-weight:600;font-size:15px;color:#22c55e">Connected</div>
@@ -97,29 +347,35 @@
                         <div class="form-section">
                             <div class="form-section-header">
                                 <div class="section-icon"><i class="bi bi-journal-text"></i></div>
-                                <div><h6>Log upload gần đây</h6></div>
+                                <div>
+                                    <h6>Log upload gần đây</h6>
+                                </div>
                             </div>
                             <div style="max-height:200px;overflow-y:auto;padding:12px 16px">
                                 <div class="d-flex flex-column gap-2">
                                     <div style="font-size:12px">
                                         <span style="color:#22c55e"><i class="bi bi-check-circle me-1"></i></span>
                                         <span style="color:#374151">datalogger_20241201_1300.csv</span>
-                                        <span style="color:#9ca3af;display:block;margin-left:20px">13:00 - 2.3 MB - OK</span>
+                                        <span style="color:#9ca3af;display:block;margin-left:20px">13:00 - 2.3 MB -
+                                            OK</span>
                                     </div>
                                     <div style="font-size:12px">
                                         <span style="color:#22c55e"><i class="bi bi-check-circle me-1"></i></span>
                                         <span style="color:#374151">datalogger_20241201_1200.csv</span>
-                                        <span style="color:#9ca3af;display:block;margin-left:20px">12:00 - 2.4 MB - OK</span>
+                                        <span style="color:#9ca3af;display:block;margin-left:20px">12:00 - 2.4 MB -
+                                            OK</span>
                                     </div>
                                     <div style="font-size:12px">
                                         <span style="color:#ef4444"><i class="bi bi-x-circle me-1"></i></span>
                                         <span style="color:#374151">datalogger_20241201_1100.csv</span>
-                                        <span style="color:#ef4444;display:block;margin-left:20px">11:00 - Connection timeout</span>
+                                        <span style="color:#ef4444;display:block;margin-left:20px">11:00 - Connection
+                                            timeout</span>
                                     </div>
                                     <div style="font-size:12px">
                                         <span style="color:#22c55e"><i class="bi bi-check-circle me-1"></i></span>
                                         <span style="color:#374151">datalogger_20241201_1000.csv</span>
-                                        <span style="color:#9ca3af;display:block;margin-left:20px">10:00 - 2.1 MB - OK</span>
+                                        <span style="color:#9ca3af;display:block;margin-left:20px">10:00 - 2.1 MB -
+                                            OK</span>
                                     </div>
                                 </div>
                             </div>
@@ -127,270 +383,190 @@
                     </div>
                 </div>
 
-                </div>
-            </div>
-        </main>
-
-        <footer class="page-footer">
-            <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
-            <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
-        </footer>
+        </div>
     </div>
-</div>
+    </main>
 
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/layout.js"></script>
-<script src="assets/js/main.js"></script>
-<script>
-/* Xử lý request POST */
-function sendPostRequest(url, formId, callback) {
-    var form = document.getElementById(formId);
-    if (!form) return;
-    
-    var formData = new FormData(form);
-    var params = new URLSearchParams();
-    for (var pair of formData.entries()) {
-        params.append(pair[0], pair[1]);
-    }
-    var encodedParams = params.toString();
+    <footer class="page-footer">
+        <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+        <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+    </footer>
+    </div>
+    </div>
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200 || xhr.status === 0) {
-                if (typeof showToast === 'function') {
-                    showToast('Đã lưu cấu hình FTP thành công!', 'success');
-                } else {
-                    alert('Đã lưu cấu hình FTP thành công!');
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
+
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu cấu hình FTP thành công!', 'success');
+                        } else {
+                            alert('Đã lưu cấu hình FTP thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
                 }
-                if (callback) callback(true);
-            } else {
-                if (typeof showToast === 'function') {
-                    showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
-                } else {
-                    alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+            };
+            xhr.send(encodedParams);
+        }
+
+        var ftpData;
+
+        function renderFTPData() {
+            if (!ftpData) return;
+
+            [1, 2].forEach(id => {
+                const serverData = ftpData[id.toString()];
+                if (!serverData) return;
+
+                // Set input values
+                $('#ftpHost_' + id).val(serverData.host);
+                $('#ftpPort_' + id).val(serverData.port);
+                $('#ftpUsername_' + id).val(serverData.username);
+                $('#ftpRemotePath_' + id).val(serverData.remotePath);
+                $('#ftpFolderStructure_' + id).val(serverData.folderStructure);
+
+                // Set checkbox and trigger update
+                const $enable = $('#ftpEnable_' + id);
+                $enable.prop('checked', serverData.enable);
+                $enable.trigger('change');
+            });
+        }
+
+        function updatedata(xmlData) {
+            var dataString = getXMLValue(xmlData, 'ftpconfig');
+            // dataString = `
+            // {
+            //         "1": {
+            //             "enable": true,
+            //             "protocol": 0,
+            //             "host": "ftp.example.com",
+            //             "port": 21,
+            //             "username": "ftpuser",
+            //             "remotePath": "/data/",
+            //             "folderStructure": 0,
+            //             "passive": 0,
+            //             "timeout": 30,
+            //             "status": 1
+            //         },
+            //         "2": {
+            //             "enable": false,
+            //             "protocol": 0,
+            //             "host": "backup.example.com",
+            //             "port": 21,
+            //             "username": "backup",
+            //             "remotePath": "/backup/",
+            //             "folderStructure": 2,
+            //             "passive": 0,
+            //             "timeout": 30,
+            //             "status": 0
+            //         }
+            // }`;
+
+            if (dataString) {
+                try {
+                    ftpData = JSON.parse(dataString);
+                    renderFTPData();
+                } catch (e) {
+                    console.error("Lỗi parse JSON FTP data:", e);
                 }
-                if (callback) callback(false);
             }
         }
-    };
-    xhr.send(encodedParams);
-}
 
-const mockFtpData = [
-    {
-        ftp_id: "1",
-        name: "FTP Server 1",
-        desc: "Máy chủ FTP chính",
-        iconBg: "#e8f4fd",
-        iconColor: "#267dc1",
-        enable: true,
-        protocol: "ftp",
-        host: "ftp.example.com",
-        port: 21,
-        username: "ftpuser",
-        password: "password123",
-        remote_path: "/data/",
-        folder_structure: "none",
-        passive: "passive",
-        timeout: 30
-    },
-    {
-        ftp_id: "2",
-        name: "FTP Server 2",
-        desc: "Máy chủ FTP dự phòng (Backup)",
-        iconBg: "#fef3c7",
-        iconColor: "#d97706",
-        enable: false,
-        protocol: "ftp",
-        host: "backup.example.com",
-        port: 21,
-        username: "ftpuser",
-        password: "password123",
-        remote_path: "/backup/",
-        folder_structure: "none",
-        passive: "passive",
-        timeout: 30
-    }
-];
+        // setTimeout("newAJAXCommand('xml/ftp.xml', updatedata, true)", 500);
 
-function renderFtpServers() {
-    let html = '';
-    mockFtpData.forEach(ftp => {
-        const isEnabled = ftp.enable ? 'checked' : '';
-        const bodyStyle = ftp.enable ? '' : 'opacity: 0.6; pointer-events: none;';
-        
-        html += `
-        <form class="needs-validation ftp-form" id="ftpForm_${ftp.ftp_id}" novalidate>
-            <input type="hidden" name="ftp_id" value="${ftp.ftp_id}">
-            <div class="form-section mb-4">
-                <div class="form-section-header d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="section-icon" style="background:${ftp.iconBg};color:${ftp.iconColor}"><i class="bi bi-server"></i></div>
-                        <div>
-                            <h6 class="mb-0">${ftp.name}</h6>
-                            <p class="mb-0" style="font-size:12px;color:#6b7280">${ftp.desc}</p>
-                        </div>
-                    </div>
-                    <div class="form-check form-switch m-0">
-                        <input class="form-check-input ftp-enable-toggle" type="checkbox" name="ftp_enable" value="true" data-target="ftpBody_${ftp.ftp_id}" ${isEnabled} style="width:40px;height:20px;cursor:pointer">
-                    </div>
-                </div>
-                <div class="form-section-body" id="ftpBody_${ftp.ftp_id}" style="${bodyStyle}">
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Giao thức</label>
-                            <select class="form-select protocol-select" name="ftp_protocol" data-target-port="ftpPort_${ftp.ftp_id}">
-                                <option value="ftp" ${ftp.protocol === 'ftp' ? 'selected' : ''}>FTP</option>
-                                <option value="ftps" ${ftp.protocol === 'ftps' ? 'selected' : ''}>FTPS (TLS)</option>
-                                <option value="sftp" ${ftp.protocol === 'sftp' ? 'selected' : ''}>SFTP (SSH)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Host / IP <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-hdd-network"></i></span>
-                                <input type="text" class="form-control" name="ftp_host" value="${ftp.host}" placeholder="ftp.example.com" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Port</label>
-                            <input type="number" class="form-control" id="ftpPort_${ftp.ftp_id}" name="ftp_port" value="${ftp.port}" required>
-                        </div>
-                    </div>
+        $(document).ready(function () {
+            // Gửi AJAX ngay khi tải trang
+            newAJAXCommand('xml/ftp.xml', updatedata, false);
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Username <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input type="text" class="form-control" name="ftp_username" value="${ftp.username}" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Password <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-key"></i></span>
-                                <input type="password" class="form-control" name="ftp_password" value="${ftp.password}" required>
-                                <button type="button" class="btn btn-outline-secondary pwd-toggle"><i class="bi bi-eye"></i></button>
-                            </div>
-                        </div>
-                    </div>
+            // Bind events
+            $('.ftp-enable-toggle').on('change', function () {
+                const bodyId = $(this).data('target');
+                const body = $(`#${bodyId}`);
+                if (this.checked) {
+                    body.css({ opacity: 1, pointerEvents: 'auto' });
+                    // Đã cập nhật: Bỏ qua .pwd-toggle VÀ .keep-disabled
+                    body.find('input, select, button').not('.pwd-toggle, .keep-disabled').prop('disabled', false);
+                    body.find('input[name="ftp_host"], input[name="ftp_username"], input[name="ftp_password"]').prop('required', true);
+                } else {
+                    // body.css({ opacity: 0.6, pointerEvents: 'none' });
+                    // body.find('input, select, button').not('.pwd-toggle').prop('disabled', true);
+                    // body.find('input[name="ftp_host"], input[name="ftp_username"], input[name="ftp_password"]').prop('required', false);
+                }
+                body.find('.pwd-toggle').prop('disabled', !this.checked);
+            });
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Remote Path</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-folder2-open"></i></span>
-                                <input type="text" class="form-control" name="ftp_remote_path" value="${ftp.remote_path}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tổ chức thư mục remote</label>
-                            <select class="form-select" name="folder_structure">
-                                <option value="none" ${ftp.folder_structure === 'none' ? 'selected' : ''}>Không tạo thêm (mặc định)</option>
-                                <option value="date" ${ftp.folder_structure === 'date' ? 'selected' : ''}>Tạo folder theo ngày (YYYY-MM-DD)</option>
-                                <option value="month" ${ftp.folder_structure === 'month' ? 'selected' : ''}>Tạo folder theo tháng (YYYY-MM/YYYY-MM-DD)</option>
-                            </select>
-                        </div>
-                    </div>
+            $('.protocol-select').on('change', function () {
+                const ports = { ftp: 21, ftps: 990, sftp: 22 };
+                const portId = $(this).data('target-port');
+                $(`#${portId}`).val(ports[$(this).val()] || 21);
+            });
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Chế độ kết nối</label>
-                            <select class="form-select" name="ftp_passive">
-                                <option value="passive" ${ftp.passive === 'passive' ? 'selected' : ''}>Passive (PASV)</option>
-                                <option value="active" ${ftp.passive === 'active' ? 'selected' : ''}>Active (PORT)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Timeout (s)</label>
-                            <input type="number" class="form-control" name="ftp_timeout" value="${ftp.timeout}" min="5" max="300">
-                        </div>
-                        <div class="col-12 mt-3 text-end">
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình ${ftp.name}</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-        `;
-    });
-    $('#ftpServersContainer').html(html);
+            $('.pwd-toggle').on('click', function () {
+                const input = $(this).siblings('input');
+                const icon = $(this).find('i');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                }
+            });
 
-    // Bind events
-    $('.ftp-enable-toggle').on('change', function() {
-        const bodyId = $(this).data('target');
-        const body = $(`#${bodyId}`);
-        if (this.checked) {
-            body.css({opacity: 1, pointerEvents: 'auto'});
-            body.find('input, select, button').not('.pwd-toggle').prop('disabled', false);
-            body.find('input[name="ftp_host"], input[name="ftp_username"], input[name="ftp_password"]').prop('required', true);
-        } else {
-            body.css({opacity: 0.6, pointerEvents: 'none'});
-            body.find('input, select, button').not('.pwd-toggle').prop('disabled', true);
-            body.find('input[name="ftp_host"], input[name="ftp_username"], input[name="ftp_password"]').prop('required', false);
-        }
-        // Always disable password toggle if body disabled
-        body.find('.pwd-toggle').prop('disabled', !this.checked);
-    });
+            $('.ftp-form').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                sendPostRequest('ftp.html', $(this).attr('id'));
+            });
 
-    $('.protocol-select').on('change', function() {
-        const ports = {ftp:21, ftps:990, sftp:22};
-        const portId = $(this).data('target-port');
-        $(`#${portId}`).val(ports[$(this).val()] || 21);
-    });
+            // Test FTP
+            $('#testFtpBtn').on('click', function () {
+                const $btn = $(this);
+                $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Connecting...').prop('disabled', true);
+                setTimeout(() => {
+                    $btn.html('<i class="bi bi-plug me-2"></i>Test kết nối FTP').prop('disabled', false);
+                    showToast('Kết nối FTP thành công! Server phản hồi bình thường.', 'success');
+                }, 2000);
+            });
 
-    $('.pwd-toggle').on('click', function() {
-        const input = $(this).siblings('input');
-        const icon = $(this).find('i');
-        if (input.attr('type') === 'password') {
-            input.attr('type', 'text');
-            icon.removeClass('bi-eye').addClass('bi-eye-slash');
-        } else {
-            input.attr('type', 'password');
-            icon.removeClass('bi-eye-slash').addClass('bi-eye');
-        }
-    });
-
-    $('.ftp-form').on('submit', function(e) {
-        e.preventDefault();
-        if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
-        sendPostRequest('ftp.html', $(this).attr('id'));
-    });
-}
-
-$(document).ready(function(){
-    renderFtpServers();
-
-    // Trigger initial state
-    $('.ftp-enable-toggle').each(function() {
-        $(this).trigger('change');
-    });
-
-    // Test FTP
-    $('#testFtpBtn').on('click', function(){
-        const $btn = $(this);
-        $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Connecting...').prop('disabled', true);
-        setTimeout(() => {
-            $btn.html('<i class="bi bi-plug me-2"></i>Test kết nối FTP').prop('disabled', false);
-            showToast('Kết nối FTP thành công! Server phản hồi bình thường.', 'success');
-        }, 2000);
-    });
-
-    // Upload Now
-    $('#uploadNowBtn').on('click', function(){
-        const $btn = $(this);
-        $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Uploading...').prop('disabled', true);
-        setTimeout(() => {
-            $btn.html('<i class="bi bi-cloud-upload me-2"></i>Upload ngay').prop('disabled', false);
-            showToast('Upload thành công! Đã gửi datalogger_now.csv lên FTP.', 'success');
-        }, 3000);
-    });
-});
-</script>
+            // Upload Now
+            $('#uploadNowBtn').on('click', function () {
+                const $btn = $(this);
+                $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Uploading...').prop('disabled', true);
+                setTimeout(() => {
+                    $btn.html('<i class="bi bi-cloud-upload me-2"></i>Upload ngay').prop('disabled', false);
+                    showToast('Upload thành công! Đã gửi datalogger_now.csv lên FTP.', 'success');
+                }, 3000);
+            });
+        });
+    </script>
 </body>
+
 </html>

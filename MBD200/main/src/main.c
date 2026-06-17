@@ -4,15 +4,12 @@
 #include "definitions.h"
 #include "app_mqtt_task.h"
 
-int main ( void )
-{
-    SYS_Initialize ( NULL );
+int main(void) {
+    SYS_Initialize(NULL);
 
-while (true) {
+    while (true) {
         SYS_Tasks();
-        HMIDwin_Tasks();
-
     }
-    
-    return ( EXIT_FAILURE );
+
+    return ( EXIT_FAILURE);
 }

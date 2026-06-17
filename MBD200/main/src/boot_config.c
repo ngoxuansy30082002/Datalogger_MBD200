@@ -38,10 +38,10 @@ static inline void _toggleLed() {
 }
 
 static inline void _setLed(bool level) {
-    GPIO_PinWrite(_bootCfglib.led1, level);
-    GPIO_PinWrite(_bootCfglib.led2, level);
-    GPIO_PinWrite(_bootCfglib.led3, level);
-    GPIO_PinWrite(_bootCfglib.led4, level);
+    GPIO_PinWrite(_bootCfglib.led1, !level);
+    GPIO_PinWrite(_bootCfglib.led2, !level);
+    GPIO_PinWrite(_bootCfglib.led3, !level);
+    GPIO_PinWrite(_bootCfglib.led4, !level);
 }
 
 static inline bool _isButtonPressed() {
@@ -130,6 +130,7 @@ void BootConfig_Initialize() {
 
 
     gAppCfg.network.isDHCPEn = true;
+    gAppCfg.network.uplink = UPLINK_ETH;
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0, &gAppCfg.network.ipAddr);
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0, &gAppCfg.network.ipMask);
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0, &gAppCfg.network.gateway);
@@ -153,15 +154,8 @@ void BootConfig_Initialize() {
         snprintf(gAppCfg.ftpServer[i].hostname, URL_LEN, "%s", FTP_HOST);
         gAppCfg.ftpServer[i].port = FTP_PORT;
         gAppCfg.ftpServer[i].makeFolder = MAKE_FOLDER_NONE;
-        snprintf(gAppCfg.ftpServer[i].namePrefix, FILE_NAME_PREFIX_LEN, "%s", FTP_NAME_PREFIX);
         gAppCfg.ftpServer[i].enable = false;
     }
-
-    gAppCfg.logFile.uplink = UPLINK_ETH;
-    gAppCfg.logFile.typefile = FILE_TYPE_TXT;
-    gAppCfg.logFile.formatFile = FORMAT_FILE_TT24;
-    gAppCfg.logFile.timeMode = TIME_MODE_OCLOCK;
-    gAppCfg.logFile.sendInterval = 2;
 
     snprintf(gAppCfg.gsm.APN, APN_LEN, "%s", MY_APN);
     snprintf(gAppCfg.gsm.usernameAPN, USERNAME_LEN, "%s", USERNAME_APN);
@@ -170,27 +164,29 @@ void BootConfig_Initialize() {
     memset(gAppCfg.position, 1, sizeof (gAppCfg.position));
 
     for (uint8_t i = 0; i < MAX_DIGITAL_OUTPUT; i++) {
-        snprintf(gAppCfg.io.out[i].describe, SENSOR_NAME_LEN, "Description");
-        gAppCfg.io.out[i].time = 0;
-        gAppCfg.io.out[i].type = OUT_HOLD;
+        snprintf(gAppCfg.io.out[i].name, SENSOR_NAME_LEN, "-");
+        snprintf(gAppCfg.io.out[i].describe, SENSOR_NAME_LEN, "-");
     }
 
     gAppCfg.sdCard.retentionMonths = SDCARD_TIME_REMOVE;
 
     gAppCfg.time.yearNumber = 20;
-    gAppCfg.time.timeAuto = 0;
-    gAppCfg.time.indexNTP = 0;
     gAppCfg.time.timeZone = 7;
+    gAppCfg.time.ntpPort = 123;
+    gAppCfg.time.syncInterval = 3600;
+    snprintf(gAppCfg.time.ntpServerPrimary, URL_LEN, "%s", NTP_SERVER_PRIMARY);
+    snprintf(gAppCfg.time.ntpServerBackup, URL_LEN, "%s", NTP_SERVER_BACKUP);
 
-    memset(gAppCfg.hmi, 30, sizeof (gAppCfg.hmi));
+    gAppCfg.hmi.numEntry = 0;
+    memset(gAppCfg.hmi.sensorIdx, 0, MAX_HMI_PARA * sizeof (uint8_t));
 
 
 
     gMbrtuCfg.numTag = 0;
     memset(gMbrtuCfg.entry, 0, sizeof (gMbrtuCfg.entry));
     for (uint8_t i = 0; i < MAX_MODBUS_TAG; i++) {
-        snprintf(gMbrtuCfg.entry[i].name, SENSOR_NAME_LEN, "Unused");
-        snprintf(gMbrtuCfg.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
+        snprintf(gMbrtuCfg.entry[i].name, SENSOR_NAME_LEN, "-");
+        snprintf(gMbrtuCfg.entry[i].unit, SENSOR_UNIT_LEN, "-");
     }
 
 
@@ -199,30 +195,27 @@ void BootConfig_Initialize() {
     for (uint8_t i = 0; i < MAX_ANALOG_CHANNEL; i++) {
         if (i < 4) gAnalogCfg.entry[i].adcType = ADC_4_20mA;
         else gAnalogCfg.entry[i].adcType = ADC_0_10V;
-        snprintf(gAnalogCfg.entry[i].name, SENSOR_NAME_LEN, "Unused");
-        snprintf(gAnalogCfg.entry[i].unit, SENSOR_UNIT_LEN, "Unused");
+        snprintf(gAnalogCfg.entry[i].name, SENSOR_NAME_LEN, "-");
+        snprintf(gAnalogCfg.entry[i].unit, SENSOR_UNIT_LEN, "-");
     }
 
 
 
     for (uint8_t i = 0; i < MAX_INPUT_CAPTURE; i++) {
-        if (i & 1) {
-            snprintf(gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN, "TotalFlow%u", i);
-            snprintf(gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3");
-        } else {
-            snprintf(gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN, "Flowrate%u", i);
-            snprintf(gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN, "%s", "m3/h");
-        }
-        gInCaptureCfg.entry[i].enable = false;
-        gInCaptureCfg.entry[i].scale = 3600;
-        gInCaptureCfg.entry[i].valPerPulse = 1;
-        gInCaptureCfg.entry[i].minFreq = 1;
+        snprintf(gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN, "-");
+        snprintf(gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN, "-");
     }
 
 
 
     gSensorCfg.numSensor = 0;
     memset(gSensorCfg.entry, 0, sizeof (gSensorCfg.entry));
+    gSensorCfg.typefile = FILE_TYPE_TXT;
+    gSensorCfg.formatFile = FORMAT_FILE_TT24;
+    gSensorCfg.logInterval = 2;
+    snprintf(gSensorCfg.filenameTemplate, FILE_NAME_LEN, "datalogger_{YYYY}{MM}{DD}{hh}{mm}{ss}");
+    gSensorCfg.uploadFtp = true;
+    gSensorCfg.saveSdcard = true;
 }
 
 bool BootConfig_Task(void) {
@@ -363,7 +356,6 @@ bool BootConfig_Task(void) {
 
         case BOOT_CONFIG_COMPLETE:
             SYS_CONSOLE_PRINT("%s - %s:\t Complete boot config \r\n", __TAG__, __func__);
-            _setLed(false);
             return true;
     }
     return false;

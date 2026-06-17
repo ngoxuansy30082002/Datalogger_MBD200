@@ -32,12 +32,11 @@ extern "C" {
     EXTFL_METADATA;
 
     typedef struct __attribute__((__packed__)) {
+        char hostname[URL_LEN];
+        uint16_t port;
         char username[USERNAME_LEN];
         char password[PASSWORD_LEN];
         char dirPath[DIR_PATH_LEN];
-        char hostname[URL_LEN];
-        uint16_t port;
-        char namePrefix[FILE_NAME_PREFIX_LEN];
         MAKE_FOLDER makeFolder;
         bool enable;
     }
@@ -48,15 +47,6 @@ extern "C" {
         uint8_t lastMonth;
     }
     SDCARD_PACKED;
-
-    typedef struct __attribute__((__packed__)) {
-        INTERNET_UPLINK uplink;
-        FORMAT_FILE formatFile;
-        FILE_TYPE typefile;
-        TIME_MODE timeMode;
-        uint16_t sendInterval;
-    }
-    LOG_FILE_PACKED;
 
     typedef struct __attribute__((__packed__)) {
         uint16_t timeout;
@@ -77,9 +67,12 @@ extern "C" {
     GSM_PACKED;
 
     typedef struct __attribute__((__packed__)) {
-        uint8_t indexNTP;
-        uint8_t timeZone;
-        bool timeAuto;
+        bool syncNtpEnable;
+        char ntpServerPrimary[URL_LEN];
+        char ntpServerBackup[URL_LEN];
+        uint32_t syncInterval;
+        uint16_t ntpPort;
+        int8_t timeZone;
         uint8_t yearNumber;
     }
     DATETIME_PACKED;
@@ -95,33 +88,41 @@ extern "C" {
 
         char deviceUsername[USERNAME_LEN];
         char devicePassword[PASSWORD_LEN];
+        INTERNET_UPLINK uplink;
     }
     NETWORK_PACKED;
 
     typedef struct __attribute__((__packed__)) {
 
         struct __attribute__((__packed__)) {
+            char name[SENSOR_NAME_LEN];
             char describe[SENSOR_NAME_LEN];
-            uint16_t time;
-            CTRL_OUT_TYPE type;
+            CTRL_MODE_TYPE mode;
+            uint16_t ontime;
+            uint16_t offtime;
+            uint16_t pulseCount;
         }
         out[MAX_DIGITAL_OUTPUT];
     }
     IO_PACKED;
+    
+     typedef struct {
+        uint8_t sensorIdx[MAX_HMI_PARA];
+        uint8_t numEntry;
+    } HMI_PACKED;
 
     typedef struct __attribute__((__packed__)) {
         EXTFL_METADATA metadata;
 
         NETWORK_PACKED network;
         FTP_SERVER_PACKED ftpServer[MAX_FTP_SERVER];
-        LOG_FILE_PACKED logFile;
         MODBUSRTU_PHY_PACKED modbusRtu;
         GSM_PACKED gsm;
         DATETIME_PACKED time;
         IO_PACKED io;
         SDCARD_PACKED sdCard;
 
-        uint8_t hmi[MAX_HMI_PARA];
+        HMI_PACKED hmi;
         uint16_t position[MAX_POSITION_SIZE];
     }
     APP_PACKED;
@@ -134,7 +135,7 @@ extern "C" {
             SENSOR_TYPE type;
             uint8_t indexOfType;
 
-            bool calibrated;
+            bool calibrate;
             STATUS_SOURCE typeStatus;
 
             STATUS_SOURCE typeGood;
@@ -153,6 +154,15 @@ extern "C" {
         }
         entry[MAX_SENSOR];
         uint8_t numSensor;
+
+        FORMAT_FILE formatFile;
+        FILE_TYPE typefile;
+        uint16_t logInterval;
+        char filenameTemplate[FILE_NAME_LEN];
+        bool compressed;
+        bool uploadFtp;
+        bool uploadMqtt;
+        bool saveSdcard;
     }
     SENSOR_PACKED;
 
@@ -163,21 +173,28 @@ extern "C" {
             bool enable;
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
+            MODBUS_TYPE type;
+
+            IPV4_ADDR ipAddress;
+            uint16_t port;
 
             uint8_t slaveAddress;
             uint8_t function;
             uint16_t regAddress;
             uint8_t quantity;
             SENSOR_DATA_TYPE rawDataType;
-            bool bigEndian;
+            BYTE_ORDER_TYPE byteOder;
+
+            bool conversion;
+            float inputMin;
+            float inputMax;
+            float outputMin;
+            float outputMax;
 
             SENSOR_SCALE_TYPE scaleType;
             SENSOR_DATA_TYPE scaleDataType;
             float scaleValue;
 
-            ADC_TYPE adcType;
-            float adcLow;
-            float adcHigh;
             float offsetPreVal;
             float offsetSubVal;
             OPERATOR offSetPreOperator;
@@ -196,14 +213,17 @@ extern "C" {
             bool enable;
             char name[SENSOR_NAME_LEN];
             char unit[SENSOR_UNIT_LEN];
+            ADC_TYPE adcType;
+
+            float inputLow;
+            float inputHigh;
+            float outputLow;
+            float outputHigh;
 
             SENSOR_SCALE_TYPE scaleType;
             SENSOR_DATA_TYPE scaleDataType;
             float scaleValue;
 
-            ADC_TYPE adcType;
-            float adcLow;
-            float adcHigh;
             float offsetPreVal;
             float offsetSubVal;
             OPERATOR offSetPreOperator;
@@ -223,7 +243,15 @@ extern "C" {
 
             float valPerPulse;
             float minFreq;
-            float scale;
+
+            SENSOR_SCALE_TYPE scaleType;
+            SENSOR_DATA_TYPE scaleDataType;
+            float scaleValue;
+
+            float offsetPreVal;
+            float offsetSubVal;
+            OPERATOR offSetPreOperator;
+            OPERATOR offsetSubOperator;
         }
         entry[MAX_INPUT_CAPTURE];
     }

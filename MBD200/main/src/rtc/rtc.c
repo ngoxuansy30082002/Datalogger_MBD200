@@ -136,34 +136,17 @@ void Rtc_Task() {
     }
 }
 
-void Rtc_updateFromManual(const char *timeString) {
-    char buffer[5];
+void Rtc_updateFromManual(const TIME *newTime) {
+    if (newTime == NULL) return;
 
-    strncpy(buffer, timeString, 4);
-    buffer[4] = '\0';
-    _bufferTime.year = (uint16_t) atoi(buffer);
-
-    strncpy(buffer, timeString + 5, 2);
-    buffer[2] = '\0';
-    _bufferTime.month = (uint8_t) atoi(buffer);
-
-    strncpy(buffer, timeString + 8, 2);
-    buffer[2] = '\0';
-    _bufferTime.day = (uint8_t) atoi(buffer);
-
-    strncpy(buffer, timeString + 11, 2);
-    buffer[2] = '\0';
-    _bufferTime.hour = (uint8_t) atoi(buffer);
-
-    strncpy(buffer, timeString + 14, 2);
-    buffer[2] = '\0';
-    _bufferTime.minute = (uint8_t) atoi(buffer);
-
-    strncpy(buffer, timeString + 17, 2);
-    buffer[2] = '\0';
-    _bufferTime.second = (uint8_t) atoi(buffer);
-
+    _bufferTime.year = newTime->year;
+    _bufferTime.month = newTime->month;
+    _bufferTime.day = newTime->day;
+    _bufferTime.hour = newTime->hour;
+    _bufferTime.minute = newTime->minute;
+    _bufferTime.second = newTime->second;
     _bufferTime.dayOfWeek = _calculateDayOfWeek(_bufferTime.year, _bufferTime.month, _bufferTime.day);
+
     rtcDt.f.bits.forceSet = 1;
 }
 
@@ -200,6 +183,11 @@ void Rtc_updateFromGsmNtp(const char * timeString) {
             &tz_units) < 7) {
         return;
     }
+
+    t.tm_year += 2000;
+    //    LOG_DEBUG("%s - %s\t %04u-%02u-%02uT%02u:%02u:%02u+%02u\r\n",
+    //            __TAG__, __func__,
+    //            t.tm_year, t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, tz_units);
 
     t.tm_year -= 1900;
     t.tm_mon -= 1;

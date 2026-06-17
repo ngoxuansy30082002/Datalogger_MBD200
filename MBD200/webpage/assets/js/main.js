@@ -4,6 +4,49 @@
  * Uses: jQuery + Bootstrap 5
  */
 
+/* =============================================
+   GLOBAL SYSTEM TIME INTERCEPTOR
+   ============================================= */
+window.parseAndDisplaySystemTime = function(xmlData) {
+    if (!xmlData) return;
+    try {
+        var sysNode = xmlData.getElementsByTagName('systime')[0];
+        if (sysNode && sysNode.firstChild) {
+            var sysStr = sysNode.firstChild.nodeValue;
+            if (sysStr && sysStr !== '~systime~') {
+                var timeStr = sysStr;
+                try {
+                    var systimeObj = JSON.parse(sysStr);
+                    if (systimeObj.systemTime) timeStr = systimeObj.systemTime;
+                } catch(e) {
+                    // Not JSON, assume raw string
+                }
+                timeStr = timeStr.replace('T', ' '); // format nicely
+                
+                var $headerTime = document.getElementById('headerSystemTime');
+                if ($headerTime) $headerTime.innerText = timeStr;
+            }
+        }
+    } catch(e) {
+        console.error("Error updating system time:", e);
+    }
+};
+
+// Patch newAJAXCommand to automatically extract system time globally
+if (typeof window.newAJAXCommand === 'function') {
+    var originalNewAJAXCommand = window.newAJAXCommand;
+    window.newAJAXCommand = function(url, container, repeat, data) {
+        if (typeof container === 'function') {
+            var originalContainer = container;
+            container = function(xmlData) {
+                window.parseAndDisplaySystemTime(xmlData);
+                originalContainer(xmlData);
+            };
+        }
+        originalNewAJAXCommand(url, container, repeat, data);
+    };
+}
+
 $(document).ready(function () {
     /* =============================================
        SIDEBAR TOGGLE
@@ -248,22 +291,44 @@ $(document).ready(function () {
     });
 
     /* =============================================
-       CURRENT DATETIME DISPLAY
+       CURRENT DATETIME DISPLAY (FROM BACKEND)
        ============================================= */
-    function updateClock() {
-        const now = new Date();
-        const options = {
-            hour: '2-digit', minute: '2-digit', second: '2-digit',
-            day: '2-digit', month: '2-digit', year: 'numeric'
-        };
-        const formatted = now.toLocaleString('vi-VN', options);
-        $('#currentTime').text(formatted);
+    // Tạo UI trong header nếu chưa có
+    if (!$('#headerSystemTime').length && $('.header-actions').length) {
+        $('.header-actions').prepend(`
+            <div class="system-time-display d-none d-sm-flex align-items-center" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:4px 12px; margin-right:8px;">
+                <i class="bi bi-clock-history text-primary me-2"></i>
+                <span id="headerSystemTime" style="font-family:'Consolas',monospace; font-size:13px; font-weight:700; color:#0f172a; letter-spacing:0.5px;">--:--:--</span>
+            </div>
+        `);
     }
 
-    if ($('#currentTime').length) {
-        updateClock();
-        setInterval(updateClock, 1000);
-    }
+    // If the page doesn't have an existing updatedata function to poll, we should poll xml/systime.xml globally
+    // if (typeof window.updatedata !== 'function') {
+        // No updatedata means no existing AJAX polling loop for this page.
+        // We will create a standalone polling loop just for system time.
+        function globalTimePoll() {
+            if (typeof window.newAJAXCommand === 'function') {
+                window.updatedata = function(xmlData) {}; // Dummy updatedata so patched newAJAXCommand intercepts it
+                newAJAXCommand('xml/systime.xml', window.updatedata, true);
+            } else {
+                // Fallback using jQuery if mchp.js is not loaded
+                $.ajax({
+                    url: 'xml/systime.xml',
+                    type: 'GET',
+                    dataType: 'xml',
+                    cache: false,
+                    success: function(xmlData) {
+                        window.parseAndDisplaySystemTime(xmlData);
+                    },
+                    complete: function() {
+                        setTimeout(globalTimePoll, 500);
+                    }
+                });
+            }
+        }
+        setTimeout(globalTimePoll, 500);
+    // }
 
     /* =============================================
        TOOLTIPS INIT

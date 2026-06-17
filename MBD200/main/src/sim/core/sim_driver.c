@@ -17,7 +17,8 @@ static const SIM_UART_PLIB _simPlib = {
     .resetPin = GPIO_PIN_RG14,
     .pwrPin = GPIO_PIN_RG12,
     .statusPin = GPIO_PIN_RD9,
-    .netStatusPin = GPIO_PIN_RA15
+    .netStatusPin = GPIO_PIN_RA15,
+    .detectPin = GPIO_PIN_RC3
 };
 
 static SIM_HW_INTERNAL_STATE _hwState = 0;
@@ -203,4 +204,8 @@ bool SIMDriver_TurnOff(void) {
     _hwTick = TICK_NOW();
     _hwState = HW_STATE_TURN_OFF_PULL_LOW;
     return true;
+}
+
+bool SIMDriver_isCardDetect(void) {
+    return (GPIO_PinRead(_simPlib.detectPin) == true);
 }

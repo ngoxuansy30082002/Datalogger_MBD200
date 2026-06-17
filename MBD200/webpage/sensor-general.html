@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
 </head>
 
 <body>
@@ -67,9 +68,9 @@
                                 style="width:200px" id="sensorTableSearch">
                             <select class="form-select form-select-sm" style="width:140px" id="typeTableFilter">
                                 <option value="">Tất cả loại</option>
-                                <option value="analog">Analog</option>
-                                <option value="modbus">Modbus</option>
-                                <option value="input">Input Capture</option>
+                                <option value="1">Modbus RTU</option>
+                                <option value="2">Analog</option>
+                                <option value="3">Input Capture</option>
                             </select>
                         </div>
                     </div>
@@ -78,12 +79,12 @@
                             <thead>
                                 <tr>
                                     <th style="width:40px">#</th>
-                                    <th>Tên sensor</th>
                                     <th>Loại</th>
+                                    <th>Tên sensor</th>
                                     <th>Đơn vị</th>
                                     <th class="text-center">Nguồn trạng thái</th>
                                     <th class="text-center">Kích hoạt</th>
-                                    <th class="text-center">Hiệu chuẩn</th>
+                                    <th class="text-center">Trạng thái</th>
                                     <th style="width:110px">Thao tác</th>
                                 </tr>
                             </thead>
@@ -110,52 +111,46 @@
                     <div class="form-section-body">
                         <form id="globalSettingsForm">
                             <div class="row g-3">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="globalLogInterval">Chu kỳ ghi log (giây)</label>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="globalLogInterval">Chu kỳ ghi log (phút)</label>
                                     <input type="number" class="form-control" id="globalLogInterval" name="logInterval"
-                                        value="60" min="1">
+                                        placeholder="60" min="1">
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="globalDecimal">Số chữ số thập phân</label>
-                                    <input type="number" class="form-control" id="globalDecimal" name="decimalPlaces"
-                                        value="2" min="0" max="5">
-                                </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label" for="globalDataFormat">Định dạng dữ liệu</label>
                                     <select class="form-select" id="globalDataFormat" name="dataFormat">
-                                        <option value="json">JSON</option>
-                                        <option value="csv" selected>CSV</option>
-                                        <option value="text">Plain Text</option>
+                                        <option value="0" selected="">TT24</option>
+                                        <option value="1">DNA</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="fileName">Tên file (template)</label>
                                     <input type="text" class="form-control" id="fileName" name="fileName"
-                                        value="datalogger_{YYYY}{MM}{DD}_{HH}{mm}.csv">
-                                    <div class="form-text">Hỗ trợ: {YYYY} {MM} {DD} {HH} {mm} {SS} {device}</div>
+                                        placeholder="datalogger_{YYYY}{MM}{DD}_{hh}{mm}{ss}.csv">
+                                    <div class="form-text">Hỗ trợ: {YYYY} {MM} {DD} {hh} {mm} {ss}</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="globalFileType">Định dạng file</label>
                                     <select class="form-select" id="globalFileType" name="fileType">
-                                        <option value="csv" selected>CSV</option>
-                                        <option value="txt">TXT</option>
+                                        <option value="0" selected="">TXT</option>
+                                        <option value="1">CSV</option>
                                     </select>
                                 </div>
 
                                 <div class="separator"></div>
 
                                 <div class="col-md-3">
-                                    <div class="form-check form-switch  d-flex align-items-center">
-                                        <input class="form-check-input" type="checkbox" id="ftpCompress"
-                                            name="ftpCompress">
-                                        <label class="form-check-label fw-500 ms-2" for="ftpCompress">Nén file
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input mt-0" type="checkbox" id="compress"
+                                            name="compress" role="switch">
+                                        <label class="form-check-label fw-500 ms-2" for="compress">Nén file
                                             (.gz)</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch d-flex align-items-center">
                                         <input class="form-check-input mt-0" type="checkbox" id="ftpEnable"
-                                            name="ftpEnable" checked role="switch">
+                                            name="ftpEnable" role="switch">
                                         <label class="form-check-label fw-500 ms-2" for="ftpEnable">Gửi dữ liệu cảm biến
                                             lên
                                             FTP</label>
@@ -221,7 +216,7 @@
                                 <label class="form-label">Loại Sensor <span class="text-danger">*</span></label>
                                 <div class="row g-2" id="sensorTypeCards">
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="analog"
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="2"
                                             style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-activity" style="font-size:24px;color:#267dc1"></i>
                                             <div style="font-size:13px;font-weight:600;margin-top:6px">Analog</div>
@@ -229,15 +224,15 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="modbus"
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="1"
                                             style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-ethernet" style="font-size:24px;color:#10b981"></i>
-                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus</div>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus RTU</div>
                                             <div style="font-size:11px;color:#9ca3af">RTU / TCP</div>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="input"
+                                        <div class="border rounded p-3 text-center sensor-type-card" data-stype="3"
                                             style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-lightning-charge-fill"
                                                 style="font-size:24px;color:#f59e0b"></i>
@@ -270,29 +265,86 @@
                             <div class="col-12">
                                 <label class="form-label">Loại nguồn trạng thái</label>
                                 <select class="form-select" id="addSourceType" name="sourceType">
-                                    <option value="auto">Tự động</option>
-                                    <option value="modbus_tag">Modbus Tag</option>
-                                    <option value="input">Digital Input</option>
+                                    <option value="0">Tự động (Auto)</option>
+                                    <option value="1">Modbus RTU</option>
+                                    <option value="2">Digital Input</option>
                                 </select>
                             </div>
 
                             <!-- Source ID fields -->
                             <div class="col-12 d-none" id="addSourceIdContainer">
+                                <input type="hidden" name="success_source_type" id="add_success_source_type">
+                                <input type="hidden" name="error_source_type" id="add_error_source_type">
+                                <input type="hidden" name="calib_source_type" id="add_calib_source_type">
                                 <div class="row g-3 mt-1">
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Success</label>
-                                        <select class="form-select" id="addSuccessId" name="successId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="addSuccessId"
+                                                name="success_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="success_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="success_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Error</label>
-                                        <select class="form-select" id="addErrorId" name="errorId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="addErrorId"
+                                                name="error_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="error_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="error_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Calibration</label>
-                                        <select class="form-select" id="addCalibId" name="calibId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="addCalibId"
+                                                name="calib_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="calib_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="calib_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +370,7 @@
                                 <div class="form-check form-switch d-flex align-items-center mb-3">
                                     <input class="form-check-input mt-0" type="checkbox" id="sensorCalibrated"
                                         name="sensorCalibrated" role="switch">
-                                    <label class="form-check-label fw-500 ms-2" for="sensorCalibrated">Đã được hiệu
+                                    <label class="form-check-label fw-500 ms-2" for="sensorCalibrated">Đang hiệu
                                         chuẩn</label>
                                 </div>
                             </div>
@@ -358,24 +410,24 @@
                                 <label class="form-label">Loại Sensor <span class="text-danger">*</span></label>
                                 <div class="row g-2" id="editSensorTypeCards">
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
-                                            data-stype="analog" style="cursor:pointer;transition:all 0.2s">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card" data-stype="2"
+                                            style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-activity" style="font-size:24px;color:#267dc1"></i>
                                             <div style="font-size:13px;font-weight:600;margin-top:6px">Analog</div>
                                             <div style="font-size:11px;color:#9ca3af">4-20mA, 0-10V</div>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
-                                            data-stype="modbus" style="cursor:pointer;transition:all 0.2s">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card" data-stype="1"
+                                            style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-ethernet" style="font-size:24px;color:#10b981"></i>
-                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus</div>
+                                            <div style="font-size:13px;font-weight:600;margin-top:6px">Modbus RTU</div>
                                             <div style="font-size:11px;color:#9ca3af">RTU / TCP</div>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="border rounded p-3 text-center edit-sensor-type-card"
-                                            data-stype="input" style="cursor:pointer;transition:all 0.2s">
+                                        <div class="border rounded p-3 text-center edit-sensor-type-card" data-stype="3"
+                                            style="cursor:pointer;transition:all 0.2s">
                                             <i class="bi bi-lightning-charge-fill"
                                                 style="font-size:24px;color:#f59e0b"></i>
                                             <div style="font-size:13px;font-weight:600;margin-top:6px">Input Capture
@@ -407,29 +459,86 @@
                             <div class="col-12">
                                 <label class="form-label">Loại nguồn trạng thái</label>
                                 <select class="form-select" id="editSourceType" name="sourceType">
-                                    <option value="auto">Tự động</option>
-                                    <option value="modbus_tag">Modbus Tag</option>
-                                    <option value="input">Digital Input</option>
+                                    <option value="0">Tự động (Auto)</option>
+                                    <option value="1">Modbus RTU</option>
+                                    <option value="2">Digital Input</option>
                                 </select>
                             </div>
 
                             <!-- Source ID fields -->
                             <div class="col-12 d-none" id="editSourceIdContainer">
+                                <input type="hidden" name="success_source_type" id="edit_success_source_type">
+                                <input type="hidden" name="error_source_type" id="edit_error_source_type">
+                                <input type="hidden" name="calib_source_type" id="edit_calib_source_type">
                                 <div class="row g-3 mt-1">
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Success</label>
-                                        <select class="form-select" id="editSuccessId" name="successId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="editSuccessId"
+                                                name="success_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="success_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="success_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Error</label>
-                                        <select class="form-select" id="editErrorId" name="errorId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="editErrorId"
+                                                name="error_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="error_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="error_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted"
+                                        <label class="form-label text-muted border-bottom pb-1 w-100"
                                             style="font-size:13px;font-weight:600">Calibration</label>
-                                        <select class="form-select" id="editCalibId" name="calibId"></select>
+                                        <div class="mb-2">
+                                            <label class="form-label tag-label d-none"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Tag</label>
+                                            <select class="form-select form-select-sm" id="editCalibId"
+                                                name="calib_tag_id"></select>
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">AND Value</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="calib_and_value" placeholder="100">
+                                        </div>
+                                        <div class="mb-2 modbus-only">
+                                            <label class="form-label"
+                                                style="font-size:12px;color:#6b7280;margin-bottom:2px">Expected
+                                                Result</label>
+                                            <input type="number" class="form-control form-control-sm"
+                                                name="calib_expected_value" placeholder="100">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -455,7 +564,7 @@
                                 <div class="form-check form-switch d-flex align-items-center mb-3">
                                     <input class="form-check-input mt-0" type="checkbox" id="editSensorCalibrated"
                                         name="sensorCalibrated" role="switch">
-                                    <label class="form-check-label fw-500 ms-2" for="editSensorCalibrated">Đã được hiệu
+                                    <label class="form-check-label fw-500 ms-2" for="editSensorCalibrated">Đang hiệu
                                         chuẩn</label>
                                 </div>
                             </div>
@@ -478,28 +587,161 @@
     <script src="assets/js/layout.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
-        /* ===== MOCK DATA ===== */
-        let sensors = [
-            { id: 1, type: 'analog', sensorId: 'ADC1', unit: 'm3/h', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: true, calib: true },
-            { id: 2, type: 'analog', sensorId: 'ADC2', unit: 'm3/h', sourceType: 'input', successId: 'DI1', errorId: 'DI2', calibId: 'DI3', active: true, calib: false },
-            { id: 3, type: 'analog', sensorId: 'ADC3', unit: 'm3/h', sourceType: 'modbus_tag', successId: 'MB_Tag1', errorId: 'MB_Tag2', calibId: 'MB_Tag3', active: false, calib: true },
-            { id: 4, type: 'modbus', sensorId: 'Modbus_Dev1', unit: 'V', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: true, calib: false },
-            { id: 5, type: 'modbus', sensorId: 'Modbus_Dev2', unit: 'A', sourceType: 'modbus_tag', successId: 'MB_Tag4', errorId: 'MB_Tag5', calibId: 'MB_Tag6', active: true, calib: true },
-            { id: 6, type: 'input', sensorId: 'DI1', unit: 'Hz', sourceType: 'auto', successId: '', errorId: '', calibId: '', active: false, calib: false },
-        ];
-        let nextId = 7;
+
+        var isFirstLoad = true;
+
+        /* ===== ENUMS ===== */
+        const SENSOR_TYPE = {
+            MODBUS_RTU: 1,
+            ANALOG: 2,
+            INPUT_CAPTURE: 3
+        };
+
+        const STATUS_SOURCE_TYPE = {
+            AUTO: 0,
+            MODBUS_RTU: 1,
+            DIGITAL_INPUT: 2
+        };
+
+        /* ===== VARIABLES ===== */
+        let sensorSources = {
+            analog: [],
+            modbus: [],
+            capture: [],
+            digitalInput: []
+        };
+        let sensors = [];
+        let nextId = 1;
         let editingId = null;
 
-        const TYPE_LABELS = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
-        const TYPE_CLASSES = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
-        const SRC_LABELS = { auto: 'Tự động', input: 'Input (DI)', modbus_tag: 'Modbus Tag' };
+        /* ===== AJAX POLLING & DATA UPDATE ===== */
+        function updatedata(xmlData) {
+            let dataString = '';
+            dataString = getXMLValue(xmlData, 'sensorGeneral');
+
+            // dataString = `
+            //     {
+            //         "analogSensors": [
+            //             { "id": 1, "name": "Analog 1" },
+            //             { "id": 5, "name": "Analog 5" },
+            //             { "id": 7, "name": "Analog 7" }
+            //         ],
+            //         "modbusTags": [
+            //             { "id": 0, "name": "Modbus Tag 1" },
+            //             { "id": 1, "name": "Modbus Tag 2" },
+            //             { "id": 2, "name": "Modbus Tag 5" }
+            //         ],
+            //         "inputCaptures": [
+            //             { "id": 1, "name": "Input Capture 1" },
+            //             { "id": 3, "name": "Input Capture 3" }
+            //         ],
+            //         "digitalInputs": [
+            //             { "id": 0, "name": "Digital Input 1" },
+            //             { "id": 1, "name": "Digital Input 4" }
+            //         ],
+            //         "sensors": [
+            //             { "id": 1, "type": 2, "sensorId": 1, "unit": "m3/h", "sourceType": 0, "successId": "", "errorId": "", "calibId": "", "successAndValue": "", "successExpectedValue": "", "errorAndValue": "", "errorExpectedValue": "", "calibAndValue": "", "calibExpectedValue": "", "active": true, "calib": true },
+            //             { "id": 2, "type": 2, "sensorId": 5, "unit": "m3/h", "sourceType": 2, "successId": 0, "errorId": 1, "calibId": 0, "successAndValue": "", "successExpectedValue": "", "errorAndValue": "", "errorExpectedValue": "", "calibAndValue": "", "calibExpectedValue": "", "active": true, "calib": false },
+            //             { "id": 3, "type": 2, "sensorId": 7, "unit": "m3/h", "sourceType": 1, "successId": 0, "errorId": 1, "calibId": 2, "successAndValue": 100, "successExpectedValue": 100, "errorAndValue": 200, "errorExpectedValue": 200, "calibAndValue": 4, "calibExpectedValue": 4, "active": false, "calib": true },
+            //             { "id": 4, "type": 1, "sensorId": 0, "unit": "V", "sourceType": 0, "successId": "", "errorId": "", "calibId": "", "successAndValue": "", "successExpectedValue": "", "errorAndValue": "", "errorExpectedValue": "", "calibAndValue": "", "calibExpectedValue": "", "active": true, "calib": false },
+            //             { "id": 5, "type": 1, "sensorId": 1, "unit": "A", "sourceType": 1, "successId": 0, "errorId": 1, "calibId": 2, "successAndValue": 100, "successExpectedValue": 100, "errorAndValue": 200, "errorExpectedValue": 200, "calibAndValue": 4, "calibExpectedValue": 4, "active": true, "calib": true },
+            //             { "id": 6, "type": 3, "sensorId": 1, "unit": "Hz", "sourceType": 0, "successId": "", "errorId": "", "calibId": "", "successAndValue": "", "successExpectedValue": "", "errorAndValue": "", "errorExpectedValue": "", "calibAndValue": "", "calibExpectedValue": "", "active": false, "calib": false }
+            //         ]
+            //     }
+            //     `;
+
+            try {
+                const sensorData = JSON.parse(dataString);
+
+                sensorSources.analog = sensorData.analogSensors || [];
+                sensorSources.modbus = sensorData.modbusTags || [];
+                sensorSources.capture = sensorData.inputCaptures || [];
+                sensorSources.digitalInput = sensorData.digitalInputs || [];
+
+                sensors = sensorData.sensors || [];
+
+                if (sensors.length > 0) {
+                    nextId = Math.max(...sensors.map(s => s.id)) + 1;
+                }
+
+                renderTable();
+
+            } catch (e) {
+                console.error("Lỗi khi parse dữ liệu JSON từ backend:", e);
+            }
+
+
+            if (isFirstLoad) {
+                isFirstLoad = false;
+                let exportDataString = getXMLValue(xmlData, 'exportSettings');
+                // exportDataString = `
+                //     {
+                //         "logInterval": 60,
+                //         "dataFormat": 0,
+                //         "fileName": "datalogger_{YYYY}{MM}{DD}_{hh}{mm}{ss}.csv",
+                //         "fileType": 0,
+                //         "compress": false,
+                //         "ftpEnable": true,
+                //         "mqttEnable": false,
+                //         "sdEnable": false
+                //     }
+                //     `;
+
+                try {
+                    const exportData = JSON.parse(exportDataString);
+                    renderExportSettings(exportData);
+                } catch (e) {
+                    console.error("Lỗi khi parse dữ liệu exportSettings JSON từ backend:", e);
+                }
+            }
+        }
+        setTimeout("newAJAXCommand('xml/sensor-general.xml', updatedata, true)", 500);
+
+
+        function getSensorTypeText(type) {
+            if (type == SENSOR_TYPE.MODBUS_RTU) return 'Modbus RTU';
+            if (type == SENSOR_TYPE.ANALOG) return 'Analog';
+            if (type == SENSOR_TYPE.INPUT_CAPTURE) return 'Input Capture';
+            return '';
+        }
+
+        function getSensorTypeClass(type) {
+            if (type == SENSOR_TYPE.MODBUS_RTU) return 'sensor-type-modbus';
+            if (type == SENSOR_TYPE.ANALOG) return 'sensor-type-analog';
+            if (type == SENSOR_TYPE.INPUT_CAPTURE) return 'sensor-type-input';
+            return '';
+        }
+
+        const SRC_LABELS = {
+            [STATUS_SOURCE_TYPE.AUTO]: 'Tự động',
+            [STATUS_SOURCE_TYPE.DIGITAL_INPUT]: 'Digital Input',
+            [STATUS_SOURCE_TYPE.MODBUS_RTU]: 'Modbus RTU'
+        };
+
+        function renderExportSettings(data) {
+            if (!data) return;
+
+            if (data.logInterval !== undefined) $('#globalLogInterval').val(data.logInterval);
+            if (data.fileName !== undefined) $('#fileName').val(data.fileName);
+
+            const $dataFormat = $('#globalDataFormat');
+            if (data.dataFormat !== undefined) $dataFormat.val(data.dataFormat);
+
+            const $fileType = $('#globalFileType');
+            if (data.fileType !== undefined) $fileType.val(data.fileType);
+
+            if (data.compress !== undefined) $('#compress').prop('checked', data.compress);
+            if (data.ftpEnable !== undefined) $('#ftpEnable').prop('checked', data.ftpEnable);
+            if (data.mqttEnable !== undefined) $('#mqttEnable').prop('checked', data.mqttEnable);
+            if (data.sdEnable !== undefined) $('#sdEnable').prop('checked', data.sdEnable);
+        }
 
         function renderTable() {
             let list = sensors;
             const q = $('#sensorTableSearch').val().toLowerCase();
             const tf = $('#typeTableFilter').val();
-            if (q) list = list.filter(s => s.sensorId.toLowerCase().includes(q));
-            if (tf) list = list.filter(s => s.type === tf);
+            if (q) list = list.filter(s => String(s.sensorId).toLowerCase().includes(q));
+            if (tf) list = list.filter(s => String(s.type) === tf);
 
             $('#sensorCount').text(sensors.length);
             const $body = $('#sensorTableBody');
@@ -515,17 +757,29 @@
                 const checkedActive = s.active ? 'checked' : '';
                 const calibBadge = s.calib ?
                     ` <span class="badge badge-calib">
-                        <i class="bi bi-patch-check-fill me-1"></i>Đã hiệu chuẩn
+                        <i class="bi bi-patch-check-fill me-1"></i>Đang hiệu chuẩn
                     </span>` :
                     ``;
+
+                let sensorNameDisplay = s.sensorId;
+                if (s.type == SENSOR_TYPE.MODBUS_RTU) {
+                    const found = sensorSources.modbus.find(x => x.id == s.sensorId);
+                    if (found) sensorNameDisplay = found.name;
+                } else if (s.type == SENSOR_TYPE.ANALOG) {
+                    const found = sensorSources.analog.find(x => x.id == s.sensorId);
+                    if (found) sensorNameDisplay = found.name;
+                } else if (s.type == SENSOR_TYPE.INPUT_CAPTURE) {
+                    const found = sensorSources.capture.find(x => x.id == s.sensorId);
+                    if (found) sensorNameDisplay = found.name;
+                }
 
                 $body.append(`
                 <tr data-id="${s.id}">
                 <td style="font-weight:600;color:#9ca3af">${i + 1}</td>
-                <td style="font-weight:600;color:#1f2937">${s.sensorId}</td>
-                <td><span class="badge sensor-type-badge ${TYPE_CLASSES[s.type]}">${TYPE_LABELS[s.type]}</span></td>
+                <td><span class="badge sensor-type-badge ${getSensorTypeClass(s.type)}">${getSensorTypeText(s.type)}</span></td>
+                <td style="font-weight:600;color:#1f2937">${sensorNameDisplay}</td>
                 <td>${s.unit}</td>
-                <td class="text-center"><span style="font-size:12px;color:#6b7280">${SRC_LABELS[s.sourceType] || SRC_LABELS['auto']}</span></td>
+                <td class="text-center"><span style="font-size:12px;color:#6b7280">${SRC_LABELS[s.sourceType] || SRC_LABELS[STATUS_SOURCE_TYPE.AUTO]}</span></td>
                 <td class="text-center">
                     <div class="form-check form-switch d-flex justify-content-center m-0">
                         <input class="form-check-input toggle-active" type="checkbox" data-id="${s.id}" ${checkedActive}>
@@ -546,18 +800,25 @@
         $(document).on('click', '#addSensorModal .sensor-type-card', function () {
             $('#addSensorModal .sensor-type-card').removeClass('border-primary').css({ background: '', borderColor: '' });
             $(this).addClass('border-primary').css({ background: '#e8f4fd' });
-            const type = $(this).data('stype');
+            const type = parseInt($(this).data('stype'), 10);
             $('#selectedSensorType').val(type);
 
             const $idSelect = $('#sensorIdSelect');
             $idSelect.empty();
 
-            if (type === 'analog') {
-                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="ADC${i}">ADC${i}</option>`);
-            } else if (type === 'modbus') {
-                for (let i = 1; i <= 32; i++) $idSelect.append(`<option value="Modbus_Dev${i}">Modbus Device ${i}</option>`);
-            } else if (type === 'input') {
-                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="DI${i}">DI${i}</option>`);
+            let options = [];
+            if (type == SENSOR_TYPE.ANALOG) {
+                options = sensorSources.analog;
+            } else if (type == SENSOR_TYPE.MODBUS_RTU) {
+                options = sensorSources.modbus;
+            } else if (type == SENSOR_TYPE.INPUT_CAPTURE) {
+                options = sensorSources.capture;
+            }
+
+            if (options) {
+                options.forEach(opt => {
+                    $idSelect.append(`<option value="${opt.id}">${opt.name}</option>`);
+                });
             }
         });
 
@@ -565,24 +826,37 @@
         $(document).on('click', '#editSensorModal .edit-sensor-type-card', function () {
             $('#editSensorModal .edit-sensor-type-card').removeClass('border-primary').css({ background: '', borderColor: '' });
             $(this).addClass('border-primary').css({ background: '#e8f4fd' });
-            const type = $(this).data('stype');
+            const type = parseInt($(this).data('stype'), 10);
             $('#editSelectedSensorType').val(type);
 
             const $idSelect = $('#editSensorIdSelect');
             $idSelect.empty();
 
-            if (type === 'analog') {
-                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="ADC${i}">ADC${i}</option>`);
-            } else if (type === 'modbus') {
-                for (let i = 1; i <= 32; i++) $idSelect.append(`<option value="Modbus_Dev${i}">Modbus Device ${i}</option>`);
-            } else if (type === 'input') {
-                for (let i = 1; i <= 8; i++) $idSelect.append(`<option value="DI${i}">DI${i}</option>`);
+            let options = [];
+            if (type == SENSOR_TYPE.ANALOG) {
+                options = sensorSources.analog;
+            } else if (type == SENSOR_TYPE.MODBUS_RTU) {
+                options = sensorSources.modbus;
+            } else if (type == SENSOR_TYPE.INPUT_CAPTURE) {
+                options = sensorSources.capture;
+            }
+
+            if (options) {
+                options.forEach(opt => {
+                    $idSelect.append(`<option value="${opt.id}">${opt.name}</option>`);
+                });
             }
         });
 
         function populateSourceIds($typeSelect, $container, $successId, $errorId, $calibId, currentSuccess = '', currentError = '', currentCalib = '') {
-            const type = $typeSelect.val();
-            if (type === 'auto') {
+            const type = parseInt($typeSelect.val(), 10);
+            const prefix = $typeSelect.attr('id').replace('SourceType', '');
+
+            $(`#${prefix}_success_source_type`).val(type);
+            $(`#${prefix}_error_source_type`).val(type);
+            $(`#${prefix}_calib_source_type`).val(type);
+
+            if (isNaN(type) || type == STATUS_SOURCE_TYPE.AUTO) {
                 $container.addClass('d-none');
             } else {
                 $container.removeClass('d-none');
@@ -590,20 +864,25 @@
                 $errorId.empty();
                 $calibId.empty();
 
-                if (type === 'modbus_tag') {
-                    for (let i = 1; i <= 32; i++) {
-                        const val = `MB_Tag${i}`;
-                        $successId.append(`<option value="${val}" ${currentSuccess === val ? 'selected' : ''}>${val}</option>`);
-                        $errorId.append(`<option value="${val}" ${currentError === val ? 'selected' : ''}>${val}</option>`);
-                        $calibId.append(`<option value="${val}" ${currentCalib === val ? 'selected' : ''}>${val}</option>`);
-                    }
-                } else if (type === 'input') {
-                    for (let i = 1; i <= 8; i++) {
-                        const val = `DI${i}`;
-                        $successId.append(`<option value="${val}" ${currentSuccess === val ? 'selected' : ''}>${val}</option>`);
-                        $errorId.append(`<option value="${val}" ${currentError === val ? 'selected' : ''}>${val}</option>`);
-                        $calibId.append(`<option value="${val}" ${currentCalib === val ? 'selected' : ''}>${val}</option>`);
-                    }
+                let options = [];
+                if (type == STATUS_SOURCE_TYPE.MODBUS_RTU) {
+                    options = sensorSources.modbus;
+                    $container.find('.modbus-only').removeClass('d-none');
+                    $container.find('.tag-label').removeClass('d-none');
+                } else if (type == STATUS_SOURCE_TYPE.DIGITAL_INPUT) {
+                    options = sensorSources.digitalInput;
+                    $container.find('.modbus-only').addClass('d-none');
+                    $container.find('.tag-label').addClass('d-none');
+                }
+
+                if (options) {
+                    options.forEach(opt => {
+                        const val = opt.id;
+                        const name = opt.name;
+                        $successId.append(`<option value="${val}" ${String(currentSuccess) === String(val) ? 'selected' : ''}>${name}</option>`);
+                        $errorId.append(`<option value="${val}" ${String(currentError) === String(val) ? 'selected' : ''}>${name}</option>`);
+                        $calibId.append(`<option value="${val}" ${String(currentCalib) === String(val) ? 'selected' : ''}>${name}</option>`);
+                    });
                 }
             }
         }
@@ -678,11 +957,19 @@
                 // Update mockup data cho UI local
                 if (success) {
                     sensors.push({
-                        id: nextId++, type, sensorId,
-                        sourceType: $('#addSourceType').val(),
-                        successId: $('#addSuccessId').val(),
-                        errorId: $('#addErrorId').val(),
-                        calibId: $('#addCalibId').val(),
+                        id: nextId++,
+                        type: parseInt(type, 10),
+                        sensorId,
+                        sourceType: parseInt($('#addSourceType').val(), 10),
+                        successId: $('#addSuccessId').val() !== null && $('#addSuccessId').val() !== '' ? parseInt($('#addSuccessId').val(), 10) : '',
+                        errorId: $('#addErrorId').val() !== null && $('#addErrorId').val() !== '' ? parseInt($('#addErrorId').val(), 10) : '',
+                        calibId: $('#addCalibId').val() !== null && $('#addCalibId').val() !== '' ? parseInt($('#addCalibId').val(), 10) : '',
+                        successAndValue: $('input[name="success_and_value"]', '#addSourceIdContainer').val(),
+                        successExpectedValue: $('input[name="success_expected_value"]', '#addSourceIdContainer').val(),
+                        errorAndValue: $('input[name="error_and_value"]', '#addSourceIdContainer').val(),
+                        errorExpectedValue: $('input[name="error_expected_value"]', '#addSourceIdContainer').val(),
+                        calibAndValue: $('input[name="calib_and_value"]', '#addSourceIdContainer').val(),
+                        calibExpectedValue: $('input[name="calib_expected_value"]', '#addSourceIdContainer').val(),
                         active: $('#sensorActive').is(':checked'),
                         calib: $('#sensorCalibrated').is(':checked')
                     });
@@ -711,6 +998,13 @@
             $(`#editSensorModal .edit-sensor-type-card[data-stype="${s.type}"]`).trigger('click');
             $('#editSensorIdSelect').val(s.sensorId);
 
+            $('#editSourceIdContainer input[name="success_and_value"]').val(s.successAndValue || '');
+            $('#editSourceIdContainer input[name="success_expected_value"]').val(s.successExpectedValue || '');
+            $('#editSourceIdContainer input[name="error_and_value"]').val(s.errorAndValue || '');
+            $('#editSourceIdContainer input[name="error_expected_value"]').val(s.errorExpectedValue || '');
+            $('#editSourceIdContainer input[name="calib_and_value"]').val(s.calibAndValue || '');
+            $('#editSourceIdContainer input[name="calib_expected_value"]').val(s.calibExpectedValue || '');
+
             $('#editSourceType').val(s.sourceType);
             populateSourceIds($('#editSourceType'), $('#editSourceIdContainer'), $('#editSuccessId'), $('#editErrorId'), $('#editCalibId'), s.successId, s.errorId, s.calibId);
 
@@ -735,12 +1029,18 @@
 
             sendPostRequest('sensor-general.html', 'editSensorForm', function (success) {
                 if (success) {
-                    s.type = type;
+                    s.type = parseInt(type, 10);
                     s.sensorId = sensorId;
-                    s.sourceType = $('#editSourceType').val();
-                    s.successId = $('#editSuccessId').val();
-                    s.errorId = $('#editErrorId').val();
-                    s.calibId = $('#editCalibId').val();
+                    s.sourceType = parseInt($('#editSourceType').val(), 10);
+                    s.successId = $('#editSuccessId').val() !== null && $('#editSuccessId').val() !== '' ? parseInt($('#editSuccessId').val(), 10) : '';
+                    s.errorId = $('#editErrorId').val() !== null && $('#editErrorId').val() !== '' ? parseInt($('#editErrorId').val(), 10) : '';
+                    s.calibId = $('#editCalibId').val() !== null && $('#editCalibId').val() !== '' ? parseInt($('#editCalibId').val(), 10) : '';
+                    s.successAndValue = $('input[name="success_and_value"]', '#editSourceIdContainer').val();
+                    s.successExpectedValue = $('input[name="success_expected_value"]', '#editSourceIdContainer').val();
+                    s.errorAndValue = $('input[name="error_and_value"]', '#editSourceIdContainer').val();
+                    s.errorExpectedValue = $('input[name="error_expected_value"]', '#editSourceIdContainer').val();
+                    s.calibAndValue = $('input[name="calib_and_value"]', '#editSourceIdContainer').val();
+                    s.calibExpectedValue = $('input[name="calib_expected_value"]', '#editSourceIdContainer').val();
                     s.active = $('#editSensorActive').is(':checked');
                     s.calib = $('#editSensorCalibrated').is(':checked');
 
@@ -803,7 +1103,7 @@
         $('#sensorTableSearch, #typeTableFilter').on('input change', renderTable);
 
         $(document).ready(function () {
-            renderTable();
+            newAJAXCommand('xml/sensor-general.xml', updatedata, false);
         });
     </script>
 </body>

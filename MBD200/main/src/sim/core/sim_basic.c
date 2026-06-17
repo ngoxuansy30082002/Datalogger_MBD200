@@ -87,7 +87,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                 }
                 _simInfo.imei[i] = '\0';
                 if (i >= 15) {
-                    //                    SYS_CONSOLE_PRINT("%s - %s:\t IMEI: %s\r\n", __TAG__, __func__, _simInfo.imei);
+                    LOG_DEBUG("%s - %s:\t IMEI: %s", __TAG__, __func__, _simInfo.imei);
                     return true;
                 }
             }
@@ -110,12 +110,12 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                     if (isdigit((unsigned char) *ptr)) {
                         int status = *ptr - '0'; /* Read <status> */
                         if (status == 1) {
-                            //                            SYS_CONSOLE_PRINT("%s - %s:\t SIM inserted\r\n", __TAG__, __func__);
+                            LOG_DEBUG("%s - %s:\t SIM inserted", __TAG__, __func__);
                             _simInfo.inserted = true;
                             return true; /* SIM detected */
                         } else {
                             _simInfo.inserted = false;
-                            //                            SYS_CONSOLE_PRINT("%s - %s:\t SIM NOT inserted\r\n", __TAG__, __func__);
+                            LOG_DEBUG("%s - %s:\t SIM NOT inserted", __TAG__, __func__);
                             return false; /* SIM not detected */
                         }
                     }
@@ -138,7 +138,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                 _simInfo.ccid[i] = '\0';
 
                 if (i > 0) {
-                    SYS_CONSOLE_PRINT("%s - %s:\t CCID: %s\r\n", __TAG__, __func__, _simInfo.ccid);
+                    LOG_DEBUG("%s - %s:\t CCID: %s", __TAG__, __func__, _simInfo.ccid);
                     return true;
                 }
             }
@@ -167,7 +167,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                             ptr++;
                         }
 
-                        SYS_CONSOLE_PRINT("%s - %s:\t CREG Status: %d\r\n", __TAG__, __func__, stat);
+                        LOG_DEBUG("%s - %s:\t CREG Status: %d", __TAG__, __func__, stat);
                         if (stat == 1 || stat == 5) {
                             return true; /* Registered to network */
                         }
@@ -199,7 +199,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                 _simInfo.networkName[i] = '\0';
 
                 if (i > 0) {
-                    SYS_CONSOLE_PRINT("%s - %s:\t Network: %s\r\n", __TAG__, __func__, _simInfo.networkName);
+                    LOG_DEBUG("%s - %s:\t Network: %s", __TAG__, __func__, _simInfo.networkName);
                 }
             }
             return true;
@@ -218,7 +218,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                         ptr++;
                     }
                     _simInfo.rssi = rssi;
-                    SYS_CONSOLE_PRINT("%s - %s:\t RSSI: %d\r\n", __TAG__, __func__, _simInfo.rssi);
+                    LOG_DEBUG("%s - %s:\t RSSI: %d", __TAG__, __func__, _simInfo.rssi);
                     return true;
                 }
             }
@@ -277,9 +277,33 @@ bool SIMBasic_HasError(void) {
 }
 
 void SIMBasic_Process(void) {
+    static uint32_t reScanTick = 0;
+    static bool preDetect = false;
+
     SIM_HW_STATUS hwStatus = SIMDriver_GetHWStatus();
     if (hwStatus == SIM_HW_STATUS_POWERDOWN)
         SIMDriver_TurnOn();
+
+    if (hwStatus != SIM_HW_STATUS_READY)
+        return;
+
+    bool currentDetect = SIMDriver_isCardDetect();
+    bool scan = false;
+
+    if (currentDetect == true && preDetect == false) {
+        LOG_DEBUG("%s - %s:\t SIMDriver_isCardDetect", __TAG__, __func__);
+        scan = true;
+        reScanTick = TICK_NOW();
+    }
+    preDetect = currentDetect;
+
+    if (!_simInfo.inserted && TIME_IS_EXPIRED(reScanTick, 60000)) {
+        reScanTick = TICK_NOW();
+        scan = true;
+    }
+
+    if (scan)
+        SIMBasic_Initialize(0);
 
     if (hwStatus != SIM_HW_STATUS_READY ||
             _currentState == SIM_BASIC_IDLE ||
@@ -301,14 +325,14 @@ void SIMBasic_Process(void) {
             else
                 _currentTxLen = snprintf((char*) tx_buf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
 
-            //            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) tx_buf);
+            //            LOG_DEBUG("%s - %s:\t Builed: %s", __TAG__, __func__, (char *) tx_buf);
             _isBuilded = true; /* Mark as built */
         }
 
         /* Execute sending to driver */
         if (_currentTxLen > 0) {
             if (SIMDriver_Execute((size_t) _currentTxLen, cmdInfo->timeoutMs)) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Sended\r\n", __TAG__, __func__);
+                //                LOG_DEBUG("%s - %s:\t Sended", __TAG__, __func__);
                 _isWaitingResp = true;
                 _isBuilded = false; /* Clear flag so next cycle/state can rebuild */
             }
@@ -320,7 +344,7 @@ void SIMBasic_Process(void) {
         if (status == SIM_DRV_STATUS_RECV_RESP) {
             uint8_t* rx_buf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
             if (rx_buf != NULL) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rx_buf);
+                //                LOG_DEBUG("%s - %s:\t Receive %s", __TAG__, __func__, (char *) rx_buf);
 
                 const char* expected_ok = _cmdTable[_currentState].respOk;
                 const char* expected_fail = _cmdTable[_currentState].respFail;
@@ -342,7 +366,7 @@ void SIMBasic_Process(void) {
                 }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
-            //            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
+            //            LOG_DEBUG("%s - %s:\t Timeout", __TAG__, __func__);
             _handleErrorOrTimeout();
         }
     }

@@ -97,11 +97,14 @@ void CLK_Initialize( void )
     PMD2 = 0x3U;
     PMD3 = 0x1ff01d7U;
     PMD4 = 0x1fbU;
-    PMD5 = 0x301d2c14U;
+    PMD5 = 0x301d0c14U;
     PMD6 = 0x830001U;
     PMD7 = 0x500000U;
 
     CFGCONbits.PMDLOCK = 1;
+
+    /* Peripheral Bus 3 is by default enabled, set its divisor */
+    PB3DIVbits.PBDIV = 9;
 
 
       

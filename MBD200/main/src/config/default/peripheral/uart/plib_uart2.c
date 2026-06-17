@@ -41,7 +41,7 @@
 #include "device.h"
 #include "plib_uart2.h"
 #include "interrupts.h"
-
+#include "sensor/modbus_rtu/modbus_rtu_phy.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: UART2 Implementation
@@ -406,6 +406,12 @@ void __attribute__((used)) UART2_RX_InterruptHandler (void)
             {
                 /* 8-bit mode */
                 ((uint8_t*)uart2Obj.rxBuffer)[rxProcessedSize] = (uint8_t)(U2RXREG);
+                modbus_phy_enable_timeout(true);
+                volatile MODBUS_RX_PACKED * modbusRx =  modbus_phy_get_rx_packed();
+                modbusRx->len++;
+                if (modbusRx->len >= MODBUS_SERIAL_RX_BUFFER_SIZE) {
+                    modbusRx->len = MODBUS_SERIAL_RX_BUFFER_SIZE - 1;
+                }
             }
             rxProcessedSize++;
         }

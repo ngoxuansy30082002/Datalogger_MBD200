@@ -91,6 +91,8 @@ void UART4_RX_Handler (void);
 void UART4_TX_Handler (void);
 void SPI5_RX_Handler (void);
 void SPI5_TX_Handler (void);
+void SPI6_RX_Handler (void);
+void SPI6_TX_Handler (void);
 void UART6_FAULT_Handler (void);
 void UART6_RX_Handler (void);
 void UART6_TX_Handler (void);
@@ -219,6 +221,16 @@ void __attribute__((used)) __ISR(_SPI5_RX_VECTOR, ipl1SRS) SPI5_RX_Handler (void
 void __attribute__((used)) __ISR(_SPI5_TX_VECTOR, ipl1SRS) SPI5_TX_Handler (void)
 {
     SPI5_TX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI6_RX_VECTOR, ipl1SRS) SPI6_RX_Handler (void)
+{
+    SPI6_RX_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_SPI6_TX_VECTOR, ipl1SRS) SPI6_TX_Handler (void)
+{
+    SPI6_TX_InterruptHandler();
 }
 
 void __attribute__((used)) __ISR(_UART6_FAULT_VECTOR, ipl1SRS) UART6_FAULT_Handler (void)

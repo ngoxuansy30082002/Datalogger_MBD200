@@ -11,6 +11,8 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
  ../src/config/default/device.h \
  ../src/config/default/peripheral/icap/plib_icap_common.h \
  ../src/config/default/peripheral/icap/plib_icap4.h \
+ ../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h \
+ ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
  ../src/config/default/driver/memory/drv_memory.h \
  ../src/config/default/driver/memory/drv_memory_definitions.h \
  ../src/config/default/driver/driver_common.h \
@@ -29,7 +31,6 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
  ../src/config/default/osal/osal_definitions.h \
  ../src/config/default/osal/osal_impl_basic.h \
  ../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h \
- ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
  ../src/config/default/driver/ethmac/drv_ethmac.h \
  ../src/config/default/driver/ethphy/drv_ethphy.h \
  ../src/config/default/library/tcpip/tcpip_ethernet.h \
@@ -127,17 +128,23 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
  ../src/boot_config.h ../src/storage/external_flash/extflash_manager.h \
  ../src/config/default/device_cache.h ../src/storage/fram/fram.h \
  ../src/storage/sd_card/sd_card.h ../src/rtc/rtc.h ../src/hmi/hmi_dwin.h \
- ../src/modbus_rtu/master.h ../src/rule_engine/rule_engine.h \
- ../src/sim/sim_main.h ../src/app.h ../src/sim/service/sim_gps.h \
- ../src/sim/core/sim_basic.h ../src/sim/core/sim_net.h \
- ../src/sim/service/sim_mqtt.h ../src/ethernet/eth_net.h \
- ../src/ethernet/tcp_mqtt.h \
+ ../src/sensor/sensor_general.h ../src/sensor/modbus_rtu/master.h \
+ ../src/sensor/analog/adc.h ../src/sensor/analog/ad717x.h \
+ ../src/sensor/analog/no_os_util.h ../src/sensor/analog/drv_spi_adc.h \
+ ../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h \
+ ../src/sensor/input_capture/input_capture.h \
+ ../src/rule_engine/rule_engine.h ../src/sim/sim_main.h ../src/app.h \
+ ../src/sim/service/sim_gps.h ../src/sim/core/sim_basic.h \
+ ../src/sim/core/sim_net.h ../src/sim/service/sim_mqtt.h \
+ ../src/ethernet/eth_net.h ../src/ethernet/tcp_mqtt.h \
+ ../src/digital_io/led_indicate.h ../src/digital_io/digital_output.h \
+ ../src/ethernet/eth_ntp.h ../src/ethernet/eth_ftp.h \
  D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/http_net_print.h \
+ ../src/config/default/library/tcpip/tcpip.h \
+ ../src/config/default/library/tcpip/src/common/helpers.h \
  ../src/config/default/net_pres/pres/net_pres_socketapi.h \
  ../src/config/default/system/sys_random_h2_adapter.h \
- ../src/config/default/system/sys_time_h2_adapter.h \
- ../src/config/default/library/tcpip/tcpip.h \
- ../src/config/default/library/tcpip/src/common/helpers.h
+ ../src/config/default/system/sys_time_h2_adapter.h
 
 ../src/config/default/system_config.h:
 
@@ -162,6 +169,10 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
 ../src/config/default/peripheral/icap/plib_icap_common.h:
 
 ../src/config/default/peripheral/icap/plib_icap4.h:
+
+../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h:
+
+../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h:
 
 ../src/config/default/driver/memory/drv_memory.h:
 
@@ -198,8 +209,6 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
 ../src/config/default/osal/osal_impl_basic.h:
 
 ../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h:
-
-../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h:
 
 ../src/config/default/driver/ethmac/drv_ethmac.h:
 
@@ -409,7 +418,21 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
 
 ../src/hmi/hmi_dwin.h:
 
-../src/modbus_rtu/master.h:
+../src/sensor/sensor_general.h:
+
+../src/sensor/modbus_rtu/master.h:
+
+../src/sensor/analog/adc.h:
+
+../src/sensor/analog/ad717x.h:
+
+../src/sensor/analog/no_os_util.h:
+
+../src/sensor/analog/drv_spi_adc.h:
+
+../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h:
+
+../src/sensor/input_capture/input_capture.h:
 
 ../src/rule_engine/rule_engine.h:
 
@@ -429,14 +452,22 @@ build/default/production/_ext/693591678/custom_http_net_app.o: \
 
 ../src/ethernet/tcp_mqtt.h:
 
+../src/digital_io/led_indicate.h:
+
+../src/digital_io/digital_output.h:
+
+../src/ethernet/eth_ntp.h:
+
+../src/ethernet/eth_ftp.h:
+
 D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/http_net_print.h:
+
+../src/config/default/library/tcpip/tcpip.h:
+
+../src/config/default/library/tcpip/src/common/helpers.h:
 
 ../src/config/default/net_pres/pres/net_pres_socketapi.h:
 
 ../src/config/default/system/sys_random_h2_adapter.h:
 
 ../src/config/default/system/sys_time_h2_adapter.h:
-
-../src/config/default/library/tcpip/tcpip.h:
-
-../src/config/default/library/tcpip/src/common/helpers.h:

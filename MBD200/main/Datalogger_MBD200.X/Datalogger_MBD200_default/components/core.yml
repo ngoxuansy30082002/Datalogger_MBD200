@@ -2652,7 +2652,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '8192'
           type: Dynamic
         type: Values
       type: Hex
@@ -2835,7 +2835,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '807218196'
+            value: '807210004'
           type: Dynamic
         type: Values
       type: Hex
@@ -3341,7 +3341,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '100000000'
+            value: '20000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -3374,7 +3374,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '100000000'
+            value: '20000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -3396,7 +3396,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '100000000'
+            value: '20000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -3922,7 +3922,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0'
+            value: '100000000'
           type: Dynamic
         type: Values
       type: Integer
@@ -4261,7 +4261,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '100000000'
+            value: '20000000'
           type: User
         type: Values
       type: String
@@ -4470,7 +4470,7 @@ data:
       - children:
         - attributes:
             id: core
-            value: '0x8001'
+            value: '0x8009'
           type: Dynamic
         type: Values
       type: String
@@ -4480,7 +4480,7 @@ data:
       children:
       - children:
         - attributes:
-            value: '2'
+            value: '10'
           type: User
         type: Values
       type: Integer
@@ -7304,6 +7304,277 @@ data:
             id: core
             value: '0'
           type: Dynamic
+        type: Values
+      type: String
+    SPI6_CLOCK_ENABLE:
+      attributes:
+        id: SPI6_CLOCK_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_FAULT_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI6_FAULT_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_185_ENABLE:
+      attributes:
+        id: EVIC_185_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_FAULT_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI6_FAULT_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_RX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI6_RX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_186_ENABLE:
+      attributes:
+        id: EVIC_186_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_RX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI6_RX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_TX_INTERRUPT_ENABLE_UPDATE:
+      attributes:
+        id: SPI6_TX_INTERRUPT_ENABLE_UPDATE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_187_ENABLE:
+      attributes:
+        id: EVIC_187_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_TX_INTERRUPT_ENABLE:
+      attributes:
+        id: SPI6_TX_INTERRUPT_ENABLE
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_185_HANDLER_LOCK:
+      attributes:
+        id: EVIC_185_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_FAULT_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI6_FAULT_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'false'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_186_HANDLER_LOCK:
+      attributes:
+        id: EVIC_186_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_RX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI6_RX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_187_HANDLER_LOCK:
+      attributes:
+        id: EVIC_187_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    SPI6_TX_INTERRUPT_HANDLER_LOCK:
+      attributes:
+        id: SPI6_TX_INTERRUPT_HANDLER_LOCK
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+    EVIC_186_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_186_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI6_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI6_RX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI6_RX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: SPI6_RX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    EVIC_187_INTERRUPT_HANDLER:
+      attributes:
+        id: EVIC_187_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: SPI6_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    SPI6_TX_INTERRUPT_HANDLER:
+      attributes:
+        id: SPI6_TX_INTERRUPT_HANDLER
+      children:
+      - children:
+        - attributes:
+            id: spi6
+            value: SPI6_TX_InterruptHandler
+          type: Dynamic
+        type: Values
+      type: String
+    BSP_PIN_97_LAT:
+      attributes:
+        id: BSP_PIN_97_LAT
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    SYS_PORT_E_LAT:
+      attributes:
+        id: SYS_PORT_E_LAT
+      children:
+      - children:
+        - attributes:
+            id: core
+            value: '28'
+          type: Dynamic
+        type: Values
+      type: Hex
+    BSP_PIN_100_LAT:
+      attributes:
+        id: BSP_PIN_100_LAT
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_99_LAT:
+      attributes:
+        id: BSP_PIN_99_LAT
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
+        type: Values
+      type: String
+    BSP_PIN_98_LAT:
+      attributes:
+        id: BSP_PIN_98_LAT
+      children:
+      - children:
+        - attributes:
+            value: High
+          type: User
         type: Values
       type: String
   userData:

@@ -5,15 +5,6 @@
 #include "sim_ntp.h"
 
 static const char * __TAG__ = "SIMNTP";
-static const char * _ntpServer[7] = {
-    "pool.ntp.org",
-    "europe.pool.ntp.org",
-    "asia.pool.ntp.org",
-    "oceania.pool.ntp.org",
-    "north-america.pool.ntp.org",
-    "south-america.pool.ntp.org",
-    "africa.pool.ntp.org"
-};
 
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format);
 static bool _respParser(int state, char* buffer, size_t maxLen);
@@ -47,7 +38,7 @@ static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* forma
     switch (state) {
         case SIM_NTP_SYNC_TIME:
             return snprintf(buffer, maxLen, format,
-                    SIM_CONTEXT_ID, _ntpServer[gAppCfg.time.indexNTP]);
+                    SIM_CONTEXT_ID, gAppCfg.time.ntpServerPrimary);
         default: return snprintf(buffer, maxLen, "%s", format);
             return 0;
     }
@@ -68,7 +59,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                     *endPtr = '\0';
 
                     Rtc_updateFromGsmNtp(startPtr);
-                    SYS_CONSOLE_PRINT("NTP Parsed Time: %s\r\n", startPtr);
+                    LOG_DEBUG("%s - %s\t NTP Parsed Time: %s\r\n", __TAG__, __func__,startPtr);
                     return true;
                 }
             }
@@ -142,14 +133,14 @@ void SIMNtp_Process(void) {
             else
                 _currentTxLen = snprintf((char*) txbuf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
 
-            //            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
+            LOG_DEBUG("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
             _isBuilded = true; /* Mark as built */
         }
 
         /* Execute sending to driver */
         if (_currentTxLen > 0) {
             if (SIMDriver_Execute((size_t) _currentTxLen, cmdInfo->timeoutMs)) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Sended\r\n", __TAG__, __func__);F
+                LOG_DEBUG("%s - %s:\t Sended\r\n", __TAG__, __func__);
                 _isWaitingResp = true;
                 _isBuilded = false; /* Clear flag so next cycle/state can rebuild */
             }
@@ -161,7 +152,7 @@ void SIMNtp_Process(void) {
         if (status == SIM_DRV_STATUS_RECV_RESP) {
             uint8_t* rxbuf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
             if (rxbuf != NULL) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
+                LOG_DEBUG("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
 
                 const char* expectedOk = _cmdTable[_currentState].respOk;
                 const char* expectedFail = _cmdTable[_currentState].respFail;
@@ -183,7 +174,7 @@ void SIMNtp_Process(void) {
                 }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
-            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
+            LOG_DEBUG("%s - %s:\t Timeout\r\n", __TAG__, __func__);
             _handleErrorOrTimeout();
         }
     }

@@ -43,6 +43,7 @@ extern "C" {
         GPIO_PIN pwrPin;
         GPIO_PIN statusPin;
         GPIO_PIN netStatusPin;
+        GPIO_PIN detectPin;
     } SIM_UART_PLIB;
 
     typedef enum {
@@ -74,7 +75,7 @@ extern "C" {
         SIM_DRV_STATUS_RECV_RESP, // Response received, data is in buffer
         SIM_DRV_STATUS_TIMEOUT // Time is up, no response
     } SIM_DRV_STATUS;
-       
+
     void SIMDriver_Initialize(void);
     void SIMDriver_Task(void);
     uint8_t* SIMDriver_GetBuffer(SIM_DRV_STATE state);
@@ -84,6 +85,7 @@ extern "C" {
     bool SIMDriver_TurnOn(void);
     bool SIMDriver_TurnOff(void);
     SIM_HW_STATUS SIMDriver_GetHWStatus(void);
+    bool SIMDriver_isCardDetect(void);
 
 #ifdef	__cplusplus
 }

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
     <style>
         /* ── Highlight active edit sections ── */
         .active-edit {
@@ -380,6 +381,36 @@
     <script src="assets/js/layout.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
+
+        var inputCaptureData;
+
+        const OPERATION_TYPE = {
+            0: '+',
+            1: '-',
+            2: '*',
+            3: '/',
+        };
+
+        const SCALE_DATA_TYPE = {
+            0: 'uint',
+            1: 'int',
+            2: 'float',
+        };
+
+        const INPUT_CAPTURE_CHANNEL_NAME = {
+            0: 'DI 1 - Pulse rate',
+            1: 'DI 1 - Counter',
+            2: 'DI 2 - Pulse rate',
+            3: 'DI 2 - Counter',
+        };
+
+        const STATUS_CFG = {
+            0: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
+            1: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
+            2: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
+            3: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
+        };
+
         /* Xử lý request POST */
         function sendPostRequest(url, formId, callback) {
             var form = document.getElementById(formId);
@@ -417,49 +448,105 @@
             xhr.send(encodedParams);
         }
 
-        const OPERATION_TYPE = {
-            0: '+',
-            1: '-',
-            2: '*',
-            3: '/',
-        };
-
-        const SCALE_DATA_TYPE = {
-            0: 'uint',
-            1: 'int',
-            2: 'float',
-        };
-
-        const INPUT_CAPTURE_CHANNEL_NAME = {
-            0: 'DI 1 - Pulse rate',
-            1: 'DI 1 - Counter',
-            2: 'DI 2 - Pulse rate',
-            3: 'DI 2 - Counter',
-        };
-
         /* ═══════════════════════════════════════════════
-           MOCK DATA – 8 Digital IO / Counter
+           MOCK DATA 
            ═══════════════════════════════════════════════ */
-        const diData = {
-            0: { name: 'FlowMeter_Outlet', value: 123, state: false, counter: 84310, ppu: 100, unit: 'm3/h', status: 'good', freq: 0.0, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 0, operator2: 1, offsetAfter: 0 },
-            1: { name: 'FlowMeter_Inlet', value: 124850, state: true, counter: 124850, ppu: 100, unit: 'm3', status: 'good', freq: 45.3, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 1, operator2: 0, offsetAfter: 0 },
-            2: { name: 'FlowMeter_Drain', value: 12345, state: false, counter: 12345, ppu: 100, unit: 'm3/h', status: 'disabled', freq: 0.0, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 2, operator2: 3, offsetAfter: 0 },
-            3: { name: 'FlowMeter_Recirculation', value: 56789, state: true, counter: 56789, ppu: 100, unit: 'm3', status: 'disabled', freq: 32.1, scaleType: "none", scaleDataType: "float", scaleValue: 1, offsetBefore: 0, operator1: 3, operator2: 2, offsetAfter: 0 },
-        };
+        function updatedata(xmlData) {
+            var dataString = getXMLValue(xmlData, 'inputcapture');
+
+            // dataString = `
+            //     {
+            //         "0": {
+            //             "enable": false,
+            //             "name": "FlowMeter_Outlet",
+            //             "value": 123,
+            //             "state": false,
+            //             "counter": 84310,
+            //             "ppu": 100,
+            //             "unit": "m3/h",
+            //             "status": 0,
+            //             "freq": 0.0,
+            //             "scaleType": 0,
+            //             "scaleDataType": 0,
+            //             "scaleValue": 1,
+            //             "offsetBefore": 0,
+            //             "operator1": 0,
+            //             "operator2": 1,
+            //             "offsetAfter": 0
+            //         },
+
+            //         "1": {
+            //             "enable": true,
+            //             "name": "FlowMeter_Inlet",
+            //             "value": 124850,
+            //             "state": true,
+            //             "counter": 124850,
+            //             "ppu": 100,
+            //             "unit": "m3",
+            //             "status": 2,
+            //             "freq": 45.3,
+            //             "scaleType": 1,
+            //             "scaleDataType": 0,
+            //             "scaleValue": 1,
+            //             "offsetBefore": 0,
+            //             "operator1": 1,
+            //             "operator2": 0,
+            //             "offsetAfter": 0
+            //         },
+
+            //         "2": {
+            //             "enable": true,
+            //             "name": "FlowMeter_Drain",
+            //             "value": 12345,
+            //             "state": false,
+            //             "counter": 12345,
+            //             "ppu": 100,
+            //             "unit": "m3/h",
+            //             "status": 3,
+            //             "freq": 0.0,
+            //             "scaleType": 2,
+            //             "scaleDataType": 1,
+            //             "scaleValue": 1,
+            //             "offsetBefore": 0,
+            //             "operator1": 2,
+            //             "operator2": 3,
+            //             "offsetAfter": 0
+            //         },
+
+            //         "3": {
+            //             "enable": false,
+            //             "name": "FlowMeter_Recirculation",
+            //             "value": 56789,
+            //             "state": true,
+            //             "counter": 56789,
+            //             "ppu": 100,
+            //             "unit": "m3",
+            //             "status": 1,
+            //             "freq": 32.1,
+            //             "scaleType": 2,
+            //             "scaleDataType": 2,
+            //             "scaleValue": 1,
+            //             "offsetBefore": 0,
+            //             "operator1": 3,
+            //             "operator2": 2,
+            //             "offsetAfter": 0
+            //         }
+            //     }
+            //     `;
+
+            inputCaptureData = JSON.parse(dataString);
+            buildDiTable();
+        }
+
+        setTimeout("newAJAXCommand('xml/input-capture.xml', updatedata, true)", 500);
 
         /* ═══════════════════════════════════════════════
            BUILD TABLE
            ═══════════════════════════════════════════════ */
-        const STATUS_CFG = {
-            good: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
-            error: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
-            disabled: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
-            pending: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
-        };
 
         function buildDiTable() {
             const $tbody = $('#diChannelBody').empty();
-            Object.entries(diData).forEach(([ch, d]) => {
+            Object.entries(inputCaptureData).forEach(([ch, d]) => {
                 const s = STATUS_CFG[d.status];
 
 
@@ -491,7 +578,7 @@
         let currentChannel = null;
 
         function activateDiEdit(ch) {
-            const d = diData[ch];
+            const d = inputCaptureData[ch];
             if (!d) return;
             currentChannel = ch;
 
@@ -513,10 +600,16 @@
             $('#diName').val(d.name !== '–– Chưa dùng ––' ? d.name : '');
             $('#pulsePerUnit').val(d.ppu);
             $('#diUnit').val(d.unit);
-            $('#diEnable').prop('checked', d.status !== 'disabled');
+            $('#diEnable').prop('checked', d.enable === true);
 
-            // Reset scale tab
-            $('#scaleType').val('none').trigger('change');
+            // Advanced Scaling
+            $('#scaleType').val(d.scaleType !== undefined ? d.scaleType : 0).trigger('change');
+            $('#scaleDataType').val(d.scaleDataType !== undefined ? d.scaleDataType : 0);
+            $('#scaleValue').val(d.scaleValue !== undefined ? d.scaleValue : 1);
+            $('#offset1').val(d.offsetBefore !== undefined ? d.offsetBefore : 0);
+            $('#op1').val(d.operator1 !== undefined ? d.operator1 : 0);
+            $('#op2').val(d.operator2 !== undefined ? d.operator2 : 0);
+            $('#offset2').val(d.offsetAfter !== undefined ? d.offsetAfter : 0).trigger('change');
 
             // Setup live panel static texts
             $('#liveVolumeUnit').text(d.unit);
@@ -524,7 +617,7 @@
 
             // Run simulation
             clearInterval(diSimTimer);
-            if (d.status !== 'disabled') {
+            if (d.status !== 0) {
                 let liveState = d.state;
                 let liveCount = d.counter;
 
@@ -577,7 +670,8 @@
            INIT
            ═══════════════════════════════════════════════ */
         $(document).ready(function () {
-            buildDiTable();
+
+            newAJAXCommand('xml/input-capture.xml', updatedata, false);
 
             /* Events */
             $(document).on('click', '.btn-di-edit', function (e) {
@@ -613,7 +707,7 @@
             /* Scaling Expression Preview */
             function updateExpressionPreview() {
                 const type = $('#scaleType').val();
-                if (type === 'none') {
+                if (type === '0') {
                     $('#expressionPreview').text('Result = Value');
                     return;
                 }
@@ -626,7 +720,7 @@
                 const scaleDataType = SCALE_DATA_TYPE[$('#scaleDataType').val()];
 
                 let valStr = 'Value';
-                if (type === 'sqrt') valStr = 'sqrt(Value)';
+                if (type === '2') valStr = 'sqrt(Value)';
 
                 let expStr = `Result = (${scaleDataType})((${off1} ${op1} ${valStr}) ${op2} ${off2})`;
                 if (scaleVal) {
@@ -638,7 +732,7 @@
 
             $('#scaleType').on('change', function () {
                 const val = $(this).val();
-                if (val === 'none') {
+                if (val === '0') {
                     $('.scale-field').prop('disabled', true);
                 } else {
                     $('.scale-field').prop('disabled', false);
@@ -655,11 +749,11 @@
 
                 sendPostRequest('input-capture.html', 'inputCaptureForm', function (success) {
                     if (success) {
-                        if (currentChannel && diData[currentChannel]) {
-                            diData[currentChannel].name = $('#diName').val() || 'Unnamed';
-                            diData[currentChannel].ppu = parseFloat($('#pulsePerUnit').val()) || 1;
-                            diData[currentChannel].unit = $('#diUnit').val();
-                            diData[currentChannel].status = $('#diEnable').is(':checked') ? 'good' : 'disabled';
+                        if (currentChannel && inputCaptureData[currentChannel]) {
+                            inputCaptureData[currentChannel].name = $('#diName').val() || 'Unnamed';
+                            inputCaptureData[currentChannel].ppu = parseFloat($('#pulsePerUnit').val()) || 1;
+                            inputCaptureData[currentChannel].unit = $('#diUnit').val();
+                            inputCaptureData[currentChannel].status = $('#diEnable').is(':checked') ? 2 : 0;
                             buildDiTable();
                         }
                         deactivateDiEdit();
@@ -670,10 +764,11 @@
             $('.btn-reset').on('click', function () {
                 $('#inputCaptureForm')[0].reset();
                 $('#inputCaptureForm').removeClass('was-validated');
-                $('#scaleType').val('none').trigger('change');
+                $('#scaleType').val('0').trigger('change');
             });
         });
     </script>
 </body>
 
 </html>
+

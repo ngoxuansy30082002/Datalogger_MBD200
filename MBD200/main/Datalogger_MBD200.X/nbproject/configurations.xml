@@ -245,6 +245,7 @@
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.h</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi1_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -347,23 +348,45 @@
                      projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/console_logs/debug_uart.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="digital_io" displayName="digital_io" projectFiles="true">
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/digital_io/led_indicate.h</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/digital_io/digital_output.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.h</itemPath>
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.h</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_ntp.h</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_ftp.h</itemPath>
       </logicalFolder>
       <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.h</itemPath>
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.h</itemPath>
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.h</itemPath>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.h</itemPath>
       </logicalFolder>
       <logicalFolder name="rule_engine" displayName="rule_engine" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rule_engine/rule_engine.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="sensor" displayName="sensor" projectFiles="true">
+        <logicalFolder name="analog" displayName="analog" projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/ad411x_regs.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/ad717x.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/adc.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/no_os_error.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/no_os_util.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/drv_spi_adc.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="input_capture"
+                       displayName="input_capture"
+                       projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/input_capture/input_capture.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/master.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/modbus_rtu_app.h</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/modbus_rtu_phy.h</itemPath>
+        </logicalFolder>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/sensor_general.h</itemPath>
       </logicalFolder>
       <logicalFolder name="sim" displayName="sim" projectFiles="true">
         <logicalFolder name="core" displayName="core" projectFiles="true">
@@ -661,6 +684,7 @@
           <itemPath>Datalogger_MBD200_default/components/drv_memory_0.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/HarmonyCore.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_debug.yml</itemPath>
+          <itemPath>Datalogger_MBD200_default/components/spi6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/uart6.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/sys_time.yml</itemPath>
           <itemPath>Datalogger_MBD200_default/components/drv_sdspi.yml</itemPath>
@@ -825,6 +849,7 @@
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.c</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.c</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi1_master.c</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.c</itemPath>
               </logicalFolder>
             </logicalFolder>
             <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
@@ -901,23 +926,42 @@
                      displayName="console_logs"
                      projectFiles="true">
       </logicalFolder>
+      <logicalFolder name="digital_io" displayName="digital_io" projectFiles="true">
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/digital_io/led_indicate.c</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/digital_io/digital_output.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="ethernet" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_net.c</itemPath>
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/tcp_mqtt.c</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_ntp.c</itemPath>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/ethernet/eth_ftp.c</itemPath>
       </logicalFolder>
       <logicalFolder name="hmi" displayName="hmi" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/hmi/hmi_dwin.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/master.c</itemPath>
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_app.c</itemPath>
-        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/modbus_rtu/modbus_rtu_phy.c</itemPath>
       </logicalFolder>
       <logicalFolder name="rtc" displayName="rtc" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rtc/rtc.c</itemPath>
       </logicalFolder>
       <logicalFolder name="rule_engine" displayName="rule_engine" projectFiles="true">
         <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/rule_engine/rule_engine.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="sensor" displayName="sensor" projectFiles="true">
+        <logicalFolder name="analog" displayName="analog" projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/ad717x.c</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/adc.c</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/analog/drv_spi_adc.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="input_capture"
+                       displayName="input_capture"
+                       projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/input_capture/input_capture.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="modbus_rtu" displayName="modbus_rtu" projectFiles="true">
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/master.c</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/modbus_rtu_app.c</itemPath>
+          <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/modbus_rtu/modbus_rtu_phy.c</itemPath>
+        </logicalFolder>
+        <itemPath>D:/StudyDoc/Do_an_tot_nghiep/Datalogger_MBD200/MBD200/main/src/sensor/sensor_general.c</itemPath>
       </logicalFolder>
       <logicalFolder name="sim" displayName="sim" projectFiles="true">
         <logicalFolder name="core" displayName="core" projectFiles="true">
@@ -1095,7 +1139,7 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>pickitbasic</platformTool>
+        <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.60</languageToolchainVersion>
         <platform>3</platform>

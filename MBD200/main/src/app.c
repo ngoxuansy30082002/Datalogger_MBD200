@@ -4,6 +4,7 @@
 static const char * __TAG__ = "APP";
 static APP_STATES _state = 0;
 static DEVICE_INFO _deviceInfo = {0};
+static uint32_t _initDelayTick = 0;
 
 void App_Initialize(void) {
     /* Place the App state machine in its initial state. */
@@ -32,11 +33,18 @@ void App_Tasks(void) {
             BootConfig_Initialize();
             ExtFlash_Initialize();
             Fram_Initialize();
-            HTTP_APP_Initialize();
+            Adc_Initialize();
+            MbrtuMaster_Initialize();
+            InputCapture_Initialize();
+            DigitalOutput_Initialize();
+            EthNtp_Initialize();
+            SensorGeneral_Initialize();
+            EthFtp_Initialize();
 
             if (appInitialized) {
                 LOG_SUCCESS("%s:\t Module Init SUCCESS!", __TAG__);
                 _state = APP_BOOT_CONFIG;
+                _initDelayTick = TICK_NOW();
             }
             break;
         }
@@ -52,6 +60,10 @@ void App_Tasks(void) {
 
         case APP_MOUNT_DISK:
         {
+            if (!TIME_IS_EXPIRED(_initDelayTick, 1000))
+                break;
+
+            LedIndicate_Initialize();
             if (SYS_FS_Mount(SYS_FS_SPIFLASH_VOL, SYS_FS_SPIFLASH_MOUNT_POINT, SYS_FS_SPIFLASH_TYPE, 0, NULL) == 0) {
                 LOG_INFO("%s:\t Flash %s File System is mounted", __TAG__, SYS_FS_SPIFLASH_TYPE_STRING);
                 _state = APP_LOAD_DEVICE_INFO;
@@ -156,6 +168,14 @@ void App_Tasks(void) {
         SDcard_Task();
         ExtFlash_Task();
         Fram_Task();
+        Adc_Task();
+        MbrtuMaster_Tasks();
+        InputCapture_Task();
+        LedIndicate_Task();
+        DigitalOutput_Task();
+        EthNtp_Task();
+        SensorGeneral_Task();
+        EthFtp_Task();
     }
 }
 

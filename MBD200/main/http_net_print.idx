@@ -1,0 +1,13 @@
++analog
++inputcapture
++modbus
++output
+time
++systime
++timeconfig
++sensorGeneral
++exportSettings
++ftpconfig
++network
++sim
++hmi

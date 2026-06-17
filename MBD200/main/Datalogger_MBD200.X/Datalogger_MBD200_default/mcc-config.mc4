@@ -61,6 +61,7 @@ modules:
 - spi1
 - spi2
 - spi5
+- spi6
 - sys_console
 - sys_console_0
 - sys_debug
@@ -90,7 +91,7 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\crypto\src\crypto.c
   hash: 4c1b271685e092105d8271ee0615ac36c95abbea944b3e3c8e5bc194da00c014
 - file: ..\src\config\default\definitions.h
-  hash: 35600da9037dcb0dcfb1651ca4d44bf0db3d840aee1553e27ba2920b0de7cdec
+  hash: 4c0b3b546b614c92d25c4b3a36b00d2efa1ccc7584b0c40682b3e017392dc065
 - file: ..\src\config\default\device.h
   hash: 4d4341a6f9628cea0bf73f980b639f7cb81089e55a60ad7e434be2a71e477442
 - file: ..\src\config\default\device_cache.h
@@ -182,11 +183,11 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\exceptions.c
   hash: 8c1843dacd6aec28ef12be3d763763a268e0facd02d4f1e7d67e21a8d73061d1
 - file: ..\src\config\default\initialization.c
-  hash: 911297ce642f4ea99bb60764452c90992805a71d53ddf4b577a05a722a03f105
+  hash: 669636d688c566c6435767ba9a8d5ffcff64802228e5992d0ccadb2c4d303452
 - file: ..\src\config\default\interrupts.c
-  hash: d243082d1135abe2e9397d65548fd7d1efc7cda8910d52d84ec46a29b384b4fc
+  hash: ebeef9715e81aa775002238ab3a16a649fe279d276936f19923ffc8cc7055f55
 - file: ..\src\config\default\interrupts.h
-  hash: f916f1e3db0261ff94b3b2afbd7da6e8f3cab38c242f89816adfb17dff27316f
+  hash: 3194f19702d435fd42dd6ba0a41f6f5a1e86dfc550ebb6df9a9fb4f05f555013
 - file: ..\src\config\default\library\tcpip\arp.h
   hash: 450ad6b0a80ffdcf33eab32bf8f662318da13ad5df0896a845cc28a490ff83a6
 - file: ..\src\config\default\library\tcpip\berkeley_api.h
@@ -504,7 +505,7 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\peripheral\cache\plib_cache_pic32mz.h
   hash: e401b896c670e8d0e1714eafc2b93a12b1fe6592783951e2353471bb4ced58e8
 - file: ..\src\config\default\peripheral\clk\plib_clk.c
-  hash: ed0a182efe62a2d4a2bafb3e2b30d2f15286fb17e5be3c340e6bb2ae9c25cd35
+  hash: 1d83f982b62ff932b69692a88904466bf88f6ce3f73d38c7932317bde1e1ad13
 - file: ..\src\config\default\peripheral\clk\plib_clk.h
   hash: 35384f2e13e59b7190bf77f6996baf3ea2377ec42df94979a6f793326def5255
 - file: ..\src\config\default\peripheral\coretimer\plib_coretimer.c
@@ -516,11 +517,11 @@ generatedFileHashHistoryMap:
 - file: ..\src\config\default\peripheral\dmac\plib_dmac.h
   hash: 78b9533671371600d12031eb6280ef51c292677cc636c809bb1b16ab772a4f8d
 - file: ..\src\config\default\peripheral\evic\plib_evic.c
-  hash: 4c6e218ef4a871ff51841f20d0677cdc68f371d2691b81de59a6eacbc6a1dab3
+  hash: 6fcd5c767289c750b7757fd3e57c053431755ea9761094398e748486ca58ca08
 - file: ..\src\config\default\peripheral\evic\plib_evic.h
   hash: b01293537ca162350d3b590ffb1c74ccea9aa5e5ad7fc2b7d0654ed4120c29a9
 - file: ..\src\config\default\peripheral\gpio\plib_gpio.c
-  hash: e0ee3ef5e8cdcf55bfe75738f86464a2a3943b649ef1d0223ff155af84941e19
+  hash: 5ac0243c68af9b7c867b59301463deea1906477631c106b97fb31893af037771
 - file: ..\src\config\default\peripheral\gpio\plib_gpio.h
   hash: 62e1f668d2d92754171d10fe0061b7b6dc8c27668a656bc5c5f06a9cd2b9fac7
 - file: ..\src\config\default\peripheral\i2c\master\plib_i2c2_master.c
@@ -555,10 +556,14 @@ generatedFileHashHistoryMap:
   hash: 71697c9cd1463e11882926c3e4b03efff466550c1a35742d13513fdd93842d7b
 - file: ..\src\config\default\peripheral\spi\spi_master\plib_spi5_master.h
   hash: d66c9f134840ee20be1e2d2eef19212d6b1205227a1aaaa8d84f1b44fa71adf8
+- file: ..\src\config\default\peripheral\spi\spi_master\plib_spi6_master.c
+  hash: b81ad943d3fbd33604bdc37b889017d1759f59258f0b3eeeb6d80c96dcc7a2a3
+- file: ..\src\config\default\peripheral\spi\spi_master\plib_spi6_master.h
+  hash: c2683b079ab762e8b44da82b61753d751b9a7d8fc1d434e419c46d32bb5a4a38
 - file: ..\src\config\default\peripheral\spi\spi_master\plib_spi_master_common.h
   hash: 844a71566e886cd1f28024000d440ac48841cdb4f4059f5feefac8e4334f12ef
 - file: ..\src\config\default\peripheral\tmr\plib_tmr3.c
-  hash: 4188a0e055f99aaafe3df86566334b4e402757c882eb9ad185923e973ac550bf
+  hash: fa713cb7abb9e97e054265d1f4c6d35d37aae8dbe8490284b72f06f228aa9566
 - file: ..\src\config\default\peripheral\tmr\plib_tmr3.h
   hash: 4507242db0aee1ed83c74dddf264a72e19bf85cf44d8339302e0e8c87030779c
 - file: ..\src\config\default\peripheral\tmr\plib_tmr_common.h

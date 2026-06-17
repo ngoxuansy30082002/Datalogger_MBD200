@@ -149,7 +149,7 @@ void SIMNet_Process(void) {
             else
                 _currentTxLen = snprintf((char*) txbuf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
 
-            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
+            //            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
             _isBuilded = true; /* Mark as built */
         }
 
@@ -168,7 +168,7 @@ void SIMNet_Process(void) {
         if (status == SIM_DRV_STATUS_RECV_RESP) {
             uint8_t* rxbuf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
             if (rxbuf != NULL) {
-                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
+                //                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
 
                 const char* expectedOk = _cmdTable[_currentState].respOk;
                 const char* expectedFail = _cmdTable[_currentState].respFail;
@@ -190,7 +190,7 @@ void SIMNet_Process(void) {
                 }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
-            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
+            //            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
             _handleErrorOrTimeout();
         }
     }

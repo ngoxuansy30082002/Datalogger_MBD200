@@ -22,7 +22,7 @@ static char _residualBuffer[256];
 static size_t _residualLen = 0;
 
 static inline bool _isCardDetect() {
-    return (GPIO_PinRead(_sdcardPlib.cardDetect) == 0);
+    return (GPIO_PinRead(_sdcardPlib.cardDetect) == true);
 }
 
 static inline void _enablePowerForCard(bool en) {

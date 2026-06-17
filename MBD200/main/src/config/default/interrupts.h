@@ -80,6 +80,8 @@ void UART4_RX_InterruptHandler( void );
 void UART4_TX_InterruptHandler( void );
 void SPI5_RX_InterruptHandler( void );
 void SPI5_TX_InterruptHandler( void );
+void SPI6_RX_InterruptHandler( void );
+void SPI6_TX_InterruptHandler( void );
 void UART6_FAULT_InterruptHandler( void );
 void UART6_RX_InterruptHandler( void );
 void UART6_TX_InterruptHandler( void );

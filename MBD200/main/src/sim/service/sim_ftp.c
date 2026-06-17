@@ -4,7 +4,6 @@
 #include "sim/core/sim_net.h"
 #include "sim_ftp.h"
 
-
 static const char * __TAG__ = "SIMFTP";
 
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format);
@@ -68,20 +67,131 @@ static const SIM_CMD_SEQ _cmdTable[SIM_FTP_COUNT] = {
     { "AT+QFTPSTAT\r\n", NULL, "+QFTPSTAT:", "ERROR", 60000, 1, _respParser, SIM_FTP_READY, SIM_FTP_ERROR},
 };
 
+/* ???????????????????????????????????????????????????????????????????
+ *  Static Variables
+ * ??????????????????????????????????????????????????????????????????? */
 static SIM_FTP_STATE _currentState = 0;
 static bool _isWaitingResp = false;
 static bool _isBuilded = false;
 static int _currentTxLen = 0;
 static uint8_t _attemptCount = 0;
 
+/* Multi-server management (like eth_ftp.c) */
+static SIM_FTP_RESULT _ftpResult = {false, SIM_FTP_SERVER_IDLE, SIM_FTP_SERVER_IDLE};
+static bool _targetFtp1 = false;
+static bool _targetFtp2 = false;
 static uint8_t _idxServer = 0;
+
+/* Variables for nested directory creation */
 static char * _directories[16] = {0};
 static uint8_t _dirDepth = 0;
 static uint8_t _dirCount = 0;
-static char _fileData[SIM_FTP_FILE_LEN] = "";
-static uint16_t _fileSize = 0;
 static char _fullPath[SIM_FTP_PATH_LEN] = "";
-static char _fileName[SIM_FTP_PATH_LEN] = "";
+
+/* ???????????????????????????????????????????????????????????????????
+ *  Path & Server helpers (like eth_ftp.c)
+ * ??????????????????????????????????????????????????????????????????? */
+
+/* * Prepare upload path from server config and file time
+ * (Similar to eth_ftp.c FTP_STATE_PREPARE_PATH)
+ */
+static void _preparePath(void) {
+    FTP_SERVER_CONFIG* srvCfg = &gAppCfg.ftpServer[_idxServer];
+    TIME fTime = FileMgr_GetUploadFileTime();
+    size_t len;
+
+    /* Copy base directory path */
+    strncpy(_fullPath, srvCfg->dirPath, sizeof (_fullPath) - 1);
+    _fullPath[sizeof (_fullPath) - 1] = '\0';
+
+    /* Remove trailing slash for clean appending */
+    len = strlen(_fullPath);
+    if (len > 0 && (_fullPath[len - 1] == '/' || _fullPath[len - 1] == '\\')) {
+        _fullPath[len - 1] = '\0';
+    }
+
+    /* Append dynamic folder based on makeFolder setting */
+    if (srvCfg->makeFolder == MAKE_FOLDER_DAY) {
+        snprintf(_fullPath + strlen(_fullPath),
+                sizeof (_fullPath) - strlen(_fullPath),
+                "/%04u%02u%02u", fTime.year, fTime.month, fTime.day);
+    } else if (srvCfg->makeFolder == MAKE_FOLDER_MONTH) {
+        snprintf(_fullPath + strlen(_fullPath),
+                sizeof (_fullPath) - strlen(_fullPath),
+                "/%04u%02u/%04u%02u%02u", fTime.year, fTime.month, fTime.year, fTime.month, fTime.day);
+    }
+
+    /* Parse directories for CWD/MKD sequence */
+    static char _pathParseBuf[SIM_FTP_PATH_LEN] = "";
+    _dirDepth = 0;
+    _dirCount = 0;
+    if (_fullPath[0] != '\0') {
+        memcpy(_pathParseBuf, _fullPath, strlen(_fullPath) + 1);
+
+        char *token = strtok(_pathParseBuf, "/");
+        while (token != NULL && _dirDepth < 16) {
+            _directories[_dirDepth] = token;
+            _dirDepth++;
+            token = strtok(NULL, "/");
+        }
+    }
+}
+
+/* Forward declaration for mutual call */
+static void _evaluateNext(bool success);
+
+/* * Initialize upload session for a specific server
+ * (Similar to eth_ftp.c FTP_STATE_INIT_SERVER)
+ */
+static void _initServer(uint8_t serverIdx) {
+    _idxServer = serverIdx;
+
+    FTP_SERVER_CONFIG* srvCfg = &gAppCfg.ftpServer[_idxServer];
+    if (!srvCfg->enable) {
+        /* Server not enabled ? skip to evaluate */
+        _evaluateNext(false);
+        return;
+    }
+
+    _preparePath();
+
+    _currentState = SIM_FTP_CFG_ACCOUNT;
+    _isWaitingResp = false;
+    _isBuilded = false;
+    _currentTxLen = 0;
+    _attemptCount = 0;
+}
+
+/* * Evaluate next server after current one completes
+ * (Similar to eth_ftp.c FTP_STATE_EVALUATE_NEXT)
+ */
+static void _evaluateNext(bool success) {
+    /* 1. Record the result of the completed server */
+    if (success) {
+        if (_idxServer == 0) _ftpResult.server1 = SIM_FTP_SERVER_SUCCESS;
+        else _ftpResult.server2 = SIM_FTP_SERVER_SUCCESS;
+    } else {
+        if (_idxServer == 0) _ftpResult.server1 = SIM_FTP_SERVER_FAILED;
+        else _ftpResult.server2 = SIM_FTP_SERVER_FAILED;
+    }
+
+    /* 2. Check if the next server is pending */
+    if (_targetFtp1) {
+        _targetFtp1 = false;
+        _initServer(0);
+    } else if (_targetFtp2) {
+        _targetFtp2 = false;
+        _initServer(1);
+    } else {
+        /* 3. Both servers handled. Clear uploading flag */
+        _ftpResult.isUploading = false;
+        _currentState = SIM_FTP_IDLE;
+    }
+}
+
+/* ???????????????????????????????????????????????????????????????????
+ *  Command Builder 
+ * ??????????????????????????????????????????????????????????????????? */
 
 static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* format) {
     if (buffer == NULL || maxLen == 0) return 0;
@@ -117,17 +227,27 @@ static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* forma
 
         case SIM_FTP_UPLOAD_PUT_CMD:
             return snprintf(buffer, maxLen, format,
-                    _fileName, _fileSize);
+                    FileMgr_GetUploadFileName(),
+                    FileMgr_GetUploadFileSize());
 
         case SIM_FTP_UPLOAD_PUT_DATA:
-            return snprintf(buffer, maxLen, "%s",
-                    _fileData);
+        {
+            uint32_t totalSize = FileMgr_GetUploadFileSize();
+            const char* fileData = FileMgr_GetUploadFileData();
+            uint16_t copyLen = (totalSize > maxLen) ? (uint16_t) maxLen : (uint16_t) totalSize;
+            memcpy(buffer, fileData, copyLen);
+            return (int) copyLen;
+        }
 
         default:
             if (format) return snprintf(buffer, maxLen, "%s", format);
             return 0;
     }
 }
+
+/* ???????????????????????????????????????????????????????????????????
+ *  Response Parser
+ * ??????????????????????????????????????????????????????????????????? */
 
 static bool _respParser(int state, char* buffer, size_t maxLen) {
     if (buffer == NULL) return false;
@@ -198,6 +318,10 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
     }
 }
 
+/* ???????????????????????????????????????????????????????????????????
+ *  Error/Timeout handler 
+ * ??????????????????????????????????????????????????????????????????? */
+
 static void _handleErrorOrTimeout(void) {
     const SIM_CMD_SEQ * cmdInfo = &_cmdTable[_currentState];
 
@@ -215,50 +339,35 @@ static void _handleErrorOrTimeout(void) {
     _isBuilded = false;
 }
 
-bool SIMFtp_Start(uint8_t idxServer, const char * path, uint16_t pathLen, const char * fileData, uint16_t fileSize) {
-    if (_currentState > SIM_FTP_IDLE)
+/* ???????????????????????????????????????????????????????????????????
+ *  Public API
+ * ??????????????????????????????????????????????????????????????????? */
+
+/* * API: Trigger Upload
+ */
+bool SIMFtp_Start(bool ftp1, bool ftp2) {
+    if (_currentState != SIM_FTP_IDLE)
+        return false;
+    if (!ftp1 && !ftp2)
         return false;
 
-    _currentState = SIM_FTP_CFG_ACCOUNT;
-    _isWaitingResp = false;
-    _isBuilded = false;
-    _currentTxLen = 0;
-    _attemptCount = 0;
-    _idxServer = idxServer;
+    _targetFtp1 = ftp1;
+    _targetFtp2 = ftp2;
 
-    _fileSize = fileSize;
-    uint16_t copyLen = (fileSize > SIM_FTP_FILE_LEN) ? SIM_FTP_FILE_LEN : fileSize;
-    strncpy(_fileData, fileData, copyLen);
-    _fileData[copyLen] = '\0';
+    /* Set general uploading flag */
+    _ftpResult.isUploading = true;
 
-    copyLen = (pathLen > SIM_FTP_PATH_LEN) ? SIM_FTP_PATH_LEN : pathLen;
-    strncpy(_fullPath, path, copyLen);
-    _fullPath[copyLen] = '\0';
+    /* Reset status for triggered servers */
+    if (ftp1) _ftpResult.server1 = SIM_FTP_SERVER_IDLE;
+    if (ftp2) _ftpResult.server2 = SIM_FTP_SERVER_IDLE;
 
-    static char _pathParseBuf[SIM_FTP_PATH_LEN] = "";
-    char *lastSlash = strrchr(_fullPath, '/');
-    if (lastSlash != NULL) {
-        strncpy(_fileName, lastSlash + 1, sizeof (_fileName) - 1);
-        _fileName[sizeof (_fileName) - 1] = '\0';
-        *lastSlash = '\0';
+    /* Start with first requested server */
+    if (ftp1) {
+        _targetFtp1 = false;
+        _initServer(0);
     } else {
-        /* no slash -> path is root */
-        strncpy(_fileName, _fullPath, sizeof (_fileName) - 1);
-        _fileName[sizeof (_fileName) - 1] = '\0';
-        _fullPath[0] = '\0';
-    }
-
-    _dirDepth = 0;
-    _dirCount = 0;
-    if (_fullPath[0] != '\0') {
-        memcpy(_pathParseBuf, _fullPath, strlen(_fullPath) + 1);
-
-        char *token = strtok(_pathParseBuf, "/");
-        while (token != NULL && _dirDepth < 16) {
-            _directories[_dirDepth] = token;
-            _dirDepth++;
-            token = strtok(NULL, "/");
-        }
+        _targetFtp2 = false;
+        _initServer(1);
     }
 
     return true;
@@ -266,23 +375,47 @@ bool SIMFtp_Start(uint8_t idxServer, const char * path, uint16_t pathLen, const 
 
 void SIMFtp_Abort(void) {
     _currentState = SIM_FTP_IDLE;
+    _targetFtp1 = false;
+    _targetFtp2 = false;
+    _ftpResult.isUploading = false;
 }
 
 bool SIMFtp_IsReady(void) {
 
-    return (_currentState == SIM_FTP_READY);
+    return (_currentState == SIM_FTP_IDLE && !_ftpResult.isUploading);
 }
 
 bool SIMFtp_HasError(void) {
 
-    return (_currentState == SIM_FTP_ERROR);
+    return (_currentState == SIM_FTP_IDLE && !_ftpResult.isUploading &&
+            (_ftpResult.server1 == SIM_FTP_SERVER_FAILED ||
+            _ftpResult.server2 == SIM_FTP_SERVER_FAILED));
 }
 
+/* * Get the detailed status of the FTP upload process
+ */
+SIM_FTP_RESULT SIMFtp_GetStatus(void) {
+    return _ftpResult;
+}
+
+/* * Main Non-blocking Task
+ */
 void SIMFtp_Process(void) {
-    if (!SIMBasic_IsReady() || !SIMNet_IsReady() ||
-            _currentState == SIM_FTP_IDLE ||
-            _currentState == SIM_FTP_READY ||
-            _currentState == SIM_FTP_ERROR) {
+    if (!SIMBasic_IsReady() || !SIMNet_IsReady()) {
+        return;
+    }
+
+    /* Evaluate next server when current one finishes */
+    if (_currentState == SIM_FTP_READY) {
+        _evaluateNext(true);
+        return;
+    }
+    if (_currentState == SIM_FTP_ERROR) {
+        _evaluateNext(false);
+        return;
+    }
+
+    if (_currentState == SIM_FTP_IDLE) {
         return;
     }
 
@@ -299,14 +432,14 @@ void SIMFtp_Process(void) {
             else
                 _currentTxLen = snprintf((char*) txbuf, SIM_TRANSFER_BUFF_SIZE, "%s", cmdInfo->cmd);
 
-            SYS_CONSOLE_PRINT("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
+//            LOG_DEBUG("%s - %s:\t Builed: %s\r\n", __TAG__, __func__, (char *) txbuf);
             _isBuilded = true; /* Mark as built */
         }
 
         /* Execute sending to driver */
         if (_currentTxLen > 0) {
             if (SIMDriver_Execute((size_t) _currentTxLen, cmdInfo->timeoutMs)) {
-                //                SYS_CONSOLE_PRINT("%s - %s:\t Sended\r\n", __TAG__, __func__);F
+                //                LOG_DEBUG("%s - %s:\t Sended\r\n", __TAG__, __func__);F
                 _isWaitingResp = true;
                 _isBuilded = false; /* Clear flag so next cycle/state can rebuild */
             }
@@ -318,7 +451,7 @@ void SIMFtp_Process(void) {
         if (status == SIM_DRV_STATUS_RECV_RESP) {
             uint8_t* rxbuf = SIMDriver_GetBuffer(SIM_DRV_RX_BUSY);
             if (rxbuf != NULL) {
-                SYS_CONSOLE_PRINT("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
+//                LOG_DEBUG("%s - %s:\t Receive %s\r\n", __TAG__, __func__, (char *) rxbuf);
 
                 const char* expectedOk = _cmdTable[_currentState].respOk;
                 const char* expectedFail = _cmdTable[_currentState].respFail;
@@ -340,7 +473,7 @@ void SIMFtp_Process(void) {
                 }
             }
         } else if (status == SIM_DRV_STATUS_TIMEOUT) {
-            SYS_CONSOLE_PRINT("%s - %s:\t Timeout\r\n", __TAG__, __func__);
+//            LOG_DEBUG("%s - %s:\t Timeout\r\n", __TAG__, __func__);
             _handleErrorOrTimeout();
         }
     }

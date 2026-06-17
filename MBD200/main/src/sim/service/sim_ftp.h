@@ -12,6 +12,22 @@
 extern "C" {
 #endif
 
+    /* * Enumeration for individual server status 
+     */
+    typedef enum {
+        SIM_FTP_SERVER_IDLE = 0,
+        SIM_FTP_SERVER_SUCCESS,
+        SIM_FTP_SERVER_FAILED
+    } SIM_FTP_SERVER_STATUS;
+
+    /* * Structure to hold overall and individual upload status
+     */
+    typedef struct {
+        bool isUploading; /* Common uploading status (true if FSM is busy) */
+        SIM_FTP_SERVER_STATUS server1; /* Result for FTP Server 1 */
+        SIM_FTP_SERVER_STATUS server2; /* Result for FTP Server 2 */
+    } SIM_FTP_RESULT;
+
     typedef enum {
         SIM_FTP_IDLE = 0,
 
@@ -42,11 +58,12 @@ extern "C" {
         SIM_FTP_COUNT
     } SIM_FTP_STATE;
 
-    bool SIMFtp_Start(uint8_t idxServer, const char * path, uint16_t pathLen, const char * fileData, uint16_t fileSize);
+    bool SIMFtp_Start(bool ftp1, bool ftp2);
     void SIMFtp_Process(void);
     void SIMFtp_Abort(void);
-    bool SIMFtp_IsReady(void);
-    bool SIMFtp_HasError(void);
+    /* * Get the detailed status of the FTP upload process
+     */
+    SIM_FTP_RESULT SIMFtp_GetStatus(void);
 
 #ifdef	__cplusplus
 }

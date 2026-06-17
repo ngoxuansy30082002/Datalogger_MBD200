@@ -1,0 +1,109 @@
+{
+    "analogSensors": [
+        {
+            "id": 0,
+            "name": "Water level 1"
+        },
+        {
+            "id": 1,
+            "name": "Water level 2"
+        },
+        {
+            "id": 2,
+            "name": "Water level 3"
+        },
+        {
+            "id": 3,
+            "name": "Water level 4"
+        }
+    ],
+    "modbusTags": [
+        {
+            "id": 0,
+            "name": "Level"
+        },
+        {
+            "id": 1,
+            "name": "Temp Sensor 2"
+        },
+        {
+            "id": 2,
+            "name": "Temperature_01"
+        }
+    ],
+    "inputCaptures": [
+        {
+            "id": 0,
+            "name": "FlowMeter_Outlet"
+        },
+        {
+            "id": 1,
+            "name": "TotalFlow_Outlet"
+        },
+        {
+            "id": 2,
+            "name": "FlowMeter_Recirculation"
+        },
+        {
+            "id": 3,
+            "name": "TotalFlow_Recirculation"
+        }
+    ],
+    "digitalInputs": [],
+    "sensors": [
+        {
+            "id": 1,
+            "type": 2,
+            "sensorId": 0,
+            "unit": "m3/h",
+            "sourceType": 0,
+            "successId": "",
+            "errorId": "",
+            "calibId": "",
+            "successAndValue": "",
+            "successExpectedValue": "",
+            "errorAndValue": "",
+            "errorExpectedValue": "",
+            "calibAndValue": "",
+            "calibExpectedValue": "",
+            "active": false,
+            "calib": false
+        },
+        {
+            "id": 2,
+            "type": 1,
+            "sensorId": 1,
+            "unit": "°C",
+            "sourceType": 0,
+            "successId": "",
+            "errorId": "",
+            "calibId": "",
+            "successAndValue": "",
+            "successExpectedValue": "",
+            "errorAndValue": "",
+            "errorExpectedValue": "",
+            "calibAndValue": "",
+            "calibExpectedValue": "",
+            "active": false,
+            "calib": false
+        },
+        {
+            "id": 3,
+            "type": 3,
+            "sensorId": 0,
+            "unit": "m3/h",
+            "sourceType": 0,
+            "successId": "",
+            "errorId": "",
+            "calibId": "",
+            "successAndValue": "",
+            "successExpectedValue": "",
+            "errorAndValue": "",
+            "errorExpectedValue": "",
+            "calibAndValue": "",
+            "calibExpectedValue": "",
+            "active": false,
+            "calib": false
+        }
+    ]
+}

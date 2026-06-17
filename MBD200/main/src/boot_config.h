@@ -45,6 +45,9 @@
 #define USERNAME_APN                    "admin"
 #define PASSWORD_APN                    "admin"
 
+#define NTP_SERVER_PRIMARY              "pool.ntp.org"
+#define NTP_SERVER_BACKUP               "time.google.com"
+
 #define SDCARD_TIME_REMOVE              3 //month
 
 #define STRENGTH_BACK_LIGHT     50

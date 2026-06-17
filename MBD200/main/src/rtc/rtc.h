@@ -98,7 +98,7 @@ extern "C" {
 
     extern RTC_DATA rtcDt;
 
-    void Rtc_updateFromManual(const char *timeString);
+    void Rtc_updateFromManual(const TIME *newTime);
     void Rtc_updateFromGsmNtp(const char *timeString);
     void Rtc_updateFromEthNtp(time_t tUnixSeconds);
 

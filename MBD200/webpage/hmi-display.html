@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
     <style>
         .display-panel {
             background: white;
@@ -30,28 +31,58 @@
         }
 
         .drop-zone {
-            min-height: 50px;
             border: 2px dashed transparent;
             border-radius: 6px;
             transition: all 0.2s;
-            padding: 4px;
         }
 
         .drop-zone.drag-over-zone {
             border-color: #267dc1;
-            background: #f0f8ff;
-        }
-
-        .sortable-item.dragging-active {
-            opacity: 0.4;
+            background: #f0f8ff !important;
         }
 
         .drop-placeholder {
-            height: 44px;
             border: 2px dashed #267dc1;
-            border-radius: 6px;
-            background: #e8f4fd;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            background: rgba(38, 125, 193, 0.05);
+            min-height: 120px;
+            pointer-events: none;
+        }
+
+        .sensor-grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .sensor-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 1200px) {
+            .sensor-grid-5 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sensor-grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .sensor-grid-2 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 575px) {
+
+            .sensor-grid-5,
+            .sensor-grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -104,35 +135,57 @@
                     </div>
                 </div>
 
-                <div class="row justify-content-center">
-                    <div class="col-lg-12">
-                        <div class="display-panel shadow-sm">
-                            <div class="display-panel-header">
+                <div class="row g-4">
+                    <!-- Danh sách tất cả sensor -->
+                    <div class="col-lg-4">
+                        <div class="display-panel shadow-sm h-100 flex-column d-flex">
+                            <div class="display-panel-header flex-shrink-0">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div
+                                        style="width:32px;height:32px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#4b5563">
+                                        <i class="bi bi-collection"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:14px;">Danh sách tất cả Sensor</div>
+                                        <div style="font-size:11px;color:#9ca3af">Kéo thả sang phải để thêm</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 drop-zone sensor-grid-2 flex-grow-1" id="allSensorsList"
+                                style="background:#f9fafb; min-height: 400px; align-content: start;">
+                                <!-- Rendered by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cấu hình thứ tự hiển thị sensor -->
+                    <div class="col-lg-8">
+                        <div class="display-panel shadow-sm h-100 flex-column d-flex">
+                            <div class="display-panel-header flex-shrink-0">
                                 <div class="d-flex align-items-center gap-2">
                                     <div
                                         style="width:32px;height:32px;border-radius:8px;background:#e8f4fd;display:flex;align-items:center;justify-content:center;color:#267dc1">
-                                        <i class="bi bi-list-ol"></i>
+                                        <i class="bi bi-layout-text-sidebar-reverse"></i>
                                     </div>
                                     <div>
-                                        <div style="font-weight:600;font-size:14px;">Cấu hình thứ tự hiển thị Sensor
-                                        </div>
-                                        <div style="font-size:11px;color:#9ca3af">Kéo thả để sắp xếp vị trí</div>
+                                        <div style="font-weight:600;font-size:14px;">Cấu hình thứ tự hiển thị</div>
+                                        <div style="font-size:11px;color:#9ca3af">Kéo thả để sắp xếp vị trí hoặc thả về
+                                            trái để xóa</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-4" style="background:#f8fafc; border-bottom-left-radius:10px; border-bottom-right-radius:10px;">
-                                <div class="row g-3 sortable-grid" id="sensorList">
-                                    <!-- Rendered by JS -->
-                                </div>
+                            <div class="p-4 drop-zone sensor-grid-5 flex-grow-1" id="layoutSensorsList"
+                                style="background:#f8fafc; min-height: 400px; align-content: start;">
+                                <!-- Rendered by JS -->
                             </div>
                         </div>
-
-                        <div class="d-flex gap-3 justify-content-end mt-4">
-                            <button type="button" class="btn btn-primary" id="saveOrderBtn">
-                                <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
-                            </button>
-                        </div>
                     </div>
+                </div>
+
+                <div class="d-flex gap-3 justify-content-end mt-4">
+                    <button type="button" class="btn btn-primary" id="saveOrderBtn">
+                        <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
+                    </button>
                 </div>
             </main>
 
@@ -149,112 +202,306 @@
     <script src="assets/js/main.js"></script>
     <script>
         /* ===== DATA ===== */
-        const TYPE_CLASSES = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
-        const TYPE_LABELS = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
+        let dragSrcEl = null;
+        let dragSrcId = null;
+        let dragSourceList = null;
 
-        let sensors = [
-            { id: 1, name: "Temp 1", type: "analog" },
-            { id: 2, name: "Pressure 1", type: "modbus" },
-            { id: 3, name: "Flow Meter 1", type: "input" },
-            { id: 4, name: "Humidity 1", type: "analog" },
-            { id: 5, name: "Level 1", type: "modbus" },
-            { id: 6, name: "Temp 2", type: "analog" },
-            { id: 7, name: "Pressure 2", type: "modbus" },
-            { id: 8, name: "Flow Meter 2", type: "input" },
-            { id: 9, name: "Humidity 2", type: "analog" },
-            { id: 10, name: "Level 2", type: "modbus" },
-        ];
+        var hmiData = {
+            allSensors: [],
+            hmiLayout: []
+        };
+        var currentDataString = '';
+
+        function updatedata(xmlData) {
+            var dataString = '';
+            dataString = getXMLValue(xmlData, 'hmi');
+
+            // dataString = `{
+            //         "allSensors": [
+            //             { "id": 1, "name": "Temp 1", "type": 2 },
+            //             { "id": 2, "name": "Pressure 1", "type": 1 },
+            //             { "id": 3, "name": "Flow Meter 1", "type": 3 },
+            //             { "id": 4, "name": "Humidity 1", "type": 2 },
+            //             { "id": 5, "name": "Level 1", "type": 1 },
+            //             { "id": 6, "name": "Temp 2", "type": 2 },
+            //             { "id": 7, "name": "Pressure 2", "type": 1 },
+            //             { "id": 8, "name": "Flow Meter 2", "type": 3 },
+            //             { "id": 9, "name": "Humidity 2", "type": 2 },
+            //             { "id": 10, "name": "Level 2", "type": 1 }
+            //         ],
+            //         "hmiLayout": [1, 2, 4, 5, 8]
+            //     }`;
+
+            if (currentDataString === dataString) return;
+            if (dragSrcId !== null) return;
+            currentDataString = dataString;
+
+            try {
+                hmiData = JSON.parse(dataString);
+                renderAll();
+            } catch (e) {
+                console.error("Invalid JSON data", e);
+            }
+        }
+
+        function getSensorTypeText(type) {
+            switch (type) {
+                case 1: return "Modbus";
+                case 2: return "Analog";
+                case 3: return "Input Capture";
+                default: return "Unknown";
+            }
+        }
+
+        function getSensorTypeClass(type) {
+            switch (type) {
+                case 1: return "sensor-type-modbus";
+                case 2: return "sensor-type-analog";
+                case 3: return "sensor-type-input";
+                default: return "bg-secondary";
+            }
+        }
 
         /* ===== RENDER ===== */
-        function renderList() {
-            const $grid = $('#sensorList');
-            $grid.empty();
-            sensors.forEach((s, i) => {
-                const tClass = TYPE_CLASSES[s.type.toLowerCase()] || 'bg-secondary';
-                const tLabel = TYPE_LABELS[s.type.toLowerCase()] || s.type;
+        function renderAll() {
+            // Render Danh sách tất cả
+            const $allList = $('#allSensorsList');
+            $allList.empty();
+            if (hmiData.allSensors && Array.isArray(hmiData.allSensors)) {
+                hmiData.allSensors.forEach(s => {
+                    const isInLayout = hmiData.hmiLayout && hmiData.hmiLayout.includes(s.id);
+                    const opacity = isInLayout ? '0.5' : '1';
+                    const draggable = isInLayout ? 'false' : 'true';
 
-                $grid.append(`
-        <div class="col-lg-2 col-md-3 col-6 sortable-item-wrapper" draggable="true" data-id="${s.id}">
-            <div class="sensor-grid-card h-100 p-3 bg-white" style="border:1px solid #e5e7eb; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; cursor:grab; transition:all 0.2s;">
-                <div style="position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:50%; background:#e8f4fd; color:#267dc1; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">${i + 1}</div>
-                <div style="color:#9ca3af; font-size:22px; margin-bottom:8px"><i class="bi bi-arrows-move"></i></div>
-                <div style="font-weight:600; color:#1f2937; text-align:center; font-size:13px; line-height:1.3; margin-bottom:10px;">${s.name}</div>
-                <span class="badge ${tClass}" style="font-size:10px; padding:5px 8px">${tLabel}</span>
-            </div>
-        </div>`);
-            });
-            initDragDrop();
+                    $allList.append(`
+                        <div class="sortable-item-wrapper" draggable="${draggable}" data-id="${s.id}" data-source="all" style="opacity: ${opacity}">
+                            <div class="sensor-grid-card h-100 p-2 bg-white" style="border:1px solid #e5e7eb; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:${isInLayout ? 'default' : 'grab'}; transition:all 0.2s;">
+                                <div style="font-weight:600; color:#1f2937; text-align:center; font-size:12px; line-height:1.3; margin-bottom:8px; margin-top:4px;">${s.name}</div>
+                                <span class="badge ${getSensorTypeClass(s.type)}" style="font-size:9px; padding:4px 6px">${getSensorTypeText(s.type)}</span>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+
+            // Render Layout hiển thị
+            const $layoutList = $('#layoutSensorsList');
+            $layoutList.empty();
+
+            if (!hmiData.hmiLayout || hmiData.hmiLayout.length === 0) {
+                $layoutList.html('<div style="grid-column: 1 / -1; text-align: center; color: #9ca3af; padding: 40px; border: 2px dashed #cbd5e1; border-radius: 8px;">Kéo thả sensor vào đây</div>');
+            } else {
+                hmiData.hmiLayout.forEach((id, index) => {
+                    const s = hmiData.allSensors ? hmiData.allSensors.find(x => x.id === id) : null;
+                    if (!s) return;
+
+                    $layoutList.append(`
+                        <div class="sortable-item-wrapper" draggable="true" data-id="${s.id}" data-source="layout">
+                            <div class="sensor-grid-card h-100 p-3 bg-white" style="border:1px solid #e5e7eb; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; cursor:grab; transition:all 0.2s;">
+                                <div style="position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:50%; background:#e8f4fd; color:#267dc1; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">${index + 1}</div>
+                                <div style="color:#9ca3af; font-size:22px; margin-bottom:8px"><i class="bi bi-arrows-move"></i></div>
+                                <div style="font-weight:600; color:#1f2937; text-align:center; font-size:13px; line-height:1.3; margin-bottom:10px;">${s.name}</div>
+                                <span class="badge ${getSensorTypeClass(s.type)}" style="font-size:10px; padding:5px 8px">${getSensorTypeText(s.type)}</span>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
         }
 
         /* ===== NATIVE HTML5 DRAG & DROP ===== */
-        function initDragDrop() {
-            const $items = $('#sensorList .sortable-item-wrapper');
-            let dragSrcId = null;
+        $(document).on('dragstart', '.sortable-item-wrapper', function (e) {
+            if ($(this).attr('draggable') === 'false') {
+                e.preventDefault();
+                return;
+            }
+            dragSrcEl = this;
+            dragSrcId = parseInt($(this).data('id'));
+            dragSourceList = $(this).data('source');
+            $(this).addClass('dragging-active');
+            e.originalEvent.dataTransfer.effectAllowed = 'move';
+            e.originalEvent.dataTransfer.setData('text/plain', dragSrcId);
+        });
 
-            $items.each(function () {
-                const el = this;
+        $(document).on('dragend', '.sortable-item-wrapper', function (e) {
+            $('.dragging-active').removeClass('dragging-active');
+            $('.drop-placeholder').remove();
+            $('#allSensorsList, #layoutSensorsList').removeClass('drag-over-zone');
+            dragSrcEl = null;
+            dragSrcId = null;
+            dragSourceList = null;
+        });
 
-                el.addEventListener('dragstart', function (e) {
-                    dragSrcId = parseInt(el.dataset.id);
-                    el.classList.add('dragging-active');
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('text/plain', dragSrcId);
-                });
+        // Hover trên Cấu hình hiển thị (Right Panel)
+        $('#layoutSensorsList').on('dragover', function (e) {
+            e.preventDefault();
+            e.originalEvent.dataTransfer.dropEffect = 'move';
 
-                el.addEventListener('dragend', function () {
-                    el.classList.remove('dragging-active');
-                    $('#sensorList .sortable-item-wrapper').removeClass('drag-over-item');
-                });
+            if (dragSrcId === null) return;
+            if (dragSourceList === 'all' && hmiData.hmiLayout && hmiData.hmiLayout.includes(dragSrcId)) return;
 
-                el.addEventListener('dragover', function (e) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    $('#sensorList .sortable-item-wrapper').removeClass('drag-over-item');
-                    el.classList.add('drag-over-item');
-                });
+            if ($(this).children().length === 1 && $(this).children().text().includes('Kéo thả sensor vào đây')) {
+                $(this).empty();
+            }
 
-                el.addEventListener('drop', function (e) {
-                    e.preventDefault();
-                    const targetId = parseInt(el.dataset.id);
-                    if (dragSrcId === null || dragSrcId === targetId) return;
+            if ($('.drop-placeholder').length === 0) {
+                $('<div class="drop-placeholder sortable-item-wrapper"></div>').appendTo(this);
+            }
 
-                    const srcIdx = sensors.findIndex(s => s.id === dragSrcId);
-                    const tgtIdx = sensors.findIndex(s => s.id === targetId);
-                    if (srcIdx === -1 || tgtIdx === -1) return;
+            const placeholder = $('.drop-placeholder')[0];
+            const items = [...this.querySelectorAll('.sortable-item-wrapper:not(.dragging-active):not(.drop-placeholder)')];
 
-                    // Reorder array
-                    const [moved] = sensors.splice(srcIdx, 1);
-                    sensors.splice(tgtIdx, 0, moved);
+            const y = e.originalEvent.clientY;
+            const x = e.originalEvent.clientX;
 
-                    renderList();
-                    console.log('[Reorder] Đã đổi vị trí, danh sách mới:', sensors.map((s, i) => ({ index: i + 1, id: s.id, name: s.name })));
-                    dragSrcId = null;
-                });
+            let closest = null;
+            let closestDist = Infinity;
+
+            items.forEach(child => {
+                const box = child.getBoundingClientRect();
+                const boxCenterX = box.left + box.width / 2;
+                const boxCenterY = box.top + box.height / 2;
+
+                const dist = Math.sqrt(Math.pow(x - boxCenterX, 2) + Math.pow(y - boxCenterY, 2));
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = child;
+                }
             });
-        }
 
-        $('#saveOrderBtn').on('click', function () {
-            console.log('[Save] Lưu cấu hình:', sensors);
-            if (typeof showToast === 'function') {
-                showToast('Đã lưu cấu hình thứ tự hiển thị!', 'success');
+            if (closest) {
+                const box = closest.getBoundingClientRect();
+                let insertBefore = false;
+
+                if (y < box.top + box.height * 0.3) {
+                    insertBefore = true;
+                } else if (y > box.bottom - box.height * 0.3) {
+                    insertBefore = false;
+                } else {
+                    insertBefore = x < (box.left + box.width / 2);
+                }
+
+                if (insertBefore) {
+                    closest.parentNode.insertBefore(placeholder, closest);
+                } else {
+                    closest.parentNode.insertBefore(placeholder, closest.nextSibling);
+                }
             } else {
-                alert('Đã lưu cấu hình thứ tự hiển thị!');
+                this.appendChild(placeholder);
             }
         });
 
+        // Hover trên Danh sách tất cả (Left Panel)
+        $('#allSensorsList').on('dragover', function (e) {
+            e.preventDefault();
+            e.originalEvent.dataTransfer.dropEffect = 'move';
+            $(this).addClass('drag-over-zone');
+            $('.drop-placeholder').remove();
+        });
+
+        $('#allSensorsList').on('dragleave', function (e) {
+            $(this).removeClass('drag-over-zone');
+        });
+
+        // Drop trên Cấu hình hiển thị (Right Panel)
+        $('#layoutSensorsList').on('drop', function (e) {
+            e.preventDefault();
+
+            if (dragSrcId === null) return;
+            if (dragSourceList === 'all' && hmiData.hmiLayout && hmiData.hmiLayout.includes(dragSrcId)) return;
+
+            const placeholder = $('.drop-placeholder');
+            if (!hmiData.hmiLayout) hmiData.hmiLayout = [];
+
+            if (placeholder.length > 0) {
+                if (dragSourceList === 'all') {
+                    placeholder.replaceWith(`<div class="sortable-item-wrapper" data-id="${dragSrcId}"></div>`);
+                } else {
+                    placeholder.replaceWith(dragSrcEl);
+                }
+
+                // Cập nhật lại mảng dữ liệu theo đúng thứ tự DOM thực tế
+                hmiData.hmiLayout = [];
+                $(this).find('.sortable-item-wrapper').each(function () {
+                    const id = parseInt($(this).data('id'));
+                    if (!isNaN(id)) {
+                        hmiData.hmiLayout.push(id);
+                    }
+                });
+            } else {
+                if (dragSourceList === 'all') {
+                    hmiData.hmiLayout.push(dragSrcId);
+                }
+            }
+
+            renderAll();
+            dragSrcId = null;
+        });
+
+        // Drop trên Danh sách tất cả (Left Panel)
+        $('#allSensorsList').on('drop', function (e) {
+            e.preventDefault();
+            $(this).removeClass('drag-over-zone');
+
+            if (dragSrcId === null) return;
+
+            if (dragSourceList === 'layout' && hmiData.hmiLayout) {
+                hmiData.hmiLayout = hmiData.hmiLayout.filter(id => id !== dragSrcId);
+                renderAll();
+            }
+            dragSrcId = null;
+        });
+
+        /* ===== SUBMIT CẤU HÌNH ===== */
+        $('#saveOrderBtn').on('click', function () {
+            let params = [];
+            if (hmiData.hmiLayout) {
+                hmiData.hmiLayout.forEach((sensorId, index) => {
+                    params.push("sensor_pos_" + index + "=" + encodeURIComponent(sensorId));
+                });
+            }
+            const postData = params.join("&");
+
+            const $btn = $(this);
+            const originalHtml = $btn.html();
+            $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Đang lưu...').prop('disabled', true);
+
+            var http = new XMLHttpRequest();
+            http.open("POST", "hmi-display.html", true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function () {
+                if (http.readyState == 4) {
+                    $btn.html(originalHtml).prop('disabled', false);
+                    if (http.status == 200 || http.status == 0) { // 0 cho phép test local offline
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu cấu hình hiển thị!', 'success');
+                        } else {
+                            alert('Đã lưu cấu hình hiển thị!');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi lưu cấu hình', 'error');
+                        } else {
+                            alert('Lỗi khi lưu cấu hình');
+                        }
+                    }
+                }
+            }
+            http.send(postData);
+        });
+
         $(document).ready(function () {
+            newAJAXCommand('xml/hmi-display.xml', updatedata, false);
+
             // Add hover styles dynamically
             $('<style>')
                 .prop('type', 'text/css')
                 .html(`
-            .sensor-grid-card:hover { border-color: #267dc1 !important; box-shadow: 0 4px 12px rgba(38, 125, 193, 0.15) !important; transform: translateY(-2px); }
-            .sensor-grid-card:active { cursor: grabbing !important; transform: scale(0.98); }
-            .drag-over-item .sensor-grid-card { border: 2px dashed #267dc1 !important; background: #e8f4fd !important; transform: scale(1.05); }
+            .sensor-grid-card[draggable="true"]:hover { border-color: #267dc1 !important; box-shadow: 0 4px 12px rgba(38, 125, 193, 0.15) !important; transform: translateY(-2px); }
+            .sensor-grid-card[draggable="true"]:active { cursor: grabbing !important; transform: scale(0.98); }
             .dragging-active { opacity: 0.4; }
-        `)
+            `)
                 .appendTo('head');
-
-            renderList();
         });
     </script>
 </body>

@@ -75,14 +75,6 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
     _print("IPAddr=%u.%u.%u.%u\n", gAppCfg.network.ipAddr.v[0], gAppCfg.network.ipAddr.v[1], gAppCfg.network.ipAddr.v[2], gAppCfg.network.ipAddr.v[3]);
     _print("\n");
 
-    _print("[APP - Log file]\n");
-    _print("UpLink=%d\n", gAppCfg.logFile.uplink);
-    _print("FormatData=%d\n", gAppCfg.logFile.formatFile);
-    _print("FileType=%d\n", gAppCfg.logFile.typefile);
-    _print("TimeMode=%d\n", gAppCfg.logFile.timeMode);
-    _print("SendInterval=%u\n", gAppCfg.logFile.sendInterval);
-    _print("\n");
-
     for (int i = 0; i < MAX_FTP_SERVER; i++) {
         _print("[APP - FTPServer%d]\n", i);
         _print("Enable=%d\n", gAppCfg.ftpServer[i].enable);
@@ -91,7 +83,6 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
         _print("Path=%s\n", gAppCfg.ftpServer[i].dirPath);
         _print("Username=%s\n", gAppCfg.ftpServer[i].username);
         _print("Password=%s\n", gAppCfg.ftpServer[i].password);
-        _print("NamePrefix=%s\n", gAppCfg.ftpServer[i].namePrefix);
         _print("MakeFolderType=%d\n", gAppCfg.ftpServer[i].makeFolder);
         _print("\n");
     }
@@ -113,17 +104,23 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
     _print("\n");
 
     _print("[APP - Time]\n");
-    _print("NTPIndex=%u\n", gAppCfg.time.indexNTP);
-    _print("TimeAuto=%u\n", gAppCfg.time.timeAuto);
+    _print("SyncNtpEnable=%u\n", gAppCfg.time.syncNtpEnable);
+    _print("NtpServerPrimary=%s\n", gAppCfg.time.ntpServerPrimary);
+    _print("NtpServerBackup=%s\n", gAppCfg.time.ntpServerBackup);
+    _print("SyncInterval=%lu\n", (unsigned long) gAppCfg.time.syncInterval);
+    _print("NtpPort=%u\n", gAppCfg.time.ntpPort);
+    _print("TimeZone=%d\n", gAppCfg.time.timeZone);
     _print("\n");
 
     _print("[APP - Output]\n");
-    _print("OUT1Describe=%s\n", gAppCfg.io.out[0].describe);
-    _print("OUT1Type=%d\n", gAppCfg.io.out[0].type);
-    _print("OUT1Time=%u\n", gAppCfg.io.out[0].time);
-    _print("OUT2Describe=%s\n", gAppCfg.io.out[0].describe);
-    _print("OUT2Type=%d\n", gAppCfg.io.out[0].type);
-    _print("OUT2Time=%u\n", gAppCfg.io.out[0].time);
+    for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++) {
+        _print("OUT%dName=%s\n", i + 1, gAppCfg.io.out[i].name);
+        _print("OUT%dDescribe=%s\n", i + 1, gAppCfg.io.out[i].describe);
+        _print("OUT%dMode=%u\n", i + 1, gAppCfg.io.out[i].mode);
+        _print("OUT%dOnTime=%u\n", i + 1, gAppCfg.io.out[i].ontime);
+        _print("OUT%dOffTime=%u\n", i + 1, gAppCfg.io.out[i].offtime);
+        _print("OUT%dPulseCount=%u\n", i + 1, gAppCfg.io.out[i].pulseCount);
+    }
     _print("\n");
 
     _print("[APP - SDcard]\n");
@@ -131,9 +128,9 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
     _print("\n");
 
     _print("[APP - HMI Tag]\n");
-    for (int i = 0; i < MAX_HMI_PARA; i++) {
-        _print("TagHMI%d=%u\n", i, gAppCfg.hmi[i]);
-    }
+//    for (int i = 0; i < MAX_HMI_PARA; i++) {
+//        _print("TagHMI%d=%u\n", i, gAppCfg.hmi[i]);
+//    }
     _print("\n");
 
     _print("[APP - ModbusTCP position]\n");
@@ -149,7 +146,7 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
         _print("\tEnable=%d\n", gSensorCfg.entry[i].enable);
         _print("\tType=%d\n", gSensorCfg.entry[i].type);
         _print("\tIndexOfType=%u\n", gSensorCfg.entry[i].indexOfType);
-        _print("\tCalibrated=%d\n", gSensorCfg.entry[i].calibrated);
+        _print("\tCalibrated=%d\n", gSensorCfg.entry[i].calibrate);
         _print("\tTypeSuccess=%d\n", gSensorCfg.entry[i].typeGood);
         _print("\tIndexOfTypeSuccess=%u\n", gSensorCfg.entry[i].indexOfTypeGood);
         _print("\tTypeCalib=%d\n", gSensorCfg.entry[i].typeCalib);
@@ -170,21 +167,30 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
     _print("TotalTag=%u\n", gMbrtuCfg.numTag);
     for (int i = 0; i < gMbrtuCfg.numTag; i++) {
         _print("\t[Tag%d]\n", i);
+        _print("\tEnable=%d\n", gMbrtuCfg.entry[i].enable);
+        _print("\tName=%s\n", gMbrtuCfg.entry[i].name);
+        _print("\tUnit=%s\n", gMbrtuCfg.entry[i].unit);
+        _print("\tType=%u\n", gMbrtuCfg.entry[i].type);
+        _print("\tIPAddress=%u.%u.%u.%u\n",
+                gMbrtuCfg.entry[i].ipAddress.v[0],
+                gMbrtuCfg.entry[i].ipAddress.v[1],
+                gMbrtuCfg.entry[i].ipAddress.v[2],
+                gMbrtuCfg.entry[i].ipAddress.v[3]);
+        _print("\tPort=%u\n", gMbrtuCfg.entry[i].port);
         _print("\tSlaveAddress=%u\n", gMbrtuCfg.entry[i].slaveAddress);
         _print("\tFunction=%u\n", gMbrtuCfg.entry[i].function);
         _print("\tRegister=%u\n", gMbrtuCfg.entry[i].regAddress);
         _print("\tQuantity=%u\n", gMbrtuCfg.entry[i].quantity);
-        _print("\tDataType=%u\n", gMbrtuCfg.entry[i].rawDataType);
-        _print("\tBigEndian=%d\n", gMbrtuCfg.entry[i].bigEndian);
-        _print("\tEnable=%d\n", gMbrtuCfg.entry[i].enable);
-        _print("\tName=%s\n", gMbrtuCfg.entry[i].name);
-        _print("\tUnit=%s\n", gMbrtuCfg.entry[i].unit);
+        _print("\tRawDataType=%u\n", gMbrtuCfg.entry[i].rawDataType);
+        _print("\tByteOder=%u\n", gMbrtuCfg.entry[i].byteOder);
+        _print("\tConversion=%d\n", gMbrtuCfg.entry[i].conversion);
+        _print("\tInputMin=%.3f\n", gMbrtuCfg.entry[i].inputMin);
+        _print("\tInputMax=%.3f\n", gMbrtuCfg.entry[i].inputMax);
+        _print("\tOutputMin=%.3f\n", gMbrtuCfg.entry[i].outputMin);
+        _print("\tOutputMax=%.3f\n", gMbrtuCfg.entry[i].outputMax);
         _print("\tScaleType=%u\n", gMbrtuCfg.entry[i].scaleType);
-        _print("\tScaledDataType=%u\n", gMbrtuCfg.entry[i].scaleDataType);
+        _print("\tScaleDataType=%u\n", gMbrtuCfg.entry[i].scaleDataType);
         _print("\tScaleValue=%.3f\n", gMbrtuCfg.entry[i].scaleValue);
-        _print("\tADCType=%u\n", gMbrtuCfg.entry[i].adcType);
-        _print("\tADCLow=%.3f\n", gMbrtuCfg.entry[i].adcLow);
-        _print("\tADCHigh=%.3f\n", gMbrtuCfg.entry[i].adcHigh);
         _print("\tOffsetPreValue=%.3f\n", gMbrtuCfg.entry[i].offsetPreVal);
         _print("\tOffsetSubValue=%.3f\n", gMbrtuCfg.entry[i].offsetSubVal);
         _print("\tOffsetPreOperator=%u\n", gMbrtuCfg.entry[i].offSetPreOperator);
@@ -202,8 +208,10 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
         _print("\tScaledDataType=%u\n", gAnalogCfg.entry[i].scaleDataType);
         _print("\tScaleValue=%.3f\n", gAnalogCfg.entry[i].scaleValue);
         _print("\tADCType=%u\n", gAnalogCfg.entry[i].adcType);
-        _print("\tADCLow=%.3f\n", gAnalogCfg.entry[i].adcLow);
-        _print("\tADCHigh=%.3f\n", gAnalogCfg.entry[i].adcHigh);
+        _print("\tInputLow=%.3f\n", gAnalogCfg.entry[i].inputLow);
+        _print("\tInputHigh=%.3f\n", gAnalogCfg.entry[i].inputHigh);
+        _print("\tOutputLow=%.3f\n", gAnalogCfg.entry[i].outputLow);
+        _print("\tOutputHigh=%.3f\n", gAnalogCfg.entry[i].outputHigh);
         _print("\tOffsetPreValue=%.3f\n", gAnalogCfg.entry[i].offsetPreVal);
         _print("\tOffsetSubValue=%.3f\n", gAnalogCfg.entry[i].offsetSubVal);
         _print("\tOffsetPreOperator=%u\n", gAnalogCfg.entry[i].offSetPreOperator);
@@ -217,10 +225,17 @@ void Logger_SaveFullConfig(LOG_CONFIG_AUTHOR author) {
         _print("\tName=%s\n", gInCaptureCfg.entry[i].name);
         _print("\tUnit=%s\n", gInCaptureCfg.entry[i].unit);
         _print("\tEnable=%d\n", gInCaptureCfg.entry[i].enable);
-        _print("\tValueOfPulse=%.4f\n", (double) gInCaptureCfg.entry[i].valPerPulse);
-        _print("\tScale=%.4f\n", (double) gInCaptureCfg.entry[i].scale);
-        _print("\tMinFreq=%.2f\n", gInCaptureCfg.entry[i].minFreq);
+        _print("\tValuePerPulse=%.4f\n", (double) gInCaptureCfg.entry[i].valPerPulse);
+        _print("\tMinFreq=%.2f\n", (double) gInCaptureCfg.entry[i].minFreq);
+        _print("\tScaleType=%u\n", gInCaptureCfg.entry[i].scaleType);
+        _print("\tScaleDataType=%u\n", gInCaptureCfg.entry[i].scaleDataType);
+        _print("\tScaleValue=%.4f\n", (double) gInCaptureCfg.entry[i].scaleValue);
+        _print("\tOffsetPreValue=%.4f\n", (double) gInCaptureCfg.entry[i].offsetPreVal);
+        _print("\tOffsetSubValue=%.4f\n", (double) gInCaptureCfg.entry[i].offsetSubVal);
+        _print("\tOffsetPreOperator=%u\n", gInCaptureCfg.entry[i].offSetPreOperator);
+        _print("\tOffsetSubOperator=%u\n", gInCaptureCfg.entry[i].offsetSubOperator);
     }
+
     _print("\n");
 
 

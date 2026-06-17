@@ -51,6 +51,7 @@
 #include "crypto/crypto.h"
 #include "peripheral/icap/plib_icap6.h"
 #include "peripheral/icap/plib_icap4.h"
+#include "peripheral/spi/spi_master/plib_spi6_master.h"
 #include "driver/memory/drv_memory.h"
 #include "peripheral/spi/spi_master/plib_spi5_master.h"
 #include "driver/ethmac/drv_ethmac.h"
@@ -109,7 +110,10 @@
 #include "storage/sd_card/sd_card.h"
 #include "rtc/rtc.h"
 #include "hmi/hmi_dwin.h"
-#include "modbus_rtu/master.h"
+#include "sensor/sensor_general.h"
+#include "sensor/modbus_rtu/master.h"
+#include "sensor/analog/adc.h"
+#include "sensor/input_capture/input_capture.h"
 #include "rule_engine/rule_engine.h"
 #include "sim/sim_main.h"
 #include "app.h"
@@ -120,6 +124,11 @@
 #include "sim/service/sim_mqtt.h" 
 #include "ethernet/eth_net.h"
 #include "ethernet/tcp_mqtt.h"
+#include "digital_io/led_indicate.h"
+#include "digital_io/digital_output.h"
+#include "ethernet/eth_ntp.h"
+#include "ethernet/eth_ftp.h"
+
 
 
 // DOM-IGNORE-BEGIN

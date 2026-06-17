@@ -204,6 +204,7 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
             gAppCfg.network.isDHCPEn = packed->network.isDHCPEn;
             memcpy(gAppCfg.network.deviceUsername, packed->network.deviceUsername, USERNAME_LEN);
             memcpy(gAppCfg.network.devicePassword, packed->network.devicePassword, PASSWORD_LEN);
+            gAppCfg.network.uplink = packed->network.uplink;
 
             for (int i = 0; i < MAX_FTP_SERVER; i++) {
                 memcpy(gAppCfg.ftpServer[i].username, packed->ftpServer[i].username, USERNAME_LEN);
@@ -211,16 +212,9 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
                 memcpy(gAppCfg.ftpServer[i].dirPath, packed->ftpServer[i].dirPath, DIR_PATH_LEN);
                 memcpy(gAppCfg.ftpServer[i].hostname, packed->ftpServer[i].hostname, URL_LEN);
                 gAppCfg.ftpServer[i].port = packed->ftpServer[i].port;
-                memcpy(gAppCfg.ftpServer[i].namePrefix, packed->ftpServer[i].namePrefix, FILE_NAME_PREFIX_LEN);
                 gAppCfg.ftpServer[i].makeFolder = packed->ftpServer[i].makeFolder;
                 gAppCfg.ftpServer[i].enable = packed->ftpServer[i].enable;
             }
-
-            gAppCfg.logFile.uplink = packed->logFile.uplink;
-            gAppCfg.logFile.formatFile = packed->logFile.formatFile;
-            gAppCfg.logFile.typefile = packed->logFile.typefile;
-            gAppCfg.logFile.timeMode = packed->logFile.timeMode;
-            gAppCfg.logFile.sendInterval = packed->logFile.sendInterval;
 
             gAppCfg.modbusRtu.timeout = packed->modbusRtu.timeout;
             gAppCfg.modbusRtu.retries = packed->modbusRtu.retries;
@@ -234,21 +228,29 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
             memcpy(gAppCfg.gsm.passwordAPN, packed->gsm.passwordAPN, PASSWORD_LEN);
             memcpy(gAppCfg.gsm.APN, packed->gsm.APN, APN_LEN);
 
-            gAppCfg.time.indexNTP = packed->time.indexNTP;
-            gAppCfg.time.timeAuto = packed->time.timeAuto;
-            gAppCfg.time.yearNumber = packed->time.yearNumber;
+            gAppCfg.time.syncNtpEnable = packed->time.syncNtpEnable;
+            memcpy(gAppCfg.time.ntpServerPrimary, packed->time.ntpServerPrimary, URL_LEN);
+            memcpy(gAppCfg.time.ntpServerBackup, packed->time.ntpServerBackup, URL_LEN);
+            gAppCfg.time.syncInterval = packed->time.syncInterval;
+            gAppCfg.time.ntpPort = packed->time.ntpPort;
             gAppCfg.time.timeZone = packed->time.timeZone;
+            gAppCfg.time.yearNumber = packed->time.yearNumber;
 
             for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++) {
+                memcpy(gAppCfg.io.out[i].name, packed->io.out[i].name, SENSOR_NAME_LEN);
                 memcpy(gAppCfg.io.out[i].describe, packed->io.out[i].describe, SENSOR_NAME_LEN);
-                gAppCfg.io.out[i].time = packed->io.out[i].time;
-                gAppCfg.io.out[i].type = packed->io.out[i].type;
+                gAppCfg.io.out[i].mode = packed->io.out[i].mode;
+                gAppCfg.io.out[i].ontime = packed->io.out[i].ontime;
+                gAppCfg.io.out[i].offtime = packed->io.out[i].offtime;
+                gAppCfg.io.out[i].pulseCount = packed->io.out[i].pulseCount;
             }
 
             gAppCfg.sdCard.retentionMonths = packed->sdCard.retentionMonths;
             gAppCfg.sdCard.lastMonth = packed->sdCard.lastMonth;
 
-            memcpy(gAppCfg.hmi, packed->hmi, MAX_HMI_PARA);
+            gAppCfg.hmi.numEntry = packed->hmi.numEntry;
+            memcpy(gAppCfg.hmi.sensorIdx, packed->hmi.sensorIdx, MAX_HMI_PARA * sizeof (uint8_t));
+
             memcpy(gAppCfg.position, packed->position, MAX_POSITION_SIZE * sizeof (uint16_t));
             break;
         }
@@ -272,7 +274,7 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
                 gSensorCfg.entry[i].type = packed->entry[i].type;
                 gSensorCfg.entry[i].indexOfType = packed->entry[i].indexOfType;
 
-                gSensorCfg.entry[i].calibrated = packed->entry[i].calibrated;
+                gSensorCfg.entry[i].calibrate = packed->entry[i].calibrate;
                 gSensorCfg.entry[i].typeStatus = packed->entry[i].typeStatus;
 
                 gSensorCfg.entry[i].typeGood = packed->entry[i].typeGood;
@@ -291,6 +293,15 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
             }
 
             gSensorCfg.numSensor = packed->numSensor;
+
+            gSensorCfg.formatFile = packed->formatFile;
+            gSensorCfg.typefile = packed->typefile;
+            gSensorCfg.logInterval = packed->logInterval;
+            memcpy(gSensorCfg.filenameTemplate, packed->filenameTemplate, FILE_NAME_LEN);
+            gSensorCfg.compressed = packed->compressed;
+            gSensorCfg.uploadFtp = packed->uploadFtp;
+            gSensorCfg.uploadMqtt = packed->uploadMqtt;
+            gSensorCfg.saveSdcard = packed->saveSdcard;
             break;
         }
 
@@ -318,8 +329,10 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
                 gAnalogCfg.entry[i].scaleValue = packed->entry[i].scaleValue;
 
                 gAnalogCfg.entry[i].adcType = packed->entry[i].adcType;
-                gAnalogCfg.entry[i].adcLow = packed->entry[i].adcLow;
-                gAnalogCfg.entry[i].adcHigh = packed->entry[i].adcHigh;
+                gAnalogCfg.entry[i].inputLow = packed->entry[i].inputLow;
+                gAnalogCfg.entry[i].inputHigh = packed->entry[i].inputHigh;
+                gAnalogCfg.entry[i].outputLow = packed->entry[i].outputLow;
+                gAnalogCfg.entry[i].outputHigh = packed->entry[i].outputHigh;
                 gAnalogCfg.entry[i].offsetPreVal = packed->entry[i].offsetPreVal;
                 gAnalogCfg.entry[i].offsetSubVal = packed->entry[i].offsetSubVal;
                 gAnalogCfg.entry[i].offSetPreOperator = packed->entry[i].offSetPreOperator;
@@ -346,21 +359,23 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
                 gMbrtuCfg.entry[i].enable = packed->entry[i].enable;
                 memcpy(gMbrtuCfg.entry[i].name, packed->entry[i].name, SENSOR_NAME_LEN);
                 memcpy(gMbrtuCfg.entry[i].unit, packed->entry[i].unit, SENSOR_UNIT_LEN);
-
+                gMbrtuCfg.entry[i].type = packed->entry[i].type;
+                memcpy(&gMbrtuCfg.entry[i].ipAddress, &packed->entry[i].ipAddress, sizeof (IPV4_ADDR));
+                gMbrtuCfg.entry[i].port = packed->entry[i].port;
                 gMbrtuCfg.entry[i].slaveAddress = packed->entry[i].slaveAddress;
                 gMbrtuCfg.entry[i].function = packed->entry[i].function;
                 gMbrtuCfg.entry[i].regAddress = packed->entry[i].regAddress;
                 gMbrtuCfg.entry[i].quantity = packed->entry[i].quantity;
                 gMbrtuCfg.entry[i].rawDataType = packed->entry[i].rawDataType;
-                gMbrtuCfg.entry[i].bigEndian = packed->entry[i].bigEndian;
-
+                gMbrtuCfg.entry[i].byteOder = packed->entry[i].byteOder;
+                gMbrtuCfg.entry[i].conversion = packed->entry[i].conversion;
+                gMbrtuCfg.entry[i].inputMin = packed->entry[i].inputMin;
+                gMbrtuCfg.entry[i].inputMax = packed->entry[i].inputMax;
+                gMbrtuCfg.entry[i].outputMin = packed->entry[i].outputMin;
+                gMbrtuCfg.entry[i].outputMax = packed->entry[i].outputMax;
                 gMbrtuCfg.entry[i].scaleType = packed->entry[i].scaleType;
                 gMbrtuCfg.entry[i].scaleDataType = packed->entry[i].scaleDataType;
                 gMbrtuCfg.entry[i].scaleValue = packed->entry[i].scaleValue;
-
-                gMbrtuCfg.entry[i].adcType = packed->entry[i].adcType;
-                gMbrtuCfg.entry[i].adcLow = packed->entry[i].adcLow;
-                gMbrtuCfg.entry[i].adcHigh = packed->entry[i].adcHigh;
                 gMbrtuCfg.entry[i].offsetPreVal = packed->entry[i].offsetPreVal;
                 gMbrtuCfg.entry[i].offsetSubVal = packed->entry[i].offsetSubVal;
                 gMbrtuCfg.entry[i].offSetPreOperator = packed->entry[i].offSetPreOperator;
@@ -389,10 +404,15 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
                 gInCaptureCfg.entry[i].enable = packed->entry[i].enable;
                 memcpy(gInCaptureCfg.entry[i].name, packed->entry[i].name, SENSOR_NAME_LEN);
                 memcpy(gInCaptureCfg.entry[i].unit, packed->entry[i].unit, SENSOR_UNIT_LEN);
-
                 gInCaptureCfg.entry[i].valPerPulse = packed->entry[i].valPerPulse;
                 gInCaptureCfg.entry[i].minFreq = packed->entry[i].minFreq;
-                gInCaptureCfg.entry[i].scale = packed->entry[i].scale;
+                gInCaptureCfg.entry[i].scaleType = packed->entry[i].scaleType;
+                gInCaptureCfg.entry[i].scaleDataType = packed->entry[i].scaleDataType;
+                gInCaptureCfg.entry[i].scaleValue = packed->entry[i].scaleValue;
+                gInCaptureCfg.entry[i].offsetPreVal = packed->entry[i].offsetPreVal;
+                gInCaptureCfg.entry[i].offsetSubVal = packed->entry[i].offsetSubVal;
+                gInCaptureCfg.entry[i].offSetPreOperator = packed->entry[i].offSetPreOperator;
+                gInCaptureCfg.entry[i].offsetSubOperator = packed->entry[i].offsetSubOperator;
             }
             break;
         }
@@ -421,6 +441,7 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
             dst->network.isDHCPEn = gAppCfg.network.isDHCPEn;
             memcpy(dst->network.deviceUsername, gAppCfg.network.deviceUsername, USERNAME_LEN);
             memcpy(dst->network.devicePassword, gAppCfg.network.devicePassword, PASSWORD_LEN);
+            dst->network.uplink = gAppCfg.network.uplink;
 
             for (int i = 0; i < MAX_FTP_SERVER; i++) {
                 memcpy(dst->ftpServer[i].username, gAppCfg.ftpServer[i].username, USERNAME_LEN);
@@ -428,16 +449,9 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 memcpy(dst->ftpServer[i].dirPath, gAppCfg.ftpServer[i].dirPath, DIR_PATH_LEN);
                 memcpy(dst->ftpServer[i].hostname, gAppCfg.ftpServer[i].hostname, URL_LEN);
                 dst->ftpServer[i].port = gAppCfg.ftpServer[i].port;
-                memcpy(dst->ftpServer[i].namePrefix, gAppCfg.ftpServer[i].namePrefix, FILE_NAME_PREFIX_LEN);
                 dst->ftpServer[i].makeFolder = gAppCfg.ftpServer[i].makeFolder;
                 dst->ftpServer[i].enable = gAppCfg.ftpServer[i].enable;
             }
-
-            dst->logFile.uplink = gAppCfg.logFile.uplink;
-            dst->logFile.formatFile = gAppCfg.logFile.formatFile;
-            dst->logFile.typefile = gAppCfg.logFile.typefile;
-            dst->logFile.timeMode = gAppCfg.logFile.timeMode;
-            dst->logFile.sendInterval = gAppCfg.logFile.sendInterval;
 
             dst->modbusRtu.timeout = gAppCfg.modbusRtu.timeout;
             dst->modbusRtu.retries = gAppCfg.modbusRtu.retries;
@@ -451,21 +465,29 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
             memcpy(dst->gsm.passwordAPN, gAppCfg.gsm.passwordAPN, PASSWORD_LEN);
             memcpy(dst->gsm.APN, gAppCfg.gsm.APN, APN_LEN);
 
-            dst->time.indexNTP = gAppCfg.time.indexNTP;
-            dst->time.timeAuto = gAppCfg.time.timeAuto;
-            dst->time.yearNumber = gAppCfg.time.yearNumber;
+            dst->time.syncNtpEnable = gAppCfg.time.syncNtpEnable;
+            memcpy(dst->time.ntpServerPrimary, gAppCfg.time.ntpServerPrimary, URL_LEN);
+            memcpy(dst->time.ntpServerBackup, gAppCfg.time.ntpServerBackup, URL_LEN);
+            dst->time.syncInterval = gAppCfg.time.syncInterval;
+            dst->time.ntpPort = gAppCfg.time.ntpPort;
             dst->time.timeZone = gAppCfg.time.timeZone;
+            dst->time.yearNumber = gAppCfg.time.yearNumber;
 
             for (int i = 0; i < MAX_DIGITAL_OUTPUT; i++) {
+                memcpy(dst->io.out[i].name, gAppCfg.io.out[i].name, SENSOR_NAME_LEN);
                 memcpy(dst->io.out[i].describe, gAppCfg.io.out[i].describe, SENSOR_NAME_LEN);
-                dst->io.out[i].time = gAppCfg.io.out[i].time;
-                dst->io.out[i].type = gAppCfg.io.out[i].type;
+                dst->io.out[i].mode = gAppCfg.io.out[i].mode;
+                dst->io.out[i].ontime = gAppCfg.io.out[i].ontime;
+                dst->io.out[i].offtime = gAppCfg.io.out[i].offtime;
+                dst->io.out[i].pulseCount = gAppCfg.io.out[i].pulseCount;
             }
 
             dst->sdCard.retentionMonths = gAppCfg.sdCard.retentionMonths;
             dst->sdCard.lastMonth = gAppCfg.sdCard.lastMonth;
 
-            memcpy(dst->hmi, gAppCfg.hmi, MAX_HMI_PARA);
+            dst->hmi.numEntry = gAppCfg.hmi.numEntry;
+            memcpy(dst->hmi.sensorIdx, gAppCfg.hmi.sensorIdx, MAX_HMI_PARA * sizeof (uint8_t));
+
             memcpy(dst->position, gAppCfg.position, MAX_POSITION_SIZE * sizeof (uint16_t));
 
             uint16_t datalen = sizeof (APP_PACKED) - sizeof (EXTFL_METADATA);
@@ -487,7 +509,7 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 dst->entry[i].enable = gSensorCfg.entry[i].enable;
                 dst->entry[i].type = gSensorCfg.entry[i].type;
                 dst->entry[i].indexOfType = gSensorCfg.entry[i].indexOfType;
-                dst->entry[i].calibrated = gSensorCfg.entry[i].calibrated;
+                dst->entry[i].calibrate = gSensorCfg.entry[i].calibrate;
                 dst->entry[i].typeStatus = gSensorCfg.entry[i].typeStatus;
                 dst->entry[i].typeGood = gSensorCfg.entry[i].typeGood;
                 dst->entry[i].indexOfTypeGood = gSensorCfg.entry[i].indexOfTypeGood;
@@ -503,6 +525,15 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 dst->entry[i].errorValueCompare = gSensorCfg.entry[i].errorValueCompare;
             }
             dst->numSensor = gSensorCfg.numSensor;
+            dst->formatFile = gSensorCfg.formatFile;
+            dst->typefile = gSensorCfg.typefile;
+            dst->logInterval = gSensorCfg.logInterval;
+            memcpy(dst->filenameTemplate, gSensorCfg.filenameTemplate, FILE_NAME_LEN);
+            dst->compressed = gSensorCfg.compressed;
+            dst->uploadFtp = gSensorCfg.uploadFtp;
+            dst->uploadMqtt = gSensorCfg.uploadMqtt;
+            dst->saveSdcard = gSensorCfg.saveSdcard;
+
 
             uint16_t datalen = sizeof (SENSOR_PACKED) - sizeof (EXTFL_METADATA);
             dst->metadata.magic = EXTFL_MAGIC;
@@ -529,8 +560,10 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 dst->entry[i].scaleValue = gAnalogCfg.entry[i].scaleValue;
 
                 dst->entry[i].adcType = gAnalogCfg.entry[i].adcType;
-                dst->entry[i].adcLow = gAnalogCfg.entry[i].adcLow;
-                dst->entry[i].adcHigh = gAnalogCfg.entry[i].adcHigh;
+                dst->entry[i].inputLow = gAnalogCfg.entry[i].inputLow;
+                dst->entry[i].inputHigh = gAnalogCfg.entry[i].inputHigh;
+                dst->entry[i].outputLow = gAnalogCfg.entry[i].outputLow;
+                dst->entry[i].outputHigh = gAnalogCfg.entry[i].outputHigh;
                 dst->entry[i].offsetPreVal = gAnalogCfg.entry[i].offsetPreVal;
                 dst->entry[i].offsetSubVal = gAnalogCfg.entry[i].offsetSubVal;
                 dst->entry[i].offSetPreOperator = gAnalogCfg.entry[i].offSetPreOperator;
@@ -556,21 +589,23 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 dst->entry[i].enable = gMbrtuCfg.entry[i].enable;
                 memcpy(dst->entry[i].name, gMbrtuCfg.entry[i].name, SENSOR_NAME_LEN);
                 memcpy(dst->entry[i].unit, gMbrtuCfg.entry[i].unit, SENSOR_UNIT_LEN);
-
+                dst->entry[i].type = gMbrtuCfg.entry[i].type;
+                memcpy(&dst->entry[i].ipAddress, &gMbrtuCfg.entry[i].ipAddress, sizeof (IPV4_ADDR));
+                dst->entry[i].port = gMbrtuCfg.entry[i].port;
                 dst->entry[i].slaveAddress = gMbrtuCfg.entry[i].slaveAddress;
                 dst->entry[i].function = gMbrtuCfg.entry[i].function;
                 dst->entry[i].regAddress = gMbrtuCfg.entry[i].regAddress;
                 dst->entry[i].quantity = gMbrtuCfg.entry[i].quantity;
                 dst->entry[i].rawDataType = gMbrtuCfg.entry[i].rawDataType;
-                dst->entry[i].bigEndian = gMbrtuCfg.entry[i].bigEndian;
-
+                dst->entry[i].byteOder = gMbrtuCfg.entry[i].byteOder;
+                dst->entry[i].conversion = gMbrtuCfg.entry[i].conversion;
+                dst->entry[i].inputMin = gMbrtuCfg.entry[i].inputMin;
+                dst->entry[i].inputMax = gMbrtuCfg.entry[i].inputMax;
+                dst->entry[i].outputMin = gMbrtuCfg.entry[i].outputMin;
+                dst->entry[i].outputMax = gMbrtuCfg.entry[i].outputMax;
                 dst->entry[i].scaleType = gMbrtuCfg.entry[i].scaleType;
                 dst->entry[i].scaleDataType = gMbrtuCfg.entry[i].scaleDataType;
                 dst->entry[i].scaleValue = gMbrtuCfg.entry[i].scaleValue;
-
-                dst->entry[i].adcType = gMbrtuCfg.entry[i].adcType;
-                dst->entry[i].adcLow = gMbrtuCfg.entry[i].adcLow;
-                dst->entry[i].adcHigh = gMbrtuCfg.entry[i].adcHigh;
                 dst->entry[i].offsetPreVal = gMbrtuCfg.entry[i].offsetPreVal;
                 dst->entry[i].offsetSubVal = gMbrtuCfg.entry[i].offsetSubVal;
                 dst->entry[i].offSetPreOperator = gMbrtuCfg.entry[i].offSetPreOperator;
@@ -597,10 +632,15 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
                 dst->entry[i].enable = gInCaptureCfg.entry[i].enable;
                 memcpy(dst->entry[i].name, gInCaptureCfg.entry[i].name, SENSOR_NAME_LEN);
                 memcpy(dst->entry[i].unit, gInCaptureCfg.entry[i].unit, SENSOR_UNIT_LEN);
-
                 dst->entry[i].valPerPulse = gInCaptureCfg.entry[i].valPerPulse;
                 dst->entry[i].minFreq = gInCaptureCfg.entry[i].minFreq;
-                dst->entry[i].scale = gInCaptureCfg.entry[i].scale;
+                dst->entry[i].scaleType = gInCaptureCfg.entry[i].scaleType;
+                dst->entry[i].scaleDataType = gInCaptureCfg.entry[i].scaleDataType;
+                dst->entry[i].scaleValue = gInCaptureCfg.entry[i].scaleValue;
+                dst->entry[i].offsetPreVal = gInCaptureCfg.entry[i].offsetPreVal;
+                dst->entry[i].offsetSubVal = gInCaptureCfg.entry[i].offsetSubVal;
+                dst->entry[i].offSetPreOperator = gInCaptureCfg.entry[i].offSetPreOperator;
+                dst->entry[i].offsetSubOperator = gInCaptureCfg.entry[i].offsetSubOperator;
             }
 
             uint16_t datalen = sizeof (INPUT_CAPTURE_PACKED) - sizeof (EXTFL_METADATA);

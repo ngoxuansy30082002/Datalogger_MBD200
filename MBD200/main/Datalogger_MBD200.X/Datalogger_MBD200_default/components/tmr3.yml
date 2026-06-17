@@ -22,8 +22,8 @@ data:
     - children:
       - attributes:
           id: tmr3
-          x: '289'
-          y: '206'
+          x: '97'
+          y: '219'
         type: ElementPosition
       type: ElementPositions
     type: ComponentGraph
@@ -46,7 +46,7 @@ data:
       - children:
         - attributes:
             id: tmr3
-            value: '390625'
+            value: '78125'
           type: Dynamic
         type: Values
       type: Integer
@@ -80,12 +80,12 @@ data:
             id: max
           children:
           - type: Value
-            value: '167.77472'
+            value: '838.8736'
           type: Float
         type: Attributes
       - children:
         - attributes:
-            value: '167.77472'
+            value: '838.8736'
           type: User
         type: Values
       type: Float

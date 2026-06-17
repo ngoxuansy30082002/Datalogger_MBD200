@@ -12,44 +12,242 @@
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        .chart-type-btn {
-            border-radius: 20px;
-            font-size: 12px;
-            padding: 5px 14px;
-        }
-
-        .chart-type-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        #sensorGrid .col {
-            transition: all 0.3s;
-        }
-
         .filter-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            border: 1.5px solid #e5e7eb;
-            background: white;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #475569;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .filter-badge.active {
-            border-color: #267dc1;
-            background: #e8f4fd;
-            color: #267dc1;
+            border-color: #0f172a;
+            background: #0f172a;
+            color: #fff;
         }
 
-        .filter-badge:hover {
-            border-color: #267dc1;
+        .filter-badge:hover:not(.active) {
+            background: #e2e8f0;
+        }
+
+        .scada-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .scada-card:hover {
+            border-color: #94a3b8;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .scada-card-header {
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .scada-card-body {
+            padding: 16px 12px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .scada-card-footer {
+            padding: 8px 12px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 11px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            background: #fff;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .status-good .status-bar {
+            background: #10b981;
+        }
+
+        .status-error .status-bar {
+            background: #ef4444;
+        }
+
+        .status-calib .status-bar {
+            background: #3b82f6;
+        }
+
+        .status-disabled .status-bar {
+            background: #9ca3af;
+        }
+
+        .sensor-val {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.5px;
+        }
+
+        .sensor-unit {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            margin-left: 2px;
+            font-family: var(--bs-body-font-family);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-good {
+            background: #10b981;
+            box-shadow: 0 0 4px #10b981;
+        }
+
+        .dot-error {
+            background: #ef4444;
+            box-shadow: 0 0 4px #ef4444;
+            animation: blink 1s infinite;
+        }
+
+        .dot-calib {
+            background: #3b82f6;
+        }
+
+        .dot-disabled {
+            background: #9ca3af;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .scada-stat-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-info {
+            background: #fff;
+        }
+
+        .stat-info .stat-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-info .stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        /* Panel header for SCADA look */
+        .panel-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .panel-body {
+            padding: 16px;
+        }
+
+        .panel-container {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            height: 100%;
+        }
+
+        .scada-card.active-card {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        @keyframes expandIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chart-expand {
+            animation: expandIn 0.4s ease-out forwards;
         }
     </style>
 </head>
@@ -111,116 +309,110 @@
                 </div>
 
                 <!-- Stat Cards Row -->
-
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
                     <div class="col">
-                        <div class="stat-card stat-purple">
-                            <div class="stat-header">
-                                <i class="bi bi-cpu-fill"></i>
-                                <span class="stat-label">Total Sensors</span>
+                        <div class="scada-stat-card">
+                            <div class="stat-icon" style="color: #6366f1; background: #e0e7ff;"><i
+                                    class="bi bi-cpu-fill"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-title">Tổng Sensors</div>
+                                <div class="stat-val" id="statTotal">0</div>
                             </div>
-                            <div class="stat-value" id="statTotal">0</div>
                         </div>
                     </div>
-
                     <div class="col">
-                        <div class="stat-card stat-success">
-                            <div class="stat-header">
-                                <i class="bi bi-check-circle-fill"></i>
-                                <span class="stat-label">Tốt</span>
+                        <div class="scada-stat-card">
+                            <div class="stat-icon" style="color: #10b981; background: #d1fae5;"><i
+                                    class="bi bi-check-circle-fill"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-title">Đang Online</div>
+                                <div class="stat-val" id="statGood">0</div>
                             </div>
-                            <div class="stat-value" id="statGood">0</div>
                         </div>
                     </div>
-
                     <div class="col">
-                        <div class="stat-card stat-danger">
-                            <div class="stat-header">
-                                <i class="bi bi-x-circle-fill"></i>
-                                <span class="stat-label">Lỗi</span>
+                        <div class="scada-stat-card">
+                            <div class="stat-icon" style="color: #ef4444; background: #fee2e2;"><i
+                                    class="bi bi-x-circle-fill"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-title">Cảnh báo Lỗi</div>
+                                <div class="stat-val" id="statError">0</div>
                             </div>
-                            <div class="stat-value" id="statError">0</div>
                         </div>
                     </div>
-
                     <div class="col">
-                        <div class="stat-card stat-primary">
-                            <div class="stat-header">
-                                <i class="bi bi-check2-circle"></i>
-                                <span class="stat-label">Đã hiệu chuẩn</span>
+                        <div class="scada-stat-card">
+                            <div class="stat-icon" style="color: #3b82f6; background: #dbeafe;"><i
+                                    class="bi bi-patch-check-fill"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-title">Calibration</div>
+                                <div class="stat-val" id="statCalib">0</div>
                             </div>
-                            <div class="stat-value" id="statCalib">0</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sensor Card Grid -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
-                                    class="bi bi-grid-fill"></i></div>
-                            <h6>Sensor Grid</h6>
-                        </div>
+                <div class="panel-container mb-4" style="background: transparent; border: none; box-shadow: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h6 class="mb-0 fw-bold"
+                            style="color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="bi bi-grid-fill text-primary me-2"></i>Realtime Monitor
+                        </h6>
                         <div class="d-flex gap-2 align-items-center">
-                            <input type="search" class="form-control form-control-sm" placeholder="Tìm sensor..."
-                                style="width:180px" id="sensorSearchInput">
-                            <button class="btn btn-sm btn-outline-primary" id="autoRefreshBtn" title="Auto refresh">
-                                <i class="bi bi-arrow-repeat me-1"></i>Auto
+                            <div class="input-group input-group-sm" style="width: 200px;">
+                                <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                                <input type="search" class="form-control border-start-0 ps-0"
+                                    placeholder="Tìm ID, Tên..." id="sensorSearchInput">
+                            </div>
+                            <button
+                                class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 bg-white fw-bold"
+                                id="autoRefreshBtn" style="border-color: #cbd5e1;">
+                                <i class="bi bi-arrow-repeat text-primary"></i>Auto
                             </button>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3" id="sensorGrid">
-                            <!-- Rendered by JS -->
-                        </div>
-                        <div id="sensorEmpty" class="text-center py-5 d-none">
-                            <i class="bi bi-search" style="font-size:32px;color:#d1d5db"></i>
-                            <p class="mt-2 text-muted">Không tìm thấy sensor</p>
-                        </div>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3"
+                        id="sensorGrid">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <div id="sensorEmpty" class="text-center py-5 d-none bg-white rounded border">
+                        <i class="bi bi-hdd-network" style="font-size:32px;color:#cbd5e1"></i>
+                        <p class="mt-2 text-muted">Không có dữ liệu</p>
                     </div>
                 </div>
 
                 <!-- Chart Section -->
-                <div class="row g-4">
+                <div class="row g-4 mb-4">
                     <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
-                                            class="bi bi-graph-up-arrow"></i></div>
-                                    <h6>Biểu đồ giá trị theo thời gian</h6>
-                                </div>
-                                <div class="d-flex gap-2 align-items-center flex-wrap">
-                                    <!-- Sensor type selector -->
-                                    <select class="form-select form-select-sm" style="width:160px" id="chartTypeSelect">
-                                        <option value="analog">Analog Sensors</option>
-                                        <option value="modbus">Modbus Sensors</option>
+                        <div class="panel-container">
+                            <div class="panel-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div><i class="bi bi-graph-up text-primary me-2"></i>BIỂU ĐỒ TREND</div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <select class="form-select form-select-sm fw-bold bg-light"
+                                        style="width:140px; border-color: #cbd5e1;" id="chartTypeSelect">
+                                        <option value="analog">Analog</option>
+                                        <option value="modbus">Modbus</option>
                                         <option value="input">Input Capture</option>
                                     </select>
-                                    <!-- Specific sensor selector -->
-                                    <select class="form-select form-select-sm" style="width:160px"
-                                        id="chartSensorSelect">
+                                    <select class="form-select form-select-sm fw-bold bg-light"
+                                        style="width:160px; border-color: #cbd5e1;" id="chartSensorSelect">
                                     </select>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <canvas id="mainChart" height="85"></canvas>
+                            <div class="panel-body">
+                                <canvas id="mainChart" height="90"></canvas>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="card-icon" style="background:#e8f4fd;color:#267dc1"><i
-                                            class="bi bi-pie-chart-fill"></i></div>
-                                    <h6>Phân loại Sensor</h6>
-                                </div>
-                            </div>
-                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <canvas id="typeChart" style="max-height:200px;max-width:200px"></canvas>
-                                <div class="mt-3 w-100" id="typeLegend"></div>
+                        <div class="panel-container">
+                            <div class="panel-header"><i class="bi bi-pie-chart-fill text-primary me-2"></i>PHÂN BỔ
+                                SENSOR</div>
+                            <div
+                                class="panel-body d-flex flex-column align-items-center justify-content-center h-100 pb-5">
+                                <canvas id="typeChart" style="max-height:180px;max-width:180px"></canvas>
+                                <div class="mt-4 w-100 px-3" id="typeLegend"></div>
                             </div>
                         </div>
                     </div>
@@ -263,26 +455,28 @@
            MOCK DATA
            ==================================================== */
         const SENSOR_DATA = [
-            { id: 1, name: 'Nhiệt độ_01', type: 'analog', value: 26.4, unit: '°C', status: 'good', min: 0, max: 100 },
-            { id: 2, name: 'Độ ẩm_01', type: 'analog', value: 68.2, unit: '%RH', status: 'good', min: 0, max: 100 },
-            { id: 3, name: 'Áp suất_01', type: 'analog', value: 1.025, unit: 'bar', status: 'calib', min: 0, max: 10 },
-            { id: 4, name: 'Điện áp_01', type: 'analog', value: 220.3, unit: 'V', status: 'good', min: 0, max: 500 },
-            { id: 5, name: 'Dòng điện_01', type: 'analog', value: 4.87, unit: 'A', status: 'error', min: 0, max: 20 },
-            { id: 6, name: 'pH_01', type: 'analog', value: 7.13, unit: 'pH', status: 'good', min: 0, max: 14 },
-            { id: 7, name: 'Modbus_T01', type: 'modbus', value: 28.1, unit: '°C', status: 'good', min: 0, max: 100 },
-            { id: 8, name: 'Modbus_P01', type: 'modbus', value: 2.34, unit: 'bar', status: 'calib', min: 0, max: 10 },
-            { id: 9, name: 'Modbus_V01', type: 'modbus', value: 380.1, unit: 'V', status: 'good', min: 0, max: 500 },
-            { id: 10, name: 'Modbus_I01', type: 'modbus', value: 12.5, unit: 'A', status: 'error', min: 0, max: 50 },
-            { id: 11, name: 'FlowMeter01', type: 'input', value: 1248, unit: 'L', status: 'good', min: 0, max: 9999 },
-            { id: 12, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 13, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 14, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 15, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 16, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 17, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 18, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 19, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
-            { id: 20, name: 'Encoder_01', type: 'input', value: 48.3, unit: 'Hz', status: 'calib', min: 0, max: 1000 },
+            { id: 1, name: 'PT100_Lò Hơi 1', type: 'analog', value: 145.2, unit: '°C', status: 'good', min: 0, max: 200 },
+            { id: 2, name: 'Áp suất_Bơm Nước', type: 'analog', value: 5.4, unit: 'bar', status: 'good', min: 0, max: 10 },
+            { id: 3, name: 'Lưu lượng_Ống Chính', type: 'analog', value: 125.0, unit: 'm3/h', status: 'good', min: 0, max: 500 },
+            { id: 4, name: 'Mức_Bồn Chứa A', type: 'analog', value: 85.5, unit: '%', status: 'calib', min: 0, max: 100 },
+            { id: 5, name: 'Độ ẩm_Kho Thành Phẩm', type: 'analog', value: 60.2, unit: '%RH', status: 'good', min: 0, max: 100 },
+            { id: 6, name: 'Nhiệt độ_Kho Lạnh', type: 'analog', value: -18.5, unit: '°C', status: 'error', min: -30, max: 10 },
+            { id: 7, name: 'Mức_Silo Xi Măng', type: 'analog', value: 12.0, unit: 'm', status: 'disabled', min: 0, max: 20 },
+
+            { id: 8, name: 'Inverter_Tốc độ', type: 'modbus', value: 1450, unit: 'RPM', status: 'good', min: 0, max: 3000 },
+            { id: 9, name: 'Inverter_Tần số', type: 'modbus', value: 50.0, unit: 'Hz', status: 'good', min: 0, max: 60 },
+            { id: 10, name: 'Điện áp_Pha R', type: 'modbus', value: 220.5, unit: 'V', status: 'good', min: 0, max: 500 },
+            { id: 11, name: 'Điện áp_Pha S', type: 'modbus', value: 218.4, unit: 'V', status: 'good', min: 0, max: 500 },
+            { id: 12, name: 'Điện áp_Pha T', type: 'modbus', value: 221.0, unit: 'V', status: 'good', min: 0, max: 500 },
+            { id: 13, name: 'Dòng điện_Tổng', type: 'modbus', value: 120.4, unit: 'A', status: 'error', min: 0, max: 200 },
+            { id: 14, name: 'Công suất_Tác dụng', type: 'modbus', value: 45.2, unit: 'kW', status: 'good', min: 0, max: 100 },
+
+            { id: 15, name: 'Flow_Nước Sạch', type: 'input', value: 10450, unit: 'm3', status: 'good', min: 0, max: 99999 },
+            { id: 16, name: 'Flow_Nước Thải', type: 'input', value: 8320, unit: 'm3', status: 'good', min: 0, max: 99999 },
+            { id: 17, name: 'Đếm_Sản Phẩm Đạt', type: 'input', value: 450, unit: 'pcs', status: 'calib', min: 0, max: 1000 },
+            { id: 18, name: 'Đếm_Sản Phẩm Lỗi', type: 'input', value: 12, unit: 'pcs', status: 'good', min: 0, max: 100 },
+            { id: 19, name: 'Encoder_Băng Tải', type: 'input', value: 1.5, unit: 'm/s', status: 'good', min: 0, max: 5 },
+            { id: 20, name: 'Cảm biến_Mưa', type: 'input', value: 0, unit: 'mm', status: 'disabled', min: 0, max: 100 },
         ];
 
         /* Chart time-series mock generator */
@@ -300,22 +494,23 @@
         /* Sensor series per type (for chart selector) */
         const CHART_DATA = {
             analog: [
-                { label: 'Nhiệt độ_01 (°C)', base: 26.4, color: '#267dc1' },
-                { label: 'Độ ẩm_01 (%RH)', base: 68.2, color: '#10b981' },
-                { label: 'Áp suất_01 (bar)', base: 1.025, color: '#f59e0b' },
-                { label: 'Điện áp_01 (V)', base: 220.3, color: '#8b5cf6' },
-                { label: 'Dòng điện_01 (A)', base: 4.87, color: '#ef4444' },
-                { label: 'pH_01', base: 7.13, color: '#06b6d4' },
+                { label: 'PT100_Lò Hơi 1 (°C)', base: 145.2, color: '#3b82f6' },
+                { label: 'Áp suất_Bơm Nước (bar)', base: 5.4, color: '#10b981' },
+                { label: 'Lưu lượng_Ống Chính (m3/h)', base: 125.0, color: '#f59e0b' },
+                { label: 'Mức_Bồn Chứa A (%)', base: 85.5, color: '#8b5cf6' },
+                { label: 'Độ ẩm_Kho Thành Phẩm (%RH)', base: 60.2, color: '#0ea5e9' },
+                { label: 'Nhiệt độ_Kho Lạnh (°C)', base: -18.5, color: '#ef4444' },
             ],
             modbus: [
-                { label: 'Modbus_T01 (°C)', base: 28.1, color: '#267dc1' },
-                { label: 'Modbus_P01 (bar)', base: 2.34, color: '#10b981' },
-                { label: 'Modbus_V01 (V)', base: 380.1, color: '#f59e0b' },
-                { label: 'Modbus_I01 (A)', base: 12.5, color: '#ef4444' },
+                { label: 'Inverter_Tốc độ (RPM)', base: 1450, color: '#3b82f6' },
+                { label: 'Inverter_Tần số (Hz)', base: 50.0, color: '#10b981' },
+                { label: 'Điện áp_Pha R (V)', base: 220.5, color: '#f59e0b' },
+                { label: 'Dòng điện_Tổng (A)', base: 120.4, color: '#ef4444' },
             ],
             input: [
-                { label: 'FlowMeter01 (L)', base: 1248, color: '#267dc1' },
-                { label: 'Encoder_01 (Hz)', base: 48.3, color: '#10b981' },
+                { label: 'Flow_Nước Sạch (m3)', base: 10450, color: '#3b82f6' },
+                { label: 'Đếm_Sản Phẩm Đạt (pcs)', base: 450, color: '#10b981' },
+                { label: 'Encoder_Băng Tải (m/s)', base: 1.5, color: '#f59e0b' },
             ]
         };
 
@@ -327,23 +522,13 @@
         let autoRefreshOn = false;
 
         function statusLabel(s) {
-            const map = { good: 'Tốt', error: 'Lỗi', calib: 'Đã hiệu chuẩn', warning: 'Cảnh báo' };
+            const map = { good: 'Online', error: 'Lỗi', calib: 'Bảo trì', disabled: 'Ngắt' };
             return map[s] || s;
         }
 
-        function statusIcon(s) {
-            const map = { good: 'bi-check-circle-fill', error: 'bi-x-circle-fill', calib: 'bi-patch-check-fill', warning: 'bi-exclamation-triangle-fill' };
-            return map[s] || 'bi-circle';
-        }
-
         function typeLabel(t) {
-            const map = { analog: 'Analog', modbus: 'Modbus', input: 'Input Capture' };
+            const map = { analog: 'Analog', modbus: 'Modbus', input: 'Input' };
             return map[t] || t;
-        }
-
-        function typeBadgeClass(t) {
-            const map = { analog: 'sensor-type-analog', modbus: 'sensor-type-modbus', input: 'sensor-type-input' };
-            return map[t] || '';
         }
 
         function renderSensorGrid(sensors) {
@@ -358,21 +543,29 @@
             $empty.addClass('d-none');
 
             sensors.forEach(s => {
-                const jitterVal = +(s.value * (1 + (Math.random() - 0.5) * 0.04)).toFixed(2);
+                const isInt = s.value % 1 === 0 && Math.abs(s.value) > 10;
+                const jitterVal = +(s.value * (1 + (Math.random() - 0.5) * 0.02)).toFixed(isInt ? 0 : 2);
+
                 const card = `
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6" data-id="${s.id}" data-type="${s.type}">
-                    <div class="sensor-card status-${s.status}" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#sensorDetailModal" data-sensor-id="${s.id}">
-                        <!-- Thêm d-flex và justify-content-between ở đây -->
-                        <div class="sensor-name d-flex justify-content-between align-items-center">
-                            <span>${s.name}</span>
-                            <span class="sensor-type-badge ${typeBadgeClass(s.type)}">${typeLabel(s.type)}</span>
+                <div class="col" data-id="${s.id}" data-type="${s.type}">
+                    <div class="scada-card status-${s.status}" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#sensorDetailModal" data-sensor-id="${s.id}">
+                        <div class="status-bar"></div>
+                        <div class="scada-card-header">
+                            <span style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">ID: ${s.id.toString().padStart(3, '0')}</span>
+                            <span style="font-size: 11px; font-weight: 600; color: #94a3b8;"><i class="bi bi-tag-fill me-1"></i>${typeLabel(s.type)}</span>
                         </div>
-                        <div class="sensor-value">${jitterVal} <small class="text-muted fs-5">${s.unit}</small></div>
-                        <div class="sensor-footer">
-                            <span class="sensor-status-badge badge-${s.status}">
-                                <i class="bi ${statusIcon(s.status)} me-1"></i>${statusLabel(s.status)}
-                            </span>
-                            <span class="sensor-updated">1s ago</span>
+                        <div class="scada-card-body">
+                            <div class="text-truncate mb-2" style="font-size: 13px; font-weight: 600; color: #64748b;" title="${s.name}">${s.name}</div>
+                            <div>
+                                <span class="sensor-val">${jitterVal}</span><span class="sensor-unit">${s.unit}</span>
+                            </div>
+                        </div>
+                        <div class="scada-card-footer">
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="status-dot dot-${s.status}"></span>
+                                <span>${statusLabel(s.status)}</span>
+                            </div>
+                            <div><i class="bi bi-clock-history me-1"></i>Vừa xong</div>
                         </div>
                     </div>
                 </div>`;
@@ -420,25 +613,26 @@
                         label: sensor.label,
                         data,
                         borderColor: sensor.color,
-                        backgroundColor: sensor.color + '18',
-                        borderWidth: 2.5,
-                        pointRadius: 3,
-                        pointHoverRadius: 6,
+                        backgroundColor: sensor.color + '15',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
                         fill: true,
-                        tension: 0.4,
+                        tension: 0.2,
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: true, position: 'top', labels: { font: { size: 12 }, boxWidth: 12 } },
-                        tooltip: { mode: 'index', intersect: false }
+                        legend: { display: true, position: 'top', labels: { font: { size: 12, family: 'system-ui' }, boxWidth: 10, usePointStyle: true } },
+                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { size: 12 }, bodyFont: { size: 13, weight: 'bold' }, padding: 10, cornerRadius: 4 }
                     },
                     scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: '#f1f5f9' }, beginAtZero: false }
+                        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#64748b' } },
+                        y: { grid: { color: '#f1f5f9', drawBorder: false }, ticks: { font: { size: 11 }, color: '#64748b' }, beginAtZero: false }
                     },
-                    animation: { duration: 600 }
+                    animation: { duration: 400 }
                 }
             });
         }
@@ -461,67 +655,173 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Analog', 'Modbus', 'Input Capture'],
-                    datasets: [{ data: [analog, modbus, input], backgroundColor: ['#267dc1', '#10b981', '#f59e0b'], borderWidth: 2 }]
+                    datasets: [{ data: [analog, modbus, input], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'], borderWidth: 0 }]
                 },
                 options: {
                     plugins: { legend: { display: false } },
-                    cutout: '68%'
+                    cutout: '75%',
+                    animation: { duration: 600 }
                 }
             });
 
             const total = analog + modbus + input;
             $('#typeLegend').html(`
-        <div class="d-flex flex-column gap-2">
-            ${[['Analog', '#267dc1', analog], ['Modbus', '#10b981', modbus], ['Input Capture', '#f59e0b', input]].map(([lbl, clr, cnt]) => `
+        <div class="d-flex flex-column gap-3">
+            ${[['Analog', '#3b82f6', analog], ['Modbus', '#10b981', modbus], ['Input', '#f59e0b', input]].map(([lbl, clr, cnt]) => `
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
-                    <div style="width:10px;height:10px;border-radius:50%;background:${clr};flex-shrink:0"></div>
-                    <span style="font-size:12.5px;color:#6b7280">${lbl}</span>
+                    <div style="width:12px;height:12px;border-radius:3px;background:${clr};flex-shrink:0"></div>
+                    <span style="font-size:12px;font-weight:600;color:#475569">${lbl}</span>
                 </div>
-                <div style="font-size:12px;font-weight:600;color:#374151">${cnt} <span style="color:#d1d5db">(${Math.round(cnt / total * 100)}%)</span></div>
+                <div style="font-size:13px;font-weight:700;color:#0f172a">${cnt} <span style="color:#cbd5e1;font-weight:500;font-size:11px">(${Math.round(cnt / total * 100)}%)</span></div>
             </div>`).join('')}
         </div>
     `);
         }
 
         /* ====================================================
-           SENSOR DETAIL MODAL
+           SENSOR DETAIL MODAL & HISTORY CHART
            ==================================================== */
+        function generateHistoryData(sensor) {
+            const points = 20;
+            const labels = [];
+            const data = [];
+            const maxData = [];
+            const minData = [];
+            const now = new Date();
+
+            let volatility = 0.03;
+            if (sensor.name.toLowerCase().includes('nhiệt độ') || sensor.name.toLowerCase().includes('pt100')) {
+                volatility = 0.01;
+            } else if (sensor.name.toLowerCase().includes('lưu lượng') || sensor.name.toLowerCase().includes('flow')) {
+                volatility = 0.08;
+            } else if (sensor.type === 'modbus') {
+                volatility = 0.02;
+            }
+
+            for (let i = points - 1; i >= 0; i--) {
+                const t = new Date(now - i * 2 * 60000);
+                labels.push(t.getHours().toString().padStart(2, '0') + ':' + t.getMinutes().toString().padStart(2, '0'));
+
+                const jitter = sensor.value * (1 + (Math.random() - 0.5) * volatility);
+                data.push(+jitter.toFixed(2));
+                maxData.push(sensor.max);
+                minData.push(sensor.min);
+            }
+            data[points - 1] = sensor.value;
+            return { labels, data, maxData, minData };
+        }
+
         $(document).on('click', '[data-sensor-id]', function () {
+            $('.scada-card').removeClass('active-card');
+            $(this).find('.scada-card').addClass('active-card');
+
             const id = parseInt($(this).data('sensor-id'));
             const s = SENSOR_DATA.find(x => x.id === id);
             if (!s) return;
-            const pct = Math.round((s.value / s.max) * 100);
-            $('#sensorDetailTitle').html(`<i class="bi bi-activity me-2 text-primary"></i>${s.name}`);
+            const pct = Math.round((Math.max(0, s.value - s.min) / (s.max - s.min)) * 100);
+
+            let badgeBg = s.status === 'good' ? '#10b981' : s.status === 'error' ? '#ef4444' : s.status === 'calib' ? '#3b82f6' : '#9ca3af';
+
+            $('#sensorDetailTitle').html(`<i class="bi bi-hdd-network me-2 text-primary"></i>${s.name}`);
             $('#sensorDetailBody').html(`
         <div class="row g-3">
-            <div class="col-6">
-                <div style="font-size:11px;color:#9ca3af;text-transform:uppercase">Giá trị</div>
-                <div style="font-size:28px;font-weight:800;color:#1f2937">${s.value} <span style="font-size:14px;color:#9ca3af">${s.unit}</span></div>
+            <div class="col-7">
+                <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;font-weight:600;letter-spacing:0.5px">Giá trị Thực Tế</div>
+                <div style="font-family:'Consolas',monospace;font-size:32px;font-weight:800;color:#0f172a;letter-spacing:-1px">${s.value} <span style="font-size:14px;color:#64748b;font-family:'Inter',sans-serif">${s.unit}</span></div>
             </div>
-            <div class="col-6 text-end">
-                <span class="sensor-status-badge badge-${s.status}"><i class="bi ${statusIcon(s.status)} me-1"></i>${statusLabel(s.status)}</span>
-                <div style="font-size:11px;color:#9ca3af;margin-top:6px">Loại: ${typeLabel(s.type)}</div>
-            </div>
-            <div class="col-12">
-                <div class="d-flex justify-content-between" style="font-size:12px;color:#9ca3af;margin-bottom:4px">
-                    <span>${s.min} ${s.unit}</span><span>${s.max} ${s.unit}</span>
+            <div class="col-5 text-end">
+                <div style="display:inline-block;padding:4px 10px;border-radius:4px;background:${badgeBg}15;color:${badgeBg};font-size:12px;font-weight:700">
+                    <span class="status-dot me-1" style="background:${badgeBg};box-shadow:none"></span>${statusLabel(s.status)}
                 </div>
-                <div class="progress" style="height:8px">
-                    <div class="progress-bar ${s.status === 'error' ? 'bg-danger' : s.status === 'calib' ? 'bg-primary' : 'bg-success'}" style="width:${Math.min(pct, 100)}%"></div>
-                </div>
-                <div style="font-size:11px;color:#9ca3af;margin-top:4px">Range: ${pct}%</div>
+                <div style="font-size:12px;color:#64748b;margin-top:8px;font-weight:600">Loại: ${typeLabel(s.type)}</div>
             </div>
-            <div class="col-6"><div style="font-size:11px;color:#9ca3af">Min</div><div class="fw-600">${s.min} ${s.unit}</div></div>
-            <div class="col-6"><div style="font-size:11px;color:#9ca3af">Max</div><div class="fw-600">${s.max} ${s.unit}</div></div>
+            <div class="col-12 mt-2">
+                <div class="d-flex justify-content-between fw-bold" style="font-size:11px;color:#64748b;margin-bottom:6px">
+                    <span>Min: ${s.min}</span><span>Max: ${s.max}</span>
+                </div>
+                <div class="progress" style="height:6px; border-radius: 3px; background: #e2e8f0; overflow: visible;">
+                    <div class="progress-bar position-relative" style="width:${Math.min(pct, 100)}%; border-radius: 3px; background: ${badgeBg};">
+                        <div style="position:absolute; right:-4px; top:-3px; width:12px; height:12px; border-radius:50%; background:#fff; border:2px solid ${badgeBg};"></div>
+                    </div>
+                </div>
+                <div class="text-end" style="font-size:11px;color:#9ca3af;margin-top:8px;font-weight:600">Phạm vi: ${pct}%</div>
+            </div>
+            <div class="col-12 mt-3 pt-3 border-top chart-expand">
+                <div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:8px"><i class="bi bi-graph-up me-1"></i>Lịch sử 20 giá trị gần nhất</div>
+                <div style="height: 180px; position: relative;">
+                    <canvas id="modalHistoryChart"></canvas>
+                </div>
+            </div>
         </div>
     `);
+
+            /* Render Chart in Modal */
+            const history = generateHistoryData(s);
+            const ctxModal = document.getElementById('modalHistoryChart').getContext('2d');
+
+            if (window.modalChartInstance) window.modalChartInstance.destroy();
+
+            window.modalChartInstance = new Chart(ctxModal, {
+                type: 'line',
+                data: {
+                    labels: history.labels,
+                    datasets: [
+                        {
+                            label: 'Giá trị',
+                            data: history.data,
+                            borderColor: badgeBg,
+                            backgroundColor: badgeBg + '20',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Max',
+                            data: history.maxData,
+                            borderColor: '#ef4444',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Min',
+                            data: history.minData,
+                            borderColor: '#3b82f6',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { size: 11 }, bodyFont: { size: 12, weight: 'bold' }, padding: 8, cornerRadius: 4 }
+                    },
+                    scales: {
+                        x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, maxTicksLimit: 5 } },
+                        y: { display: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { font: { size: 10 } }, suggestedMin: s.min - (s.max - s.min) * 0.1, suggestedMax: s.max + (s.max - s.min) * 0.1 }
+                    },
+                    animation: { duration: 600, easing: 'easeOutQuart' }
+                }
+            });
         });
 
         /* ====================================================
            INIT
            ==================================================== */
         $(document).ready(function () {
+            $('#sensorDetailModal').on('hidden.bs.modal', function () {
+                $('.scada-card').removeClass('active-card');
+            });
+
             updateStatCards();
             renderSensorGrid(getFilteredSensors());
             initTypeChart();
@@ -559,14 +859,14 @@
             $('#autoRefreshBtn').on('click', function () {
                 autoRefreshOn = !autoRefreshOn;
                 if (autoRefreshOn) {
-                    $(this).html('<i class="bi bi-pause-fill me-1"></i>Pause').addClass('btn-primary').removeClass('btn-outline-primary');
+                    $(this).html('<i class="bi bi-pause-fill text-white"></i>').removeClass('btn-outline-secondary bg-white').addClass('btn-primary').css('border-color', 'var(--bs-primary)');
                     autoRefreshTimer = setInterval(() => {
                         renderSensorGrid(getFilteredSensors());
                         const type = $('#chartTypeSelect').val();
                         initMainChart(type, parseInt($('#chartSensorSelect').val()));
                     }, 3000);
                 } else {
-                    $(this).html('<i class="bi bi-arrow-repeat me-1"></i>Auto').removeClass('btn-primary').addClass('btn-outline-primary');
+                    $(this).html('<i class="bi bi-arrow-repeat text-primary"></i>Auto').removeClass('btn-primary').addClass('btn-outline-secondary bg-white').css('border-color', '#cbd5e1');
                     clearInterval(autoRefreshTimer);
                 }
             });

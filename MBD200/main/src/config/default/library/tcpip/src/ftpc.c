@@ -2541,7 +2541,7 @@ static void ftpc_process_pasv_response(TCPIP_FTPC_DCPT_TYPE* pDcpt)
     }
 
     pDcpt->ftpcDataConnection.dataServerIpAddrType = IP_ADDRESS_TYPE_IPV4;
-    pDcpt->ftpcDataConnection.dataServerPort  = ((uint16_t)pasv_response[4] * 256U) + (uint16_t)pasv_response[5];
+    pDcpt->ftpcDataConnection.dataServerPort  = ((uint8_t)pasv_response[4] << 8) | (uint8_t)pasv_response[5];
     (void)memcpy(pDcpt->ftpcDataConnection.dataServerAddr.v4Add.v, (uint8_t*)pasv_response, sizeof(IPV4_ADDR));
     
 }
@@ -3416,8 +3416,8 @@ static void F_ftpcErrorUpdate(TCPIP_FTPC_DCPT_TYPE* pDcpt)
     // trigger call back for control socket
     ftpcCtrlEvent(pDcpt,TCPIP_FTPC_CTRL_EVENT_FAILURE, NULL,0);
     // returns the state machine to default home
-    pDcpt->ftpcState = TCPIP_FTPC_STATE_HOME; 
-    SYS_CONSOLE_PRINT("FTPC ERROR : %d\r\n", pDcpt->error);
+    pDcpt->ftpcState = TCPIP_FTPC_STATE_HOME;
+    //    SYS_CONSOLE_PRINT("FTPC ERROR : %d\r\n", pDcpt->error);
 }
 
 // Disconnect Control socket and remove the descriptor

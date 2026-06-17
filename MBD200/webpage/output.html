@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
     <style>
         /* ── Highlight active edit sections ── */
         .active-edit {
@@ -49,10 +50,6 @@
             padding: 12px;
             display: flex;
             align-items: center;
-        }
-
-        .output-item:hover {
-            background: #f0f7ff;
         }
 
         .output-item.row-active {
@@ -196,8 +193,8 @@
                                 <div class="col-md-4">
                                     <label class="form-label">Mode</label>
                                     <select class="form-select" id="doMode" name="mode">
-                                        <option value="hold">Hold (Giữ trạng thái)</option>
-                                        <option value="non-hold">Non-Hold (Pulse)</option>
+                                        <option value="0">Hold (Giữ trạng thái)</option>
+                                        <option value="1">Non-Hold (Pulse)</option>
                                     </select>
                                 </div>
 
@@ -258,6 +255,11 @@
     <script src="assets/js/layout.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
+
+        var outputData;
+        var pauseSync = false;
+        var syncTimeout = null;
+
         /* Xử lý request POST */
         function sendPostRequest(url, formId, callback) {
             var form = document.getElementById(formId);
@@ -295,50 +297,87 @@
             xhr.send(encodedParams);
         }
 
-        let outputs = [
-            { id: 1, pin: 'DO0', name: 'Relay_01', desc: 'Relay đầu ra 1', state: false, mode: 'hold', on_time: 500, off_time: 500, pulse_count: 0 },
-            { id: 2, pin: 'DO1', name: 'Valve_01', desc: 'Van điện từ xả', state: true, mode: 'non-hold', on_time: 1000, off_time: 1000, pulse_count: 3 },
-        ];
+        function updatedata(xmlData) {
+            if (pauseSync) return;
+            var dataString = getXMLValue(xmlData, 'output');
+
+            // dataString = `
+            //     {
+            //         "0": {
+            //             "pin": "DO0",
+            //             "name": "Relay_01",
+            //             "desc": "Relay đầu ra 1",
+            //             "state": false,
+            //             "level": true,
+            //             "mode": 0,
+            //             "on_time": 500,
+            //             "off_time": 500,
+            //             "pulse_count": 0
+            //         },
+
+            //         "1": {
+            //             "pin": "DO1",
+            //             "name": "Valve_01",
+            //             "desc": "Van điện từ xả",
+            //             "state": true,
+            //             "level": false,
+            //             "mode": 1,
+            //             "on_time": 1000,
+            //             "off_time": 1000,
+            //             "pulse_count": 3
+            //         }
+            //     }
+            //     `;
+
+            outputData = JSON.parse(dataString);
+            renderOutputs();
+        }
+
+        setTimeout("newAJAXCommand('xml/output.xml', updatedata, true)", 500);
 
         function renderOutputs() {
             const $list = $('#outputList');
             $list.empty();
+
+            // Vẫn chuyển thành mảng để đếm số lượng ON/OFF nhanh
+            const outputs = Object.values(outputData);
             const on = outputs.filter(o => o.state).length;
             $('#onCount').text(on);
             $('#offCount').text(outputs.length - on);
             $('#totalDOCount').text(outputs.length);
 
-            outputs.forEach(o => {
+            // Duyệt qua Object bằng Object.entries để lấy chuỗi id ("0", "1") làm key
+            Object.entries(outputData).forEach(([id, o]) => {
                 $list.append(`
-                <div class="output-item ms-3 mt-3 me-3" data-id="${o.id}">
-                    <div class="output-indicator ${o.state ? 'on' : 'off'}"></div>
-                    <div style="min-width:50px;text-align:center">
-                        <div style="font-size:10px;font-weight:600;color:#9ca3af">${o.pin}</div>
-                    </div>
-                    <div style="flex:1">
-                        <div class="output-name fw-bold">${o.name}</div>
-                        <div class="output-desc text-muted" style="font-size:12px">${o.desc}</div>
-                    </div>
-                    <div style="width:100px; text-align:center;">
-                        <span class="badge bg-light text-dark border">${o.mode === 'hold' ? 'Hold' : 'Pulse'}</span>
-                    </div>
-                    <label class="big-toggle ms-2">
-                        <input type="checkbox" class="do-toggle" data-id="${o.id}" ${o.state ? 'checked' : ''}>
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="badge ms-2 ${o.state ? 'badge-good' : ''}" style="${!o.state ? 'background:#f3f4f6;color:#6b7280' : 'background:#dcfce7;color:#16a34a'}">${o.state ? 'ON' : 'OFF'}</span>
-                    <div class="ms-3 d-flex gap-1">
-                        <button class="btn btn-icon btn-sm btn-outline-primary btn-edit-do" data-id="${o.id}" title="Cấu hình">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                    </div>
-                </div>`);
+                    <div class="output-item ms-3 mt-3 me-3" data-id="${id}">
+                        <div class="output-indicator ${o.state ? 'on' : 'off'}"></div>
+                        <div style="min-width:50px;text-align:center">
+                            <div style="font-size:10px;font-weight:600;color:#9ca3af">${o.pin}</div>
+                        </div>
+                        <div style="flex:1">
+                            <div class="output-name fw-bold">${o.name}</div>
+                            <div class="output-desc text-muted" style="font-size:12px">${o.desc}</div>
+                        </div>
+                        <div style="width:100px; text-align:center;">
+                            <span class="badge bg-light text-dark border">${o.mode === 'hold' ? 'Hold' : 'Pulse'}</span>
+                        </div>
+                        <label class="big-toggle ms-2">
+                            <input type="checkbox" class="do-toggle" data-id="${id}" ${o.state ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="badge ms-2 ${o.level ? 'badge-good' : ''}" style="${!o.level ? 'background:#f3f4f6;color:#6b7280' : 'background:#dcfce7;color:#16a34a'}">${o.level ? 'HIGH' : 'LOW'}</span>
+                        <div class="ms-3 d-flex gap-1">
+                            <button class="btn btn-icon btn-sm btn-outline-primary btn-edit-do" data-id="${id}" title="Cấu hình">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                        </div>
+                    </div>`);
             });
         }
 
         /* Edit behaviour */
         function activateDoEdit(id) {
-            const o = outputs.find(x => x.id === id);
+            const o = outputData[id];
             if (!o) return;
 
             // Highlight row
@@ -354,7 +393,7 @@
             $('#doEditBanner').fadeIn(250);
 
             // Fill form
-            $('#do_id').val(o.id);
+            $('#do_id').val(id);
             $('#doName').val(o.name);
             $('#doDesc').val(o.desc);
             $('#doMode').val(o.mode);
@@ -420,7 +459,7 @@
             sendPostRequest('output.html', 'outputForm', function (success) {
                 if (success) {
                     const id = parseInt($('#do_id').val());
-                    const o = outputs.find(x => x.id === id);
+                    const o = outputData[id];
                     if (o) {
                         o.name = $('#doName').val();
                         o.desc = $('#doDesc').val();
@@ -437,24 +476,57 @@
 
         /* Toggle ON/OFF */
         $(document).on('change', '.do-toggle', function () {
-            const id = parseInt($(this).data('id'));
-            const o = outputs.find(x => x.id === id);
-            if (!o) return;
-            o.state = this.checked;
-            renderOutputs();
-            showToast(`${o.name}: ${o.state ? 'BẬT ✓' : 'TẮT'}`, o.state ? 'success' : 'warning');
-        });
+            const $toggle = $(this);
+            const id = parseInt($toggle.data('id'));
+            const o = outputData[id];
 
-        /* All ON / All OFF */
-        $('#allOnBtn').on('click', function () {
-            outputs.forEach(o => o.state = true);
+            if (!o) return;
+
+            const newState = this.checked;
+            $toggle.prop('disabled', true);
+
+            // BƯỚC QUAN TRỌNG: Kích hoạt tạm dừng đồng bộ dữ liệu nền trong 1 giây
+            pauseSync = true;
+            clearTimeout(syncTimeout); // Xoá timeout cũ nếu người dùng bấm liên tục
+            syncTimeout = setTimeout(function () {
+                pauseSync = false;
+            }, 1000); // 1000ms = 1 giây
+
+            // Cập nhật ngay giao diện để tạo cảm giác phản hồi tức thì mượt mà
+            o.state = newState;
             renderOutputs();
-            showToast('Đã bật tất cả output.', 'success');
-        });
-        $('#allOffBtn').on('click', function () {
-            outputs.forEach(o => o.state = false);
-            renderOutputs();
-            showToast('Đã tắt tất cả output.', 'warning');
+
+            const postData = {
+                do_id: id,
+                state: newState ? 1 : 0
+            };
+
+            $.ajax({
+                url: 'output.html', // Endpoint của bạn
+                type: 'POST',
+                data: postData,
+                success: function (response) {
+                    // Đã render rồi nên ở đây chỉ cần hiện thông báo
+                    if (typeof showToast === 'function') {
+                        showToast(`${o.name}: ${o.state ? 'BẬT ✓' : 'TẮT'}`, o.state ? 'success' : 'warning');
+                    }
+                },
+                error: function (xhr) {
+                    // Nếu gửi lệnh xuống mạch thất bại: Đảo ngược trạng thái về như cũ
+                    o.state = !newState;
+                    renderOutputs();
+
+                    // Huỷ tạm dừng sớm để hệ thống đồng bộ lại ngay
+                    pauseSync = false;
+                    clearTimeout(syncTimeout);
+
+                    if (typeof showToast === 'function') {
+                        showToast(`Lỗi khi điều khiển ${o.name}: ` + xhr.status, 'error');
+                    } else {
+                        alert(`Lỗi khi điều khiển ${o.name}: ` + xhr.status);
+                    }
+                }
+            });
         });
 
         function drawWaveform() {
@@ -526,7 +598,8 @@
         }
 
         $(document).ready(function () {
-            renderOutputs();
+            newAJAXCommand('xml/output.xml', updatedata, false);
+
             drawWaveform();
 
             $('#pulseOnTime, #pulseOffTime, #pulseCount').on('input change', drawWaveform);

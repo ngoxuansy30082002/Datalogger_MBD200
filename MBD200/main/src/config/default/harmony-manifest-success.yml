@@ -4,7 +4,7 @@
 
 
 project: Datalogger_MBD200
-creation_date: 2026-05-03T16:30:04.378+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2026-06-03T20:40:52.575+07:00[Asia/Bangkok]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 11
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.6.4

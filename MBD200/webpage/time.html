@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
 </head>
 
 <body>
@@ -64,19 +65,20 @@
                                 <div
                                     style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
                                     Thời gian hệ thống hiện tại</div>
-                                <div id="currentTime"
+                                <div id="displayTime"
                                     style="font-size:36px;font-weight:700;font-family:monospace;letter-spacing:2px">
                                     --:--:--</div>
-                                <div id="currentDate" style="font-size:15px;opacity:0.7;margin-top:4px">Loading...</div>
+                                <div id="displayDate" style="font-size:15px;opacity:0.7;margin-top:4px">Loading...</div>
                             </div>
                             <div class="col-auto text-end">
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span
-                                        style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse-green 2s infinite;display:inline-block"></span>
-                                    <span style="font-size:13px;color:#22c55e;font-weight:500">NTP Synchronized</span>
+                                <div class="d-flex align-items-center justify-content-end gap-2 mb-2">
+                                    <span id="ntpStatusDot"
+                                        style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block"></span>
+                                    <span id="ntpStatusText" style="font-size:13px;color:#22c55e;font-weight:500">NTP
+                                        Synchronized</span>
                                 </div>
-                                <div style="font-size:12px;opacity:0.5">Last sync: 5 phút trước</div>
-                                <div style="font-size:12px;opacity:0.5">UTC+7 (ICT) - Ho Chi Minh</div>
+                                <div id="lastSyncText" style="font-size:12px;opacity:0.5">Last sync: --</div>
+                                <div id="tzInfoText" style="font-size:12px;opacity:0.5">--</div>
                             </div>
                         </div>
                     </div>
@@ -102,44 +104,37 @@
                                                     class="text-danger">*</span></label>
                                             <select class="form-select" id="timezone" name="timezone" required>
                                                 <optgroup label="Đông Nam Á">
-                                                    <option value="Asia/Ho_Chi_Minh" selected>UTC+7 - Asia/Ho_Chi_Minh
+                                                    <option value="7" selected>UTC+7 - Asia/Ho_Chi_Minh
                                                         (Việt Nam)</option>
-                                                    <option value="Asia/Bangkok">UTC+7 - Asia/Bangkok (Thái Lan)
-                                                    </option>
-                                                    <option value="Asia/Singapore">UTC+8 - Asia/Singapore</option>
-                                                    <option value="Asia/Jakarta">UTC+7 - Asia/Jakarta (Indonesia)
-                                                    </option>
-                                                    <option value="Asia/Kuala_Lumpur">UTC+8 - Asia/Kuala_Lumpur</option>
+                                                    <option value="8">UTC+8 - Asia/Singapore</option>
                                                 </optgroup>
                                                 <optgroup label="Châu Âu">
-                                                    <option value="Europe/London">UTC+0 - Europe/London</option>
-                                                    <option value="Europe/Paris">UTC+1 - Europe/Paris</option>
-                                                    <option value="Europe/Berlin">UTC+1 - Europe/Berlin</option>
+                                                    <option value="0">UTC+0 - Europe/London</option>
+                                                    <option value="1">UTC+1 - Europe/Paris</option>
                                                 </optgroup>
                                                 <optgroup label="Mỹ">
-                                                    <option value="America/New_York">UTC-5 - America/New York</option>
-                                                    <option value="America/Los_Angeles">UTC-8 - America/Los Angeles
+                                                    <option value="-5">UTC-5 - America/New York</option>
+                                                    <option value="-8">UTC-8 - America/Los Angeles
                                                     </option>
                                                 </optgroup>
                                                 <optgroup label="UTC">
-                                                    <option value="UTC">UTC+0 - Universal Time (UTC)</option>
+                                                    <option value="0">UTC+0 - Universal Time (UTC)</option>
                                                 </optgroup>
                                             </select>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label" for="dateFormat">Định dạng ngày tháng</label>
-                                            <select class="form-select" id="dateFormat" name="date_format">
-                                                <option value="DD/MM/YYYY" selected>DD/MM/YYYY (Việt Nam)</option>
-                                                <option value="MM/DD/YYYY">MM/DD/YYYY (Mỹ)</option>
-                                                <option value="YYYY-MM-DD">YYYY-MM-DD (ISO 8601)</option>
-                                                <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                                            <select class="form-select" id="dateFormat" name="date_format" disabled>
+                                                <option value="0" selected>DD/MM/YYYY (Việt Nam)</option>
+                                                <option value="1">MM/DD/YYYY (Mỹ)</option>
+                                                <option value="2">YYYY/MM/DD (ISO 8601)</option>
                                             </select>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label" for="timeFormat">Định dạng thời gian</label>
-                                            <select class="form-select" id="timeFormat" name="time_format">
-                                                <option value="24h" selected>24 giờ (HH:mm:ss)</option>
-                                                <option value="12h">12 giờ (hh:mm:ss AM/PM)</option>
+                                            <select class="form-select" id="timeFormat" name="time_format" disabled>
+                                                <option value="0" selected>24 giờ (HH:mm:ss)</option>
+                                                <option value="1">12 giờ (hh:mm:ss AM/PM)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -167,14 +162,17 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label" for="manualDate">Ngày</label>
-                                            <input type="date" class="form-control" id="manualDate" name="manual_date" required>
+                                            <input type="date" class="form-control" id="manualDate" name="manual_date"
+                                                required>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="manualTime">Giờ</label>
-                                            <input type="time" class="form-control" id="manualTime" name="manual_time" step="1" required>
+                                            <input type="time" class="form-control" id="manualTime" name="manual_time"
+                                                step="1" required>
                                         </div>
                                         <div class="col-12 mt-4">
-                                            <button type="submit" class="btn btn-outline-primary w-100" id="applyManualTime">
+                                            <button type="submit" class="btn btn-outline-primary w-100"
+                                                id="applyManualTime">
                                                 <i class="bi bi-clock me-2"></i>Lưu thời gian thủ công
                                             </button>
                                         </div>
@@ -202,7 +200,8 @@
                                             <div class="form-check form-switch d-flex align-items-center mb-2">
                                                 <input class="form-check-input" type="checkbox" id="enableNtp"
                                                     name="ntp_enable" checked>
-                                                <label class="form-check-label fw-600 ms-2" for="enableNtp">Bật đồng bộ NTP</label>
+                                                <label class="form-check-label fw-600 ms-2" for="enableNtp">Bật đồng bộ
+                                                    NTP</label>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -231,7 +230,8 @@
                                                 name="ntp_port" value="123">
                                         </div>
                                         <div class="col-12 d-flex justify-content-between align-items-center mt-4">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" id="syncNowBtn">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                id="syncNowBtn">
                                                 <i class="bi bi-arrow-repeat me-1"></i>Đồng bộ ngay
                                             </button>
                                             <button type="submit" class="btn btn-primary btn-sm">
@@ -262,7 +262,7 @@
         function sendPostRequest(url, formId, callback) {
             var form = document.getElementById(formId);
             if (!form) return;
-            
+
             var formData = new FormData(form);
             var params = new URLSearchParams();
             for (var pair of formData.entries()) {
@@ -273,7 +273,7 @@
             var xhr = new XMLHttpRequest();
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200 || xhr.status === 0) {
                         if (typeof showToast === 'function') {
@@ -295,32 +295,126 @@
             xhr.send(encodedParams);
         }
 
-        $(document).ready(function () {
-            // Live clock
-            function updateClock() {
-                const now = new Date();
-                $('#currentTime').text(
-                    now.getHours().toString().padStart(2, '0') + ':' +
-                    now.getMinutes().toString().padStart(2, '0') + ':' +
-                    now.getSeconds().toString().padStart(2, '0')
-                );
-                const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-                $('#currentDate').text(
-                    days[now.getDay()] + ', ' +
-                    now.getDate().toString().padStart(2, '0') + '/' +
-                    (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                    now.getFullYear()
-                );
+        var timeConfig = {};
+        var systemTime = {};
+        var isFirstLoad = true;
+        var serverTime = new Date();
+
+        function updatedata(xmlData) {
+            var dataString = getXMLValue(xmlData, 'timeconfig');
+            // dataString = `
+            //     {
+            //         "timezone": 7,
+            //         "dateFormat": 0,
+            //         "timeFormat": 0,
+            //         "ntpEnable": true,
+            //         "ntpServer1": "pool.ntp.org",
+            //         "ntpServer2": "time.google.com",
+            //         "ntpInterval": "3600",
+            //         "ntpPort": 123,
+            //         "ntpStatus": true,
+            //         "lastSync": "10 last minute"
+            //     }
+            //     `;
+            timeConfig = JSON.parse(dataString);
+
+
+            dataString = getXMLValue(xmlData, 'systime');
+            // dataString = `
+            //     {
+            //         "systemTime": "2026-05-18T21:00:11"
+            //     }
+            //     `;
+            systime = JSON.parse(dataString);
+
+
+            var parsedTime = new Date(systime.systemTime);
+            if (!isNaN(parsedTime.getTime())) {
+                serverTime = parsedTime;
             }
-            updateClock();
-            setInterval(updateClock, 1000);
 
-            // Set manual date/time defaults
-            const now = new Date();
-            $('#manualDate').val(now.toISOString().split('T')[0]);
-            $('#manualTime').val(now.toTimeString().split(' ')[0]);
+            if (timeConfig.ntpStatus) {
+                $('#ntpStatusDot').css('background', '#22c55e').addClass('pulse-green');
+                $('#ntpStatusText').text('NTP Synchronized').css('color', '#22c55e');
+            } else {
+                $('#ntpStatusDot').css('background', '#f59e0b').removeClass('pulse-green');
+                $('#ntpStatusText').text('NTP Not Synchronized').css('color', '#f59e0b');
+            }
+            $('#lastSyncText').text('Last sync: ' + timeConfig.lastSync);
 
-            // Form Submits
+            // Parse chuỗi Timezone đầy đủ từ thẻ select option
+            var tzOption = $('#timezone option[value="' + timeConfig.timezone + '"]');
+            var tzFullText = tzOption.length > 0 ? tzOption.text() : ("UTC" + (timeConfig.timezone >= 0 ? "+" : "") + timeConfig.timezone);
+            $('#tzInfoText').text(tzFullText);
+
+            // Điền dữ liệu vào form (Chỉ chạy 1 lần đầu tiên khi tải trang)
+            if (isFirstLoad) {
+                $('#timezone').val(timeConfig.timezone);
+                $('#dateFormat').val(timeConfig.dateFormat);
+                $('#timeFormat').val(timeConfig.timeFormat);
+                $('#enableNtp').prop('checked', timeConfig.ntpEnable);
+                $('#ntpServer1').val(timeConfig.ntpServer1);
+                $('#ntpServer2').val(timeConfig.ntpServer2);
+                $('#ntpInterval').val(timeConfig.ntpInterval);
+                $('#ntpPort').val(timeConfig.ntpPort);
+
+                // Điền giá trị manual_date và manual_time mặc định
+                var d = serverTime.getDate().toString().padStart(2, '0');
+                var m = (serverTime.getMonth() + 1).toString().padStart(2, '0');
+                var y = serverTime.getFullYear();
+                $('#manualDate').val(y + '-' + m + '-' + d);
+
+                var hrs = serverTime.getHours().toString().padStart(2, '0');
+                var mns = serverTime.getMinutes().toString().padStart(2, '0');
+                var scs = serverTime.getSeconds().toString().padStart(2, '0');
+                $('#manualTime').val(hrs + ':' + mns + ':' + scs);
+
+                isFirstLoad = false;
+            }
+
+            // Cập nhật UI trực tiếp bằng dữ liệu thời gian từ backend
+            if (typeof timeConfig.timeFormat !== 'undefined') {
+                var hours = serverTime.getHours();
+                var mins = serverTime.getMinutes().toString().padStart(2, '0');
+                var secs = serverTime.getSeconds().toString().padStart(2, '0');
+                var ampm = "";
+
+                // Định dạng hiển thị giờ (1 = 12h)
+                if (timeConfig.timeFormat == 1) {
+                    ampm = hours >= 12 ? " PM" : " AM";
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                }
+                hours = hours.toString().padStart(2, '0');
+
+                $('#displayTime').text(hours + ':' + mins + ':' + secs + ampm);
+
+                var days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+                var dayName = days[serverTime.getDay()];
+                var d = serverTime.getDate().toString().padStart(2, '0');
+                var m = (serverTime.getMonth() + 1).toString().padStart(2, '0');
+                var y = serverTime.getFullYear();
+
+                var dateStr = d + '/' + m + '/' + y; // Mặc định định dạng 0
+
+                // Định dạng hiển thị ngày tháng
+                if (timeConfig.dateFormat == 1) dateStr = m + '/' + d + '/' + y;
+                else if (timeConfig.dateFormat == 2) dateStr = y + '-' + m + '-' + d;
+                else if (timeConfig.dateFormat == 3) dateStr = d + '-' + m + '-' + y;
+
+                $('#displayDate').text(dayName + ', ' + dateStr);
+            }
+        }
+
+        // Cấu hình lặp AJAX từ mạch (chu kỳ nhận dữ liệu liên tục)
+        setTimeout("newAJAXCommand('xml/time.xml', updatedata, true)", 500);
+
+        $(document).ready(function () {
+            newAJAXCommand('xml/time.xml', updatedata, false);
+
+
+
+            // Các sự kiện Form Submit giữ nguyên của bạn...
             $('#timezoneForm').on('submit', function (e) {
                 e.preventDefault();
                 if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
@@ -339,15 +433,14 @@
                 sendPostRequest('time.html', 'ntpForm');
             });
 
-            // NTP Sync Now
             $('#syncNowBtn').on('click', function () {
                 const $btn = $(this);
                 $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Đang đồng bộ...').prop('disabled', true);
-                
+
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "time.html", true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         $btn.html('<i class="bi bi-arrow-repeat me-1"></i>Đồng bộ ngay').prop('disabled', false);
                         if (xhr.status === 200 || xhr.status === 0) {
@@ -360,7 +453,10 @@
                 xhr.send("action=sync_ntp_now");
             });
         });
+
     </script>
+
 </body>
 
 </html>
+

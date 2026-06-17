@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
     <style>
         /* ── Highlight active edit sections ── */
         .active-edit {
@@ -206,7 +207,7 @@
                                         <div class="col-md-6">
                                             <label class="form-label" for="sampleRate">Chu kỳ lấy mẫu (ms)</label>
                                             <input type="number" class="form-control" id="sampleRate" name="sample_rate"
-                                                value="500" min="10" max="60000">
+                                                value="500" min="10" max="60000" disabled>
                                             <div class="form-text">Tối thiểu 10ms</div>
                                         </div>
                                     </div>
@@ -381,14 +382,9 @@
 
                                     <!-- Stats -->
                                     <div class="row g-2 text-start mb-3">
-                                        <div class="col-6">
+                                        <div class="col-12">
                                             <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">Raw Input</div>
                                             <div id="rawInputVal" style="font-size:14px;font-weight:600;color:#374151">
-                                                --</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div style="font-size:11px;color:#9ca3af;margin-bottom:2px">ADC Count</div>
-                                            <div id="adcCountVal" style="font-size:14px;font-weight:600;color:#374151">
                                                 --</div>
                                         </div>
                                         <div class="col-6">
@@ -454,16 +450,17 @@
     <script src="assets/js/layout.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
-        /* ═══════════════════════════════════════════════
-           MOCK DATA – 8 Analog Channels
-           ═══════════════════════════════════════════════ */
+
+        var analogData;
+        let currentActiveChannel = null;
+
         const SIGNAL_RAW_UNIT = {
             0: 'mA',
             1: 'V',
         };
 
         const SIGNAL_RAW_TYPE = {
-            0: '4-10mA',
+            0: '4-20mA',
             1: '0-10V',
         };
 
@@ -480,24 +477,12 @@
             2: 'float',
         };
 
-        const analogData = {
-            1: { name: 'Temperature_01', value: 26.4, unit: '°C', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '12.3 mA', adcCount: '2048', min24: '22.1', max24: '31.7', scaleType: 1, scaleDataType: 2, scaleValue: 1.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            2: { name: 'Pressure_01', value: 3.2, unit: 'bar', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 10, status: 'disabled', sampleRate: 200, rawInput: '9.1 mA', adcCount: '1843', min24: '2.8', max24: '4.1', scaleType: 1, scaleDataType: 2, scaleValue: 1.6, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            3: { name: 'Humidity_01', value: 65.5, unit: '%RH', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 1000, rawInput: '6.55 V', adcCount: '2678', min24: '60.2', max24: '71.3', scaleType: 1, scaleDataType: 2, scaleValue: 1.7, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            4: { name: 'Flow_01', value: 12.8, unit: 'L/s', signal: 0, rawMin: 4, rawMax: 20, euMin: 0, euMax: 50, status: 'error', sampleRate: 100, rawInput: '8.1 mA', adcCount: '1652', min24: '11.0', max24: '18.5', scaleType: 1, scaleDataType: 2, scaleValue: 1.8, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            5: { name: 'Level_01', value: 78.2, unit: '%', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'good', sampleRate: 500, rawInput: '7.82 V', adcCount: '3196', min24: '74.0', max24: '82.1', scaleType: 1, scaleDataType: 2, scaleValue: 1.9, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            6: { name: 'Temp_Boiler', value: 89.1, unit: '°C', signal: 0, rawMin: 0, rawMax: 400, euMin: -50, euMax: 200, status: 'good', sampleRate: 500, rawInput: '124.5 Ω', adcCount: '2981', min24: '85.0', max24: '92.3', scaleType: 1, scaleDataType: 2, scaleValue: 2.0, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            7: { name: 'Voltage_Bus', value: 24.1, unit: 'V', signal: 1, rawMin: 0, rawMax: 10, euMin: 0, euMax: 30, status: 'disabled', sampleRate: 250, rawInput: '8.03 V', adcCount: '3282', min24: '23.8', max24: '24.3', scaleType: 1, scaleDataType: 2, scaleValue: 2.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-            8: { name: '–', value: null, unit: '–', signal: 0, rawMin: 0, rawMax: 10, euMin: 0, euMax: 100, status: 'disabled', sampleRate: 1000, rawInput: '–', adcCount: '–', min24: '–', max24: '–', scaleType: 1, scaleDataType: 2, scaleValue: 2.5, offsetBefore: 4, operator1: 1, offsetAfter: 3, operator2: 2 },
-        };
-
-        /* ── Status config ── */
         /* ── Status config ── */
         const STATUS_CFG = {
-            good: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
-            error: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
-            disabled: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
-            pending: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
+            0: { cls: 'badge-disabled', text: 'Chưa dùng', icon: 'bi-dash-circle' },
+            1: { cls: 'badge-warning', text: 'Đang xác định', icon: 'bi-question-circle-fill' },
+            2: { cls: 'badge-good', text: 'Tốt', icon: 'bi-check-circle-fill' },
+            3: { cls: 'badge-error', text: 'Lỗi', icon: 'bi-x-circle-fill' },
         };
 
         /* ═══════════════════════════════════════════════
@@ -543,9 +528,59 @@
            ═══════════════════════════════════════════════ */
         let liveTimer = null;
 
+        function renderLiveCard(ch) {
+            const d = analogData[ch];
+            if (!d) return;
+
+            // Cập nhật các label cố định
+            $('#liveChannelLabel').text(`Đọc live từ AI - ${ch}`);
+            $('#liveUnit').text(d.unit);
+            $('#euMinLabel').text(d.euMin + ' ' + d.unit);
+            $('#euMaxLabel').text(d.euMax + ' ' + d.unit);
+
+            if (d.value !== null) {
+                const range = d.euMax - d.euMin;
+                const s = STATUS_CFG[d.status] || STATUS_CFG[0];
+
+                $('#liveStatusBadge').attr('class', 'badge mb-3 ' + s.cls).text(s.text);
+
+                // Cập nhật giá trị đo (Value) và phần trăm (Progress Bar)
+                const val = parseFloat(d.value).toFixed(1);
+                const pct = range > 0 ? Math.min(100, Math.max(0, ((val - d.euMin) / range * 100))).toFixed(1) : 0;
+
+                $('#liveVal').text(val);
+                $('#liveBar').css('width', pct + '%');
+                $('#pctLabel').text(pct + '%');
+
+                // Cập nhật các thông số phụ (Raw, ADC, Min, Max)
+                $('#rawInputVal').text(d.rawInput || '--');
+                
+                const minText = (d.min24 !== null && d.min24 !== undefined)
+                    ? Number(d.min24).toFixed(1) + ' ' + d.unit
+                    : '--';
+                const maxText = (d.max24 !== null && d.max24 !== undefined)
+                    ? Number(d.max24).toFixed(1) + ' ' + d.unit
+                    : '--';
+                $('#minVal').text(minText);
+                $('#maxVal').text(maxText);
+            } else {
+                $('#liveVal').text('–');
+                $('#liveUnit').text('–');
+                $('#liveBar').css('width', '0%');
+                $('#pctLabel').text('0%');
+                $('#liveStatusBadge').attr('class', 'badge mb-3 badge-disabled').text('Chưa cấu hình');
+                $('#rawInputVal').text('--');
+                $('#minVal').text('--');
+                $('#maxVal').text('--');
+            }
+        }
+
         function activateAnalogEdit(ch) {
             const d = analogData[ch];
             if (!d) return;
+
+            // Đánh dấu kênh đang được chọn
+            currentActiveChannel = ch;
 
             // Highlight row
             $('#analogChannelTable tbody tr').removeClass('row-active');
@@ -569,7 +604,7 @@
             $('#rawMax').val(d.rawMax);
             $('#euMin').val(d.euMin);
             $('#euMax').val(d.euMax);
-            $('#chEnable').prop('checked', d.status !== 'disabled');
+            $('#chEnable').prop('checked', d.enable === true);
 
             // Reset scaling
             $('#scaleType').val(d.scaleType).trigger('change');
@@ -585,42 +620,8 @@
             $('#rawUnit, #rawUnit2').text(ru);
             $('#euUnit1, #euUnit2').text(d.unit);
 
-            // Update live panel header
-            $('#liveChannelLabel').text(`Đọc live từ ${ch}`);
-
-            // Update static stats
-            $('#rawInputVal').text(d.rawInput);
-            $('#adcCountVal').text(d.adcCount);
-            $('#minVal').text(d.min24 !== '–' ? d.min24 + ' ' + d.unit : '–');
-            $('#maxVal').text(d.max24 !== '–' ? d.max24 + ' ' + d.unit : '–');
-            $('#euMinLabel').text(d.euMin + ' ' + d.unit);
-            $('#euMaxLabel').text(d.euMax + ' ' + d.unit);
-
-            // Live value simulation
-            clearInterval(liveTimer);
-            if (d.value !== null) {
-                const range = d.euMax - d.euMin;
-                const s = STATUS_CFG[d.status];
-                $('#liveStatusBadge').attr('class', 'badge mb-3 ' + s.cls).text(s.text);
-                $('#liveUnit').text(d.unit);
-
-                function updateLive() {
-                    const delta = (Math.random() - 0.5) * range * 0.05;
-                    const val = Math.max(d.euMin, Math.min(d.euMax, d.value + delta)).toFixed(1);
-                    const pct = range > 0 ? Math.min(100, ((val - d.euMin) / range * 100)).toFixed(1) : 0;
-                    $('#liveVal').text(val);
-                    $('#liveBar').css('width', pct + '%');
-                    $('#pctLabel').text(pct + '%');
-                }
-                updateLive();
-                liveTimer = setInterval(updateLive, 2000);
-            } else {
-                $('#liveVal').text('–');
-                $('#liveUnit').text('–');
-                $('#liveBar').css('width', '0%');
-                $('#pctLabel').text('0%');
-                $('#liveStatusBadge').attr('class', 'badge mb-3 badge-disabled').text('Chưa cấu hình');
-            }
+            // Bơm dữ liệu live card ngay lần đầu tiên bấm vào
+            renderLiveCard(ch);
 
             // Smooth scroll to banner
             const offset = $('#analogEditBanner').offset().top - 80;
@@ -628,7 +629,7 @@
         }
 
         function deactivateAnalogEdit() {
-            clearInterval(liveTimer);
+            currentActiveChannel = null; // Xóa trạng thái kênh đang chọn
             $('.form-section').removeClass('active-edit');
             $('#analogEditBanner').fadeOut(200);
             $('#analogChannelTable tbody tr').removeClass('row-active');
@@ -676,9 +677,117 @@
             xhr.send(encodedParams);
         }
 
-        $(document).ready(function () {
+        function updatedata(xmlData) {
+            var dataString = getXMLValue(xmlData, 'analog');
+            // dataString = `
+            //     {
+            //         "1": {
+            //             "enable": true,
+            //             "name": "Temperature_01",
+            //             "value": 26.4,
+            //             "unit": "°C",
+            //             "signal": 0,
+            //             "rawMin": 4,
+            //             "rawMax": 20,
+            //             "euMin": 0,
+            //             "euMax": 100,
+            //             "status": 2,
+            //             "sampleRate": 500,
+            //             "rawInput": "12.3 mA",
+            //             "min24": "22.1",
+            //             "max24": "31.7",
+            //             "scaleType": 1,
+            //             "scaleDataType": 2,
+            //             "scaleValue": 1.5,
+            //             "offsetBefore": 4,
+            //             "operator1": 1,
+            //             "offsetAfter": 3,
+            //             "operator2": 2
+            //         },
+            //         "2": {
+            //             "enable": false,
+            //             "name": "Pressure_01",
+            //             "value": 3.2,
+            //             "unit": "bar",
+            //             "signal": 0,
+            //             "rawMin": 4,
+            //             "rawMax": 20,
+            //             "euMin": 0,
+            //             "euMax": 10,
+            //             "status": 0,
+            //             "sampleRate": 200,
+            //             "rawInput": "9.1 mA",
+            //             "min24": "2.8",
+            //             "max24": "4.1",
+            //             "scaleType": 1,
+            //             "scaleDataType": 2,
+            //             "scaleValue": 1.6,
+            //             "offsetBefore": 4,
+            //             "operator1": 1,
+            //             "offsetAfter": 3,
+            //             "operator2": 2
+            //         },
+            //         "3": {
+            //             "enable": false,
+            //             "name": "Humidity_01",
+            //             "value": 65.5,
+            //             "unit": "%RH",
+            //             "signal": 1,
+            //             "rawMin": 0,
+            //             "rawMax": 10,
+            //             "euMin": 0,
+            //             "euMax": 100,
+            //             "status": 2,
+            //             "sampleRate": 1000,
+            //             "rawInput": "6.55 V",
+            //             "min24": "60.2",
+            //             "max24": "71.3",
+            //             "scaleType": 1,
+            //             "scaleDataType": 2,
+            //             "scaleValue": 1.7,
+            //             "offsetBefore": 4,
+            //             "operator1": 1,
+            //             "offsetAfter": 3,
+            //             "operator2": 2
+            //         },
+            //         "4": {
+            //             "enable": true,
+            //             "name": "Flow_01",
+            //             "value": 12.8,
+            //             "unit": "L/s",
+            //             "signal": 0,
+            //             "rawMin": 4,
+            //             "rawMax": 20,
+            //             "euMin": 0,
+            //             "euMax": 50,
+            //             "status": 3,
+            //             "sampleRate": 100,
+            //             "rawInput": "8.1 mA",
+            //             "min24": "11.0",
+            //             "max24": "18.5",
+            //             "scaleType": 1,
+            //             "scaleDataType": 2,
+            //             "scaleValue": 1.8,
+            //             "offsetBefore": 4,
+            //             "operator1": 1,
+            //             "offsetAfter": 3,
+            //             "operator2": 2
+            //         }
+            //     }
+            // ` ;
 
+            analogData = JSON.parse(dataString);
             buildAnalogTable();
+
+            if (currentActiveChannel !== null && analogData[currentActiveChannel]) {
+                renderLiveCard(currentActiveChannel);
+            }
+        }
+
+        setTimeout("newAJAXCommand('xml/analog.xml', updatedata, true)", 500);
+
+        $(document).ready(function () {
+            newAJAXCommand('xml/analog.xml', updatedata, false);
 
             /* Edit button click */
             $(document).on('click', '.btn-analog-edit', function (e) {
@@ -701,7 +810,7 @@
             /* ===== ADVANCED SCALING LOGIC ===== */
             function updateExpressionPreview() {
                 const type = $('#scaleType').val();
-                if (type === 'none') {
+                if (type === '0') {
                     $('#expressionPreview').text('Result = Value');
                     return;
                 }
@@ -727,7 +836,7 @@
 
             $('#scaleType').on('change', function () {
                 const val = $(this).val();
-                if (val === 'none') {
+                if (val === '0') {
                     $('.scale-field').prop('disabled', true);
                     $('#scaleHint').addClass('d-none');
                 } else {

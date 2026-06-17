@@ -58,6 +58,18 @@ Remarks:
 	They can have any name the application uses to.
 ****************************************************************************/
 
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_analog(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_inputcapture(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_modbus(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_output(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_systime(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_timeconfig(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_sensorGeneral(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_exportSettings(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_ftpconfig(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_sim(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_hmi(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt);
 
 /*****************************************************************************
   Function:
@@ -135,10 +147,10 @@ typedef struct HTTP_APP_DYNVAR_ENTRY
 }HTTP_APP_DYNVAR_ENTRY;
 
 // Number of buffers to be used by the app for dynamic variable callbacks
-#define HTTP_APP_DYNVAR_BUFFERS_NO      4
+#define HTTP_APP_DYNVAR_BUFFERS_NO      20
 
 // size of an allocated dynamic variable call back buffer
-#define HTTP_APP_DYNVAR_BUFFER_SIZE     100
+#define HTTP_APP_DYNVAR_BUFFER_SIZE     2000
 
 //An entry for the dynamic variables which is used during the dynamic variable processing
 typedef struct HTTP_APP_DYNVAR_BUFFER

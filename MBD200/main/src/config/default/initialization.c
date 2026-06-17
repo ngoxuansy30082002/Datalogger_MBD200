@@ -902,6 +902,8 @@ void SYS_Initialize ( void* data )
 
     ICAP4_Initialize();
 
+	SPI6_Initialize();
+
 	SPI5_Initialize();
 
 	UART6_Initialize();

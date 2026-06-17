@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- This project runs fully offline (no CDN required) -->
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,259 +12,286 @@
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-<div class="layout-wrapper">
-    <div id="sidebarMount"></div>
-    <div class="main-wrapper" id="mainWrapper">
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
 
-        <header class="top-header">
-            <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
-            <div class="header-breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                    <li class="breadcrumb-item">System Configuration</li>
-                    <li class="breadcrumb-item active">Serial COM</li>
-                </ol>
-            </div>
-            <div class="header-actions">
-                <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
-                <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
-                <div class="header-divider"></div>
-                <div class="user-info dropdown" data-bs-toggle="dropdown">
-                    <div class="user-avatar">AD</div>
-                    <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">Serial COM</li>
+                    </ol>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
-                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
-        </header>
-
-        <main class="page-content">
-            <div class="page-header">
-                <h1><i class="bi bi-usb-plug-fill text-primary me-2"></i>Serial COM</h1>
-                <p>Cấu hình thông số giao tiếp cổng Serial</p>
-            </div>
-
-            <!-- Port status cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-sm-6">
-                    <div class="card p-3">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="fw-600">COM1 (RS485)</div>
-                            <span class="badge badge-status-active">Active</span>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
                         </div>
-                        <div style="font-size:12px;color:#9ca3af">9600, 8N1 | Master</div>
-                        <div style="font-size:12px;color:#9ca3af">3 thiết bị kết nối</div>
-                        <div class="progress mt-2" style="height:4px"><div class="progress-bar" style="width:60%;background:#267dc1"></div></div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-usb-plug-fill text-primary me-2"></i>Serial COM</h1>
+                    <p>Cấu hình thông số giao tiếp cổng Serial</p>
+                </div>
+
+                <!-- Port status cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="fw-600">COM1 (RS485)</div>
+                                <span class="badge badge-status-active">Active</span>
+                            </div>
+                            <div style="font-size:12px;color:#9ca3af">9600, 8N1 | Master</div>
+                            <div style="font-size:12px;color:#9ca3af">3 thiết bị kết nối</div>
+                            <div class="progress mt-2" style="height:4px">
+                                <div class="progress-bar" style="width:60%;background:#267dc1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="fw-600">COM2 (RS232)</div>
+                                <span class="badge badge-status-inactive">Disabled</span>
+                            </div>
+                            <div style="font-size:12px;color:#9ca3af">Not configured</div>
+                            <div style="font-size:12px;color:#9ca3af">0 thiết bị</div>
+                            <div class="progress mt-2" style="height:4px">
+                                <div class="progress-bar" style="width:0%;background:#267dc1"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="card p-3">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="fw-600">COM2 (RS232)</div>
-                            <span class="badge badge-status-inactive">Disabled</span>
-                        </div>
-                        <div style="font-size:12px;color:#9ca3af">Not configured</div>
-                        <div style="font-size:12px;color:#9ca3af">0 thiết bị</div>
-                        <div class="progress mt-2" style="height:4px"><div class="progress-bar" style="width:0%;background:#267dc1"></div></div>
-                    </div>
-                </div>
-            </div>
 
-            <form class="needs-validation" id="rs485Form" novalidate>
-                <div class="row g-4">
-                    <div class="col-lg-7">
+                <form class="needs-validation" id="rs485Form" novalidate>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
 
-                        <!-- Port Selection & Mode -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-plug-fill"></i></div>
-                                <div>
-                                    <h6>Cổng &amp; Chế độ</h6>
-                                    <p>Chọn cổng serial và vai trò Modbus</p>
-                                </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="serialPort">Cổng Serial <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="serialPort" name="serial_port" disabled>
-                                            <option value="COM1" selected>COM1 - RS485</option>
-                                            <option value="COM2">COM2 - RS232</option>
-                                        </select>
+                            <!-- Port Selection & Mode -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-plug-fill"></i></div>
+                                    <div>
+                                        <h6>Cổng &amp; Chế độ</h6>
+                                        <p>Chọn cổng serial và vai trò Modbus</p>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="modbusRole">Vai trò Modbus</label>
-                                        <select class="form-select" id="modbusRole" name="modbus_role" disabled>
-                                            <option value="master" selected>Master (chủ động poll)</option>
-                                            <option value="slave">Slave (bị động đọc)</option>
-                                        </select>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="serialPort">Cổng Serial <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="serialPort" name="serial_port" disabled>
+                                                <option value="COM1" selected>COM1 - RS485</option>
+                                                <option value="COM2">COM2 - RS232</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="modbusRole">Vai trò Modbus</label>
+                                            <select class="form-select" id="modbusRole" name="modbus_role" disabled>
+                                                <option value="master" selected>Master (chủ động poll)</option>
+                                                <option value="slave">Slave (bị động đọc)</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Serial Parameters -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-gear-wide-connected"></i></div>
-                                <div>
-                                    <h6>Thông số Serial</h6>
-                                    <p>Baudrate, Parity, Data bits, Stop bits</p>
+                            <!-- Serial Parameters -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-gear-wide-connected"></i></div>
+                                    <div>
+                                        <h6>Thông số Serial</h6>
+                                        <p>Baudrate, Parity, Data bits, Stop bits</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="baudRate">Baud Rate <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="baudRate" name="baud_rate" required>
-                                            <option value="1200">1200</option>
-                                            <option value="2400">2400</option>
-                                            <option value="4800">4800</option>
-                                            <option value="9600" selected>9600 (Khuyến nghị)</option>
-                                            <option value="19200">19200</option>
-                                            <option value="38400">38400</option>
-                                            <option value="57600">57600</option>
-                                            <option value="115200">115200</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="dataBits">Data Bits</label>
-                                        <select class="form-select" id="dataBits" name="data_bits">
-                                            <option value="7">7</option>
-                                            <option value="8" selected>8 (Mặc định)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="parityRS">Parity <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="parityRS" name="parity" required>
-                                            <option value="none" selected>None (N)</option>
-                                            <option value="even">Even (E)</option>
-                                            <option value="odd">Odd (O)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="stopBit">Stop Bit <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="stopBit" name="stop_bits" required>
-                                            <option value="1" selected>1</option>
-                                            <option value="1.5">1.5</option>
-                                            <option value="2">2</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12">
-                                        <!-- Summary Preview -->
-                                        <div class="alert alert-primary d-flex align-items-center gap-3">
-                                            <i class="bi bi-info-circle-fill"></i>
-                                            <div>
-                                                Cấu hình hiện tại: <strong id="serialSummary">9600, 8N1</strong>
-                                                <span class="ms-2 text-muted" style="font-size:12px">(Baud, DataBits + Parity + StopBit)</span>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="baudRate">Baud Rate <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="baudRate" name="baud_rate" required>
+                                                <option value="1200">1200</option>
+                                                <option value="2400">2400</option>
+                                                <option value="4800">4800</option>
+                                                <option value="9600" selected>9600 (Khuyến nghị)</option>
+                                                <option value="19200">19200</option>
+                                                <option value="38400">38400</option>
+                                                <option value="57600">57600</option>
+                                                <option value="115200">115200</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="dataBits">Data Bits</label>
+                                            <select class="form-select" id="dataBits" name="data_bits">
+                                                <option value="7">7</option>
+                                                <option value="8" selected>8 (Mặc định)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="parityRS">Parity <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="parityRS" name="parity" required>
+                                                <option value="none" selected>None (N)</option>
+                                                <option value="even">Even (E)</option>
+                                                <option value="odd">Odd (O)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="stopBit">Stop Bit <span
+                                                    class="text-danger">*</span></label>
+                                            <select class="form-select" id="stopBit" name="stop_bits" required>
+                                                <option value="1" selected>1</option>
+                                                <option value="1.5">1.5</option>
+                                                <option value="2">2</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <!-- Summary Preview -->
+                                            <div class="alert alert-primary d-flex align-items-center gap-3">
+                                                <i class="bi bi-info-circle-fill"></i>
+                                                <div>
+                                                    Cấu hình hiện tại: <strong id="serialSummary">9600, 8N1</strong>
+                                                    <span class="ms-2 text-muted" style="font-size:12px">(Baud, DataBits
+                                                        + Parity + StopBit)</span>
+                                                </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modbus Timing -->
+                            <div class="form-section mb-0">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-stopwatch-fill"></i></div>
+                                    <div>
+                                        <h6>Timing &amp; Timeout</h6>
+                                        <p>Thời gian chờ và khoảng dừng giữa các frame</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="responseTimeout">Response Timeout
+                                                (ms)</label>
+                                            <input type="number" class="form-control" id="responseTimeout"
+                                                name="response_timeout" value="1000" min="100" max="30000">
+                                            <div class="form-text">Thời gian chờ phản hồi từ slave</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="interFrameDelay">Inter-Frame Delay
+                                                (ms)</label>
+                                            <input type="number" class="form-control" id="interFrameDelay"
+                                                name="inter_frame_delay" value="3.5" step="0.5" min="0">
+                                            <div class="form-text">Khoảng dừng giữa 2 frame (≥ 3.5 ký tự)</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retryCount">Số lần thử lại</label>
+                                            <input type="number" class="form-control" id="retryCount" name="retry_count"
+                                                value="3" min="0" max="10">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="scanDelay">Scan Delay (ms)</label>
+                                            <input type="number" class="form-control" id="scanDelay" name="scan_delay"
+                                                value="100" min="10">
+                                            <div class="form-text">Trễ giữa các lần poll</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Modbus Timing -->
-                        <div class="form-section mb-0">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-stopwatch-fill"></i></div>
-                                <div>
-                                    <h6>Timing &amp; Timeout</h6>
-                                    <p>Thời gian chờ và khoảng dừng giữa các frame</p>
+                        <!-- Right Panel -->
+                        <div class="col-lg-5">
+                            <!-- Bus Monitor -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"
+                                        style="background:linear-gradient(135deg,#1a2332,#243447)"><i
+                                            class="bi bi-terminal-fill" style="color:#22c55e"></i></div>
+                                    <div>
+                                        <h6>Bus Monitor</h6>
+                                        <p>Frame dữ liệu Modbus gần nhất</p>
+                                    </div>
+                                </div>
+                                <div
+                                    style="background:#1a2332;padding:16px;font-family:monospace;font-size:12px;max-height:280px;overflow-y:auto;border-radius:0 0 10px 10px">
+                                    <div style="color:#9ca3af;margin-bottom:8px">[13:45:02.234] TX → Slave 01</div>
+                                    <div style="color:#3a9ad9;word-break:break-all">01 03 00 00 00 04 44 09</div>
+                                    <br>
+                                    <div style="color:#9ca3af;margin-bottom:8px">[13:45:02.289] RX ← Slave 01</div>
+                                    <div style="color:#22c55e;word-break:break-all">01 03 08 10 A4 10 B2 00 65 FF FF CE
+                                        2A</div>
+                                    <br>
+                                    <div style="color:#9ca3af;margin-bottom:8px">[13:45:03.234] TX → Slave 02</div>
+                                    <div style="color:#3a9ad9;word-break:break-all">02 04 00 01 00 02 20 F9</div>
+                                    <br>
+                                    <div style="color:#9ca3af;margin-bottom:8px">[13:45:03.291] RX ← Slave 02</div>
+                                    <div style="color:#22c55e;word-break:break-all">02 04 04 41 D2 00 00 5E 73</div>
+                                    <br>
+                                    <div style="color:#9ca3af;margin-bottom:8px">[13:45:04.234] TX → Slave 05</div>
+                                    <div style="color:#3a9ad9;word-break:break-all">05 03 00 00 00 08 44 4C</div>
+                                    <br>
+                                    <div style="color:#f59e0b;margin-bottom:8px">[13:45:04.235+1000] TIMEOUT Slave 05
+                                    </div>
+                                    <div style="color:#ef4444">No response after 1000ms</div>
                                 </div>
                             </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="responseTimeout">Response Timeout (ms)</label>
-                                        <input type="number" class="form-control" id="responseTimeout" name="response_timeout" value="1000" min="100" max="30000">
-                                        <div class="form-text">Thời gian chờ phản hồi từ slave</div>
+
+                            <!-- Statistics -->
+                            <div class="form-section">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-bar-chart-fill"></i></div>
+                                    <div>
+                                        <h6>Thống kê truyền nhận</h6>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="interFrameDelay">Inter-Frame Delay (ms)</label>
-                                        <input type="number" class="form-control" id="interFrameDelay" name="inter_frame_delay" value="3.5" step="0.5" min="0">
-                                        <div class="form-text">Khoảng dừng giữa 2 frame (≥ 3.5 ký tự)</div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-2" style="font-size:13.5px">
+                                        <div class="col-7 text-muted">TX Frames</div>
+                                        <div class="col-5 fw-600 text-end">48,210</div>
+                                        <div class="col-7 text-muted">RX Frames</div>
+                                        <div class="col-5 fw-600 text-end">47,856</div>
+                                        <div class="col-7 text-muted">CRC Errors</div>
+                                        <div class="col-5 fw-600 text-danger text-end">14</div>
+                                        <div class="col-7 text-muted">Timeouts</div>
+                                        <div class="col-5 fw-600 text-warning text-end">354</div>
+                                        <div class="col-7 text-muted">Success Rate</div>
+                                        <div class="col-5 fw-600 text-success text-end">99.26%</div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="retryCount">Số lần thử lại</label>
-                                        <input type="number" class="form-control" id="retryCount" name="retry_count" value="3" min="0" max="10">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="scanDelay">Scan Delay (ms)</label>
-                                        <input type="number" class="form-control" id="scanDelay" name="scan_delay" value="100" min="10">
-                                        <div class="form-text">Trễ giữa các lần poll</div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100"
+                                            id="clearStatsBtn">
+                                            <i class="bi bi-trash me-2"></i>Xóa thống kê
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Panel -->
-                    <div class="col-lg-5">
-                        <!-- Bus Monitor -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon" style="background:linear-gradient(135deg,#1a2332,#243447)"><i class="bi bi-terminal-fill" style="color:#22c55e"></i></div>
-                                <div>
-                                    <h6>Bus Monitor</h6>
-                                    <p>Frame dữ liệu Modbus gần nhất</p>
-                                </div>
-                            </div>
-                            <div style="background:#1a2332;padding:16px;font-family:monospace;font-size:12px;max-height:280px;overflow-y:auto;border-radius:0 0 10px 10px">
-                                <div style="color:#9ca3af;margin-bottom:8px">[13:45:02.234] TX → Slave 01</div>
-                                <div style="color:#3a9ad9;word-break:break-all">01 03 00 00 00 04 44 09</div>
-                                <br>
-                                <div style="color:#9ca3af;margin-bottom:8px">[13:45:02.289] RX ← Slave 01</div>
-                                <div style="color:#22c55e;word-break:break-all">01 03 08 10 A4 10 B2 00 65 FF FF CE 2A</div>
-                                <br>
-                                <div style="color:#9ca3af;margin-bottom:8px">[13:45:03.234] TX → Slave 02</div>
-                                <div style="color:#3a9ad9;word-break:break-all">02 04 00 01 00 02 20 F9</div>
-                                <br>
-                                <div style="color:#9ca3af;margin-bottom:8px">[13:45:03.291] RX ← Slave 02</div>
-                                <div style="color:#22c55e;word-break:break-all">02 04 04 41 D2 00 00 5E 73</div>
-                                <br>
-                                <div style="color:#9ca3af;margin-bottom:8px">[13:45:04.234] TX → Slave 05</div>
-                                <div style="color:#3a9ad9;word-break:break-all">05 03 00 00 00 08 44 4C</div>
-                                <br>
-                                <div style="color:#f59e0b;margin-bottom:8px">[13:45:04.235+1000] TIMEOUT Slave 05</div>
-                                <div style="color:#ef4444">No response after 1000ms</div>
-                            </div>
-                        </div>
-
-                        <!-- Statistics -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-bar-chart-fill"></i></div>
-                                <div>
-                                    <h6>Thống kê truyền nhận</h6>
-                                </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-2" style="font-size:13.5px">
-                                    <div class="col-7 text-muted">TX Frames</div>
-                                    <div class="col-5 fw-600 text-end">48,210</div>
-                                    <div class="col-7 text-muted">RX Frames</div>
-                                    <div class="col-5 fw-600 text-end">47,856</div>
-                                    <div class="col-7 text-muted">CRC Errors</div>
-                                    <div class="col-5 fw-600 text-danger text-end">14</div>
-                                    <div class="col-7 text-muted">Timeouts</div>
-                                    <div class="col-5 fw-600 text-warning text-end">354</div>
-                                    <div class="col-7 text-muted">Success Rate</div>
-                                    <div class="col-5 fw-600 text-success text-end">99.26%</div>
-                                </div>
-                                <div class="mt-3">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary w-100" id="clearStatsBtn">
-                                        <i class="bi bi-trash me-2"></i>Xóa thống kê
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex flex-wrap gap-3 justify-content-end mt-4 pt-2 border-top"
+                    <div class="d-flex flex-wrap gap-3 justify-content-end mt-4 pt-2 border-top"
                         style="border-color:#f1f5f9!important">
                         <button type="button" class="btn btn-secondary btn-reset">
                             <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
@@ -272,87 +300,79 @@
                             <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình
                         </button>
                     </div>
-            </form>
-        </main>
+                </form>
+            </main>
 
-        <footer class="page-footer">
-            <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
-            <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
-        </footer>
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
     </div>
-</div>
 
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/layout.js"></script>
-<script src="assets/js/main.js"></script>
-<script>
-/* Xử lý request POST */
-function sendPostRequest(url, formId, callback) {
-    var form = document.getElementById(formId);
-    if (!form) return;
-    
-    var formData = new FormData(form);
-    var params = new URLSearchParams();
-    for (var pair of formData.entries()) {
-        params.append(pair[0], pair[1]);
-    }
-    var encodedParams = params.toString();
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        /* Xử lý request POST */
+        function sendPostRequest(url, formId, callback) {
+            var form = document.getElementById(formId);
+            if (!form) return;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200 || xhr.status === 0) {
-                if (typeof showToast === 'function') {
-                    showToast('Đã lưu cấu hình Serial thành công!', 'success');
-                } else {
-                    alert('Đã lưu cấu hình Serial thành công!');
-                }
-                if (callback) callback(true);
-            } else {
-                if (typeof showToast === 'function') {
-                    showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
-                } else {
-                    alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
-                }
-                if (callback) callback(false);
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
             }
+            var encodedParams = params.toString();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã lưu cấu hình Serial thành công!', 'success');
+                        } else {
+                            alert('Đã lưu cấu hình Serial thành công!');
+                        }
+                        if (callback) callback(true);
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi dữ liệu: ' + xhr.status, 'error');
+                        } else {
+                            alert('Lỗi khi gửi dữ liệu: ' + xhr.status);
+                        }
+                        if (callback) callback(false);
+                    }
+                }
+            };
+            xhr.send(encodedParams);
         }
-    };
-    xhr.send(encodedParams);
-}
 
-$(document).ready(function(){
-    function updateSummary(){
-        const baud = $('#baudRate').val();
-        const data = $('#dataBits').val();
-        const parity = {'none':'N','even':'E','odd':'O'}[$('#parityRS').val()] || 'N';
-        const stop = $('#stopBit').val();
-        $('#serialSummary').text(`${baud}, ${data}${parity}${stop}`);
-    }
-    $('#baudRate, #dataBits, #parityRS, #stopBit').on('change', updateSummary);
+        $(document).ready(function () {
+            function updateSummary() {
+                const baud = $('#baudRate').val();
+                const data = $('#dataBits').val();
+                const parity = { 'none': 'N', 'even': 'E', 'odd': 'O' }[$('#parityRS').val()] || 'N';
+                const stop = $('#stopBit').val();
+                $('#serialSummary').text(`${baud}, ${data}${parity}${stop}`);
+            }
+            $('#baudRate, #dataBits, #parityRS, #stopBit').on('change', updateSummary);
 
-    $('#rs485Form').on('submit', function (e) {
-        e.preventDefault();
-        if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
-        sendPostRequest('serial-com.html', 'rs485Form');
-    });
+            $('#rs485Form').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) { $(this).addClass('was-validated'); return; }
+                sendPostRequest('serial-com.html', 'rs485Form');
+            });
 
-    $('#testRS485Btn').on('click', function(){
-        const $btn = $(this);
-        $btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Đang test...').prop('disabled', true);
-        setTimeout(() => {
-            $btn.html('<i class="bi bi-broadcast me-2"></i>Test RS485').prop('disabled', false);
-            showToast('RS485 bus hoạt động bình thường. Loopback thành công.', 'success');
-        }, 2000);
-    });
-
-    $('#clearStatsBtn').on('click', function(){
-        showToast('Đã xóa thống kê truyền nhận.', 'info');
-    });
-});
-</script>
+            $('#clearStatsBtn').on('click', function () {
+                showToast('Đã xóa thống kê truyền nhận.', 'info');
+            });
+        });
+    </script>
 </body>
+
 </html>

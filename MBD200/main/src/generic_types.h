@@ -50,6 +50,7 @@
 #define USERNAME_LEN                    48
 #define PASSWORD_LEN                    48
 #define FILE_NAME_LEN                   64
+#define FILE_MAX_SIZE                   2048
 #define FILE_NAME_PREFIX_LEN            32
 #define DIR_PATH_LEN                    256
 #define URL_LEN                         128
@@ -108,7 +109,6 @@ extern "C" {
 #endif
 
     typedef enum {
-        UPLINK_NONE = 0,
         UPLINK_ALL,
         UPLINK_ETH,
         UPLINK_GSM
@@ -132,13 +132,23 @@ extern "C" {
     } SENSOR_TYPE;
 
     typedef enum {
-        ADC_NONE = 0,
-        ADC_0_10V,
-        ADC_4_20mA,
+        ADC_4_20mA = 0,
+        ADC_0_10V
     } ADC_TYPE;
 
     typedef enum {
-        OPERATOR_NONE = 0,
+        MODBUS_RTU = 0,
+        MODBUS_TCP
+    } MODBUS_TYPE;
+
+    typedef enum {
+        BIG_ENDIAN_ABCD = 0,
+        LITTLE_ENDIAN_CDAB,
+        BIG_ENDIAN_SWAP_BADC,
+        LITTLE_ENDIAN_SWAP_DCBA,
+    } BYTE_ORDER_TYPE;
+
+    typedef enum {
         OPERATOR_ADDITION,
         OPERATOR_SUBTRACTION,
         OPERATOR_MULTIPLICATION,
@@ -146,7 +156,7 @@ extern "C" {
     } OPERATOR;
 
     typedef enum {
-        FROM_NONE = 0,
+        FROM_AUTO = 0,
         FROM_MBRTU,
         FROM_DIGITAL_INPUT,
     } STATUS_SOURCE;
@@ -165,7 +175,7 @@ extern "C" {
     typedef enum {
         OUT_HOLD = 0,
         OUT_PULSE,
-    } CTRL_OUT_TYPE;
+    } CTRL_MODE_TYPE;
 
     typedef enum {
         SCALE_NONE = 0,
@@ -174,16 +184,15 @@ extern "C" {
     } SENSOR_SCALE_TYPE;
 
     typedef enum {
-        DATA_RAW = 0,
-        DATA_UINT,
+        DATA_UINT = 0,
         DATA_INT,
         DATA_FLOAT,
     } SENSOR_DATA_TYPE;
 
     typedef enum {
-        STATUS_UNKNOWN = -1,
-        STATUS_GOOD = 0,
-        STATUS_CALIBRATION,
+        STATUS_DISABLE = 0,
+        STATUS_IDENTIFYING,
+        STATUS_GOOD,
         STATUS_BAD
     } SENSOR_STATUS;
 
@@ -198,12 +207,11 @@ extern "C" {
     } TIME;
 
     typedef struct {
+        char hostname[URL_LEN];
+        uint16_t port;
         char username[USERNAME_LEN];
         char password[PASSWORD_LEN];
         char dirPath[DIR_PATH_LEN];
-        char hostname[URL_LEN];
-        uint16_t port;
-        char namePrefix[FILE_NAME_PREFIX_LEN];
         MAKE_FOLDER makeFolder;
         bool enable;
     }
@@ -214,15 +222,6 @@ extern "C" {
         uint8_t lastMonth;
     }
     SDCARD_CONFIG;
-
-    typedef struct {
-        INTERNET_UPLINK uplink;
-        FORMAT_FILE formatFile;
-        FILE_TYPE typefile;
-        TIME_MODE timeMode;
-        uint16_t sendInterval;
-    }
-    LOG_FILE_CONFIG;
 
     typedef struct {
         uint16_t timeout;
@@ -239,14 +238,16 @@ extern "C" {
         char usernameAPN[USERNAME_LEN];
         char passwordAPN[PASSWORD_LEN];
         char APN[APN_LEN];
-        
     }
     GSM_CONFIG;
 
     typedef struct {
-        uint8_t indexNTP;
-        uint8_t timeZone;
-        bool timeAuto;
+        bool syncNtpEnable;
+        char ntpServerPrimary[URL_LEN];
+        char ntpServerBackup[URL_LEN];
+        uint32_t syncInterval;
+        uint16_t ntpPort;
+        int8_t timeZone;
         uint8_t yearNumber;
     }
     DATETIME_CONFIG;
@@ -262,131 +263,165 @@ extern "C" {
 
         char deviceUsername[USERNAME_LEN];
         char devicePassword[PASSWORD_LEN];
+        INTERNET_UPLINK uplink;
     }
     NETWORK_CONFIG;
 
     typedef struct {
+        char name[SENSOR_NAME_LEN];
+        char describe[SENSOR_NAME_LEN];
+        CTRL_MODE_TYPE mode;
+        uint16_t ontime;
+        uint16_t offtime;
+        uint16_t pulseCount;
+    }
+    DO_CHANNEL_CONFIG;
 
-        struct {
-            char describe[SENSOR_NAME_LEN];
-            uint16_t time;
-            CTRL_OUT_TYPE type;
-        }
-        out[MAX_DIGITAL_OUTPUT];
+    typedef struct {
+        DO_CHANNEL_CONFIG out[MAX_DIGITAL_OUTPUT];
     }
     IO_CONFIG;
 
     typedef struct {
+        uint8_t sensorIdx[MAX_HMI_PARA];
+        uint8_t numEntry;
+    } HMI_CONFIG;
 
-        struct {
-            bool enable;
-            SENSOR_TYPE type;
-            uint8_t indexOfType;
+    typedef struct {
+        bool enable;
+        SENSOR_TYPE type;
+        uint8_t indexOfType;
 
-            bool calibrated;
-            STATUS_SOURCE typeStatus;
+        bool calibrate;
+        STATUS_SOURCE typeStatus;
 
-            STATUS_SOURCE typeGood;
-            uint8_t indexOfTypeGood;
-            STATUS_SOURCE typeCalib;
-            uint8_t indexOfTypeCalib;
-            STATUS_SOURCE typeErr;
-            uint8_t indexOfTypeErr;
+        STATUS_SOURCE typeGood;
+        uint8_t indexOfTypeGood;
+        STATUS_SOURCE typeCalib;
+        uint8_t indexOfTypeCalib;
+        STATUS_SOURCE typeErr;
+        uint8_t indexOfTypeErr;
 
-            uint16_t goodValueAND;
-            uint16_t goodValueCompare;
-            uint16_t calibValueAND;
-            uint16_t calibValueCompare;
-            uint16_t errorValueAND;
-            uint16_t errorValueCompare;
-        }
-        entry[MAX_SENSOR];
+        uint16_t goodValueAND;
+        uint16_t goodValueCompare;
+        uint16_t calibValueAND;
+        uint16_t calibValueCompare;
+        uint16_t errorValueAND;
+        uint16_t errorValueCompare;
+    } SENSOR_ENTRY_CONFIG;
+
+    typedef struct {
+        SENSOR_ENTRY_CONFIG entry[MAX_SENSOR];
         uint8_t numSensor;
+
+        FORMAT_FILE formatFile;
+        FILE_TYPE typefile;
+        uint16_t logInterval;
+        char filenameTemplate[FILE_NAME_LEN];
+        bool compressed;
+        bool uploadFtp;
+        bool uploadMqtt;
+        bool saveSdcard;
     }
     SENSOR_CONFIG;
 
     typedef struct {
         NETWORK_CONFIG network;
         FTP_SERVER_CONFIG ftpServer[MAX_FTP_SERVER];
-        LOG_FILE_CONFIG logFile;
         MODBUSRTU_PHY_CONFIG modbusRtu;
         GSM_CONFIG gsm;
         DATETIME_CONFIG time;
         IO_CONFIG io;
         SDCARD_CONFIG sdCard;
 
-        uint8_t hmi[MAX_HMI_PARA];
+        HMI_CONFIG hmi;
         uint16_t position[MAX_POSITION_SIZE];
     }
     APP_CONFIG;
 
     typedef struct {
+        bool enable;
+        char name[SENSOR_NAME_LEN];
+        char unit[SENSOR_UNIT_LEN];
+        MODBUS_TYPE type;
 
-        struct {
-            bool enable;
-            char name[SENSOR_NAME_LEN];
-            char unit[SENSOR_UNIT_LEN];
+        IPV4_ADDR ipAddress;
+        uint16_t port;
 
-            uint8_t slaveAddress;
-            uint8_t function;
-            uint16_t regAddress;
-            uint8_t quantity;
-            SENSOR_DATA_TYPE rawDataType;
-            bool bigEndian;
+        uint8_t slaveAddress;
+        uint8_t function;
+        uint16_t regAddress;
+        uint8_t quantity;
+        SENSOR_DATA_TYPE rawDataType;
+        BYTE_ORDER_TYPE byteOder;
 
-            SENSOR_SCALE_TYPE scaleType;
-            SENSOR_DATA_TYPE scaleDataType;
-            float scaleValue;
+        bool conversion;
+        float inputMin;
+        float inputMax;
+        float outputMin;
+        float outputMax;
 
-            ADC_TYPE adcType;
-            float adcLow;
-            float adcHigh;
-            float offsetPreVal;
-            float offsetSubVal;
-            OPERATOR offSetPreOperator;
-            OPERATOR offsetSubOperator;
-        }
-        entry[MAX_MODBUS_TAG];
+        SENSOR_SCALE_TYPE scaleType;
+        SENSOR_DATA_TYPE scaleDataType;
+        float scaleValue;
 
+        float offsetPreVal;
+        float offsetSubVal;
+        OPERATOR offSetPreOperator;
+        OPERATOR offsetSubOperator;
+    } MODBUSRTU_TAG_ENTRY;
+
+    typedef struct {
+        MODBUSRTU_TAG_ENTRY entry[MAX_MODBUS_TAG];
         uint8_t numTag;
-    }
-    MODBUSRTU_TAG_CONFIG;
+    } MODBUSRTU_TAG_CONFIG;
 
     typedef struct {
+        bool enable;
+        char name[SENSOR_NAME_LEN];
+        char unit[SENSOR_UNIT_LEN];
+        ADC_TYPE adcType;
 
-        struct {
-            bool enable;
-            char name[SENSOR_NAME_LEN];
-            char unit[SENSOR_UNIT_LEN];
+        float inputLow;
+        float inputHigh;
+        float outputLow;
+        float outputHigh;
 
-            SENSOR_SCALE_TYPE scaleType;
-            SENSOR_DATA_TYPE scaleDataType;
-            float scaleValue;
+        SENSOR_SCALE_TYPE scaleType;
+        SENSOR_DATA_TYPE scaleDataType;
+        float scaleValue;
 
-            ADC_TYPE adcType;
-            float adcLow;
-            float adcHigh;
-            float offsetPreVal;
-            float offsetSubVal;
-            OPERATOR offSetPreOperator;
-            OPERATOR offsetSubOperator;
-        }
-        entry[MAX_ANALOG_CHANNEL];
-    }
-    ANALOG_CONFIG;
+        float offsetPreVal;
+        float offsetSubVal;
+        OPERATOR offSetPreOperator;
+        OPERATOR offsetSubOperator;
+    } ANALOG_CHANNEL_CONFIG;
 
     typedef struct {
+        ANALOG_CHANNEL_CONFIG entry[MAX_ANALOG_CHANNEL];
+    } ANALOG_CONFIG;
 
-        struct {
-            bool enable;
-            char name[SENSOR_NAME_LEN];
-            char unit[SENSOR_UNIT_LEN];
+    typedef struct {
+        bool enable;
+        char name[SENSOR_NAME_LEN];
+        char unit[SENSOR_UNIT_LEN];
 
-            float valPerPulse;
-            float minFreq;
-            float scale;
-        }
-        entry[MAX_INPUT_CAPTURE];
+        float valPerPulse;
+        float minFreq;
+
+        SENSOR_SCALE_TYPE scaleType;
+        SENSOR_DATA_TYPE scaleDataType;
+        float scaleValue;
+
+        float offsetPreVal;
+        float offsetSubVal;
+        OPERATOR offSetPreOperator;
+        OPERATOR offsetSubOperator;
+    }
+    INPUT_CAPTURE_CHANNEL_CONFIG;
+
+    typedef struct {
+        INPUT_CAPTURE_CHANNEL_CONFIG entry[MAX_INPUT_CAPTURE];
     }
     INPUT_CAPTURE_CONFIG;
 
