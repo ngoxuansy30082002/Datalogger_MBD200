@@ -1,0 +1,1 @@
+ $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -O1 -I"../src" -I"../src/config/pic32mz_ef_sk" -Werror -Wall   -DXPRJ_pic32mz_ef_sk=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  D:\StudyDoc\Do_an_tot_nghiep\Datalogger_MBD200\MBD200\switcher\firmware\src\config\pic32mz_ef_sk\stdio\xc32_monitor.c

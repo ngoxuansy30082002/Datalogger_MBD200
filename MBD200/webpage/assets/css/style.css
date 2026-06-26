@@ -1762,3 +1762,94 @@ html, body {
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
 }
+
+
+/*--------------------------------------------------------------
+# Upload file
+--------------------------------------------------------------*/
+
+.uploadfile-container {
+	height: 100vh;
+	width: 100%;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	background-color: #fcfcfc;
+	margin-top: -60px;
+  }
+  
+  .uploadfile-card {
+	border-radius: 10px;
+	box-shadow: 0 5px 10px 0 rgb(0 114 255 / 31%);
+	width: 600px;
+	height: 260px;
+	background-color: #ffffff;
+	padding: 16px 30px 40px;
+  }
+  
+  .uploadfile-card h3 {
+	font-size: 22px;
+	font-weight: 600;
+	
+  }
+  .uploadfile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Giãn cách giữa h3 và hình ảnh */
+}
+
+.uploadfile-icon {
+    width: 150px; /* Đặt kích thước hình ảnh */
+    height: 50px;
+    object-fit: cover; /* Cắt hoặc bóp méo hình ảnh để vừa kích thước */
+}
+  
+  .uploadfile-drop_box {
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	border-radius: 5px;
+  }
+  
+  .uploadfile-drop_box h4 {
+	font-size: 16px;
+	font-weight: 400;
+	color: #2e2e2e;
+  }
+  
+  .uploadfile-drop_box p {
+	margin-top: 10px;
+	margin-bottom: 20px;
+	font-size: 12px;
+	color: #a3a3a3;
+  }
+  
+  .uploadfile-btn {
+	text-decoration: none;
+	background-color: #005af0;
+	color: #ffffff;
+	padding: 10px 20px;
+	border: none;
+	outline: none;
+	transition: 0.3s;
+  }
+  
+  .uploadfile-btn:hover{
+	text-decoration: none;
+	background-color: #ffffff;
+	color: #005af0;
+	padding: 10px 20px;
+	border: none;
+	outline: 1px solid #010101;
+  }
+  .uploadfile-form input {
+	margin: 10px 0;
+	width: 100%;
+	background-color: #e2e2e2;
+	border: none;
+	outline: none;
+	padding: 12px 20px;
+	border-radius: 4px;
+  }

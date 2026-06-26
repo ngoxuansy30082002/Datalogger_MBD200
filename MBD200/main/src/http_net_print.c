@@ -65,6 +65,10 @@ static HTTP_APP_DYNVAR_ENTRY HTTP_APP_DynVarTbl[] = {
     {"network", TCPIP_HTTP_Print_network},
     {"sim", TCPIP_HTTP_Print_sim},
     {"hmi", TCPIP_HTTP_Print_hmi},
+    {"dashboard", TCPIP_HTTP_Print_dashboard},
+    {"mqtt", TCPIP_HTTP_Print_mqtt},
+    {"ruleEngine", TCPIP_HTTP_Print_ruleEngine},
+    {"systemInfo", TCPIP_HTTP_Print_systemInfo},
 };
 
 // Function that processes the dynamic variables

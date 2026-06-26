@@ -12,13 +12,13 @@
 #include <string.h>
 #include "definitions.h"
 
-#define NTP_NET_TIMEOUT_MS      30000
-#define NTP_NTP_TIMEOUT_MS      30000
-#define NTP_MAX_RETRY           2
+#define NTP_NET_TIMEOUT_MS      15000
+#define NTP_NTP_TIMEOUT_MS      15000
+#define NTP_MAX_RETRY           1
 
-#define FTP_NET_TIMEOUT_MS      30000
-#define FTP_UPLOAD_TIMEOUT_MS   120000
-#define FTP_MAX_RETRY           2
+#define FTP_NET_TIMEOUT_MS      15000
+#define FTP_UPLOAD_TIMEOUT_MS   60000
+#define FTP_MAX_RETRY           1
 
 #ifdef	__cplusplus
 extern "C" {

@@ -90,12 +90,6 @@ void GPIO_Initialize ( void )
     TRISGCLR = 0x7000U; /* Direction Control */
     ANSELGCLR = 0x3c0U; /* Digital Mode Enable */
 
-    /* Unlock system for PPS configuration */
-    SYSKEY = 0x00000000U;
-    SYSKEY = 0xAA996655U;
-    SYSKEY = 0x556699AAU;
-
-    CFGCONbits.IOLOCK = 0U;
 
     /* PPS Input Remapping */
     SDI2R = 10;
@@ -119,10 +113,6 @@ void GPIO_Initialize ( void )
     RPD3R = 5;
     RPD5R = 2;
 
-        /* Lock back the system after PPS configuration */
-    CFGCONbits.IOLOCK = 1U;
-
-    SYSKEY = 0x00000000U;
 
 }
 

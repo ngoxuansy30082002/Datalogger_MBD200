@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "definitions.h"
-#include "generic_types.h"
 
 #define HMI_FRAME_HEADER1               0x5A
 #define HMI_FRAME_HEADER2               0xA5
@@ -24,10 +23,10 @@
 #define HMI_ADDR_NETWORK1               0x5016 
 //#define HMI_ADDR_SIGNAL2                0x501D 
 //#define HMI_ADDR_NETWORK2               0x501E
-//#define HMI_ADDR_SDCARD_STS             0x5050
-//#define HMI_ADDR_FTP_STS                0x5060
-//#define HMI_ADDR_SIM1_STS               0x5070
-//#define HMI_ADDR_SIM2_STS               0x5080
+#define HMI_ADDR_SDCARD_STS             0x5050
+#define HMI_ADDR_FTP_STS                0x5060
+#define HMI_ADDR_SIM_STS                0x5070
+#define HMI_ADDR_MQTT_STS               0x5080
 #define HMI_ADDR_DEVICE_INFO            0x50A0
 
 #define HMI_ADDR_ROW_NAME(row)          (0x1003u + ((uint16_t)(row) << 4))
@@ -55,7 +54,10 @@ extern "C" {
         HMI_TAG_PAGE1_ROW_UNIT,
         HMI_TAG_PAGE2_ROW_NAME,
         HMI_TAG_PAGE2_ROW_UNIT,
-
+        HMI_TAG_PAGE3_ROW_NAME,
+        HMI_TAG_PAGE3_ROW_UNIT,
+        HMI_TAG_PAGE4_ROW_NAME,
+        HMI_TAG_PAGE4_ROW_UNIT,
 
         HMI_TAG_MAX_COUNT,
     } HMI_TAG_TYPE;
@@ -95,7 +97,7 @@ extern "C" {
             bool isPending;
             char buffer[24];
         } entry[20];
-//entry[MAX_HMI_PARA];
+        //entry[MAX_HMI_PARA];
         int8_t numPending;
         bool lock;
     } HMI_PENDING;
@@ -111,7 +113,6 @@ extern "C" {
     void HMIDwin_Tasks();
     bool HMIDwin_TriggerSend(HMI_TAG_TYPE tagType);
     bool HMIDwin_TriggerSendStatus(uint8_t idxRow, uint8_t status);
-//  bool HMIDwin_TriggerSendStatus(uint8_t idxRow, STATUS status);
     bool HMIDwin_TriggerSendValue(uint8_t idxRow, HMI_TAG_DATA_TYPE dataType, float data);
 
 #ifdef	__cplusplus

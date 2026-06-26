@@ -13,7 +13,7 @@ static uint8_t _readQueueStorage[EXTFL_QUEUE_SIZE * sizeof (EXTFL_QUEUE_ENTRY)];
 static DRV_HANDLE _driverHandle;
 static bool _openStatus = 0;
 static uint32_t _currentAddrFlash = 0;
-static CACHE_ALIGN uint8_t _transferBuffer[EXTFL_PAGE_SIZE * 8];
+static CACHE_ALIGN uint8_t _transferBuffer[EXTFL_PAGE_SIZE * 16];
 
 
 static const EXTFL_PARTITION _partition[EXTFL_NUM_PARTITION] = {
@@ -251,6 +251,18 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
             gAppCfg.hmi.numEntry = packed->hmi.numEntry;
             memcpy(gAppCfg.hmi.sensorIdx, packed->hmi.sensorIdx, MAX_HMI_PARA * sizeof (uint8_t));
 
+            memcpy(gAppCfg.mqtt.host, packed->mqtt.host, URL_LEN);
+            memcpy(gAppCfg.mqtt.clientId, packed->mqtt.clientId, USERNAME_LEN);
+            memcpy(gAppCfg.mqtt.username, packed->mqtt.username, USERNAME_LEN);
+            memcpy(gAppCfg.mqtt.password, packed->mqtt.password, PASSWORD_LEN);
+            gAppCfg.mqtt.port = packed->mqtt.port;
+            gAppCfg.mqtt.qos = packed->mqtt.qos;
+            gAppCfg.mqtt.useTls = packed->mqtt.useTls;
+            gAppCfg.mqtt.publishInterval = packed->mqtt.publishInterval;
+            memcpy(gAppCfg.mqtt.valueTopic, packed->mqtt.valueTopic, MQTT_TOPIC_LEN);
+            memcpy(gAppCfg.mqtt.notifyTopic, packed->mqtt.notifyTopic, MQTT_TOPIC_LEN);
+            memcpy(gAppCfg.mqtt.statusTopic, packed->mqtt.statusTopic, MQTT_TOPIC_LEN);
+
             memcpy(gAppCfg.position, packed->position, MAX_POSITION_SIZE * sizeof (uint16_t));
             break;
         }
@@ -302,6 +314,28 @@ static bool _unpackBufferLoaded(void * buffer, uint16_t bufferSize, EXTFL_DATA_T
             gSensorCfg.uploadFtp = packed->uploadFtp;
             gSensorCfg.uploadMqtt = packed->uploadMqtt;
             gSensorCfg.saveSdcard = packed->saveSdcard;
+
+            for (int i = 0; i < MAX_RULE; i++) {
+                gSensorCfg.ruleEntry[i].enable = packed->ruleEntry[i].enable;
+                memcpy(gSensorCfg.ruleEntry[i].name, packed->ruleEntry[i].name, SENSOR_NAME_LEN);
+                gSensorCfg.ruleEntry[i].type = packed->ruleEntry[i].type;
+                gSensorCfg.ruleEntry[i].sensorId1 = packed->ruleEntry[i].sensorId1;
+                gSensorCfg.ruleEntry[i].op1 = packed->ruleEntry[i].op1;
+                gSensorCfg.ruleEntry[i].value1 = packed->ruleEntry[i].value1;
+
+                gSensorCfg.ruleEntry[i].enableCondition1 = packed->ruleEntry[i].enableCondition1;
+                gSensorCfg.ruleEntry[i].logic = packed->ruleEntry[i].logic;
+                gSensorCfg.ruleEntry[i].sensorId2 = packed->ruleEntry[i].sensorId2;
+                gSensorCfg.ruleEntry[i].op2 = packed->ruleEntry[i].op2;
+                gSensorCfg.ruleEntry[i].value2 = packed->ruleEntry[i].value2;
+
+                gSensorCfg.ruleEntry[i].enableDebounce = packed->ruleEntry[i].enableDebounce;
+                gSensorCfg.ruleEntry[i].debounceValue = packed->ruleEntry[i].debounceValue;
+                gSensorCfg.ruleEntry[i].debounceUnit = packed->ruleEntry[i].debounceUnit;
+
+                gSensorCfg.ruleEntry[i].notifyAction = packed->ruleEntry[i].notifyAction;
+            }
+            gSensorCfg.numRule = packed->numRule;
             break;
         }
 
@@ -488,6 +522,18 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
             dst->hmi.numEntry = gAppCfg.hmi.numEntry;
             memcpy(dst->hmi.sensorIdx, gAppCfg.hmi.sensorIdx, MAX_HMI_PARA * sizeof (uint8_t));
 
+            memcpy(dst->mqtt.host, gAppCfg.mqtt.host, URL_LEN);
+            memcpy(dst->mqtt.clientId, gAppCfg.mqtt.clientId, USERNAME_LEN);
+            memcpy(dst->mqtt.username, gAppCfg.mqtt.username, USERNAME_LEN);
+            memcpy(dst->mqtt.password, gAppCfg.mqtt.password, PASSWORD_LEN);
+            dst->mqtt.port = gAppCfg.mqtt.port;
+            dst->mqtt.qos = gAppCfg.mqtt.qos;
+            dst->mqtt.useTls = gAppCfg.mqtt.useTls;
+            dst->mqtt.publishInterval = gAppCfg.mqtt.publishInterval;
+            memcpy(dst->mqtt.valueTopic, gAppCfg.mqtt.valueTopic, MQTT_TOPIC_LEN);
+            memcpy(dst->mqtt.notifyTopic, gAppCfg.mqtt.notifyTopic, MQTT_TOPIC_LEN);
+            memcpy(dst->mqtt.statusTopic, gAppCfg.mqtt.statusTopic, MQTT_TOPIC_LEN);
+
             memcpy(dst->position, gAppCfg.position, MAX_POSITION_SIZE * sizeof (uint16_t));
 
             uint16_t datalen = sizeof (APP_PACKED) - sizeof (EXTFL_METADATA);
@@ -534,7 +580,28 @@ static bool _packBufferSave(void * buffer, uint16_t maxBufferSize, EXTFL_DATA_TY
             dst->uploadMqtt = gSensorCfg.uploadMqtt;
             dst->saveSdcard = gSensorCfg.saveSdcard;
 
+            for (int i = 0; i < MAX_RULE; i++) {
+                dst->ruleEntry[i].enable = gSensorCfg.ruleEntry[i].enable;
+                memcpy(dst->ruleEntry[i].name, gSensorCfg.ruleEntry[i].name, SENSOR_NAME_LEN);
+                dst->ruleEntry[i].type = gSensorCfg.ruleEntry[i].type;
+                dst->ruleEntry[i].sensorId1 = gSensorCfg.ruleEntry[i].sensorId1;
+                dst->ruleEntry[i].op1 = gSensorCfg.ruleEntry[i].op1;
+                dst->ruleEntry[i].value1 = gSensorCfg.ruleEntry[i].value1;
 
+                dst->ruleEntry[i].enableCondition1 = gSensorCfg.ruleEntry[i].enableCondition1;
+                dst->ruleEntry[i].logic = gSensorCfg.ruleEntry[i].logic;
+                dst->ruleEntry[i].sensorId2 = gSensorCfg.ruleEntry[i].sensorId2;
+                dst->ruleEntry[i].op2 = gSensorCfg.ruleEntry[i].op2;
+                dst->ruleEntry[i].value2 = gSensorCfg.ruleEntry[i].value2;
+
+                dst->ruleEntry[i].enableDebounce = gSensorCfg.ruleEntry[i].enableDebounce;
+                dst->ruleEntry[i].debounceValue = gSensorCfg.ruleEntry[i].debounceValue;
+                dst->ruleEntry[i].debounceUnit = gSensorCfg.ruleEntry[i].debounceUnit;
+
+                dst->ruleEntry[i].notifyAction = gSensorCfg.ruleEntry[i].notifyAction;
+            }
+            dst->numRule = gSensorCfg.numRule;
+            
             uint16_t datalen = sizeof (SENSOR_PACKED) - sizeof (EXTFL_METADATA);
             dst->metadata.magic = EXTFL_MAGIC;
             dst->metadata.length = datalen;

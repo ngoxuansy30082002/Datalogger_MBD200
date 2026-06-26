@@ -591,9 +591,9 @@ void modbus_app_task() {
                 volatile MODBUS_RX_PACKED *modbusRx = modbus_phy_get_rx_packed();
                 bool isError = false;
 
-                for (uint8_t i = 0; i < modbusRx->len; i++) {
-                    LOG_DEBUG("databyte %u-th: %02X", i, modbusRx->data[i]);
-                }
+                //                for (uint8_t i = 0; i < modbusRx->len; i++) {
+                //                    LOG_DEBUG("databyte %u-th: %02X", i, modbusRx->data[i]);
+                //                }
 
                 if (_transferData.slave_address == modbusRx->address) {
                     uint8_t func = modbusRx->func;

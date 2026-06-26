@@ -1,7 +1,7 @@
 #include "system_config.h"
 #include "system_definitions.h"
 #include "http_net_print.h"
-//#include "bootloader/bootloader_nvm_interface.h"
+#include "bootloader/bootloader_nvm_interface.h"
 
 #include "tcpip/tcpip.h"
 #include "tcpip/src/common/helpers.h"
@@ -11,12 +11,11 @@
 #include "tcpip/tcpip.h"
 #include "tcpip/src/common/helpers.h"
 
+extern bool mainForceReset;
 static const char * __TAG__ = "CUSTOM_HTTP";
 static char _dynVarBuffer[512];
-static bool lastFailure = false;
-bool _passwordIsChanged = false;
-//static uint8_t md5Hash[20];
-//static char _dynVarBuffer[200];
+static uint8_t md5Hash[20];
+static int showJumpFirmware = 0;
 
 /****************************************************************************
  * 
@@ -117,8 +116,10 @@ TCPIP_HTTP_NET_IO_RESULT TCPIP_HTTP_NET_ConnectionGetExecute(TCPIP_HTTP_NET_CONN
 
 #if defined(TCPIP_HTTP_NET_USE_POST)
 
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostIndex(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostSensorGeneral(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostHmiDisplay(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostRuleEngine(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostAnalog(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostModbus(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostInputCapture(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
@@ -131,6 +132,7 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostSim(TCPIP_HTTP_NET_CONN_HANDLE connHandl
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostFtp(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostMqtt(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostStorage(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostFirmwareUpload(TCPIP_HTTP_NET_CONN_HANDLE connHandle);
 
 TCPIP_HTTP_NET_IO_RESULT TCPIP_HTTP_NET_ConnectionPostExecute(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_NET_USER_CALLBACK *pCBack) {
     // Resolve which function to use and pass along
@@ -140,10 +142,14 @@ TCPIP_HTTP_NET_IO_RESULT TCPIP_HTTP_NET_ConnectionPostExecute(TCPIP_HTTP_NET_CON
     filename[0] = 0;
     SYS_FS_FileNameGet(TCPIP_HTTP_NET_ConnectionFileGet(connHandle), filename, sizeof (filename));
 
+    if (!memcmp(filename, "index.html", 10))
+        return HTTPPostIndex(connHandle);
     if (!memcmp(filename, "sensor-general.html", 19))
         return HTTPPostSensorGeneral(connHandle);
     if (!memcmp(filename, "hmi-display.html", 16))
         return HTTPPostHmiDisplay(connHandle);
+    if (!memcmp(filename, "rule-engine.html", 16))
+        return HTTPPostRuleEngine(connHandle);
     if (!memcmp(filename, "analog.html", 11))
         return HTTPPostAnalog(connHandle);
     if (!memcmp(filename, "modbus.html", 11))
@@ -168,240 +174,76 @@ TCPIP_HTTP_NET_IO_RESULT TCPIP_HTTP_NET_ConnectionPostExecute(TCPIP_HTTP_NET_CON
         return HTTPPostMqtt(connHandle);
     if (!memcmp(filename, "storage.html", 12))
         return HTTPPostStorage(connHandle);
+    if (!memcmp(filename, "upload.html", 10))
+        return HTTPPostFirmwareUpload(connHandle);
 
     TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_UPLOAD_ERROR);
     return TCPIP_HTTP_NET_IO_RES_DONE;
 }
-//
-//static TCPIP_HTTP_NET_IO_RESULT HTTPPostReset(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
-//    bool bConfigFailure = false;
-//    uint8_t *httpDataBuff = 0;
-//    uint16_t httpBuffSize;
-//    uint32_t byteCount;
-//
-//    byteCount = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
-//
-//    if (byteCount > TCPIP_HTTP_NET_ConnectionReadBufferSize(connHandle)) { // Configuration Failure
-//        lastFailure = true;
-//        TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
-//        return TCPIP_HTTP_NET_IO_RES_DONE;
-//    }
-//
-//    // Ensure that all data is waiting to be parsed.  If not, keep waiting for
-//    // all of it to arrive.
-//    if (TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle) < byteCount)
-//        return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
-//
-//    // Use current config in non-volatile memory as defaults
-//    httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle); // chi lay con tro, tro den buffer, chua co data
-//    httpBuffSize = TCPIP_HTTP_NET_ConnectionDataBufferSizeGet(connHandle);
-//
-//    // Read all browser POST data
-//    while (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle)) {
-//        // Read a form field name
-//        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 12) != TCPIP_HTTP_NET_READ_OK) {
-//            bConfigFailure = true;
-//            break;
-//        }
-//
-//        // Read a form field value
-//        if (TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 12, httpBuffSize - 12 - 2) != TCPIP_HTTP_NET_READ_OK) {
-//            bConfigFailure = true;
-//            break;
-//        }
-//
-//        // Parse the value that was read
-//        if (!strcmp((char *) httpDataBuff, (const char *) "reset")) {// Save new static IP Address
-//            uint8_t check = atoi((char *) (httpDataBuff + 12));
-//            if (check != 1) {
-//                bConfigFailure = true;
-//                break;
-//            } else {
-//                _passwordIsChanged = check;
-//                SYS_RESET_SoftwareReset();
-//            }
-//        } else if (!strcmp((char *) httpDataBuff, (const char *) "switch")) {
-//            uint8_t check = atoi((char *) (httpDataBuff + 12));
-//            if (check != 1) {
-//                bConfigFailure = true;
-//                break;
-//            } else {
-//                //                if (newFirmware)
-//                //                    bootloader_SwapAndReset();
-//            }
-//        }
-//        //        else if (!strcmp((char *) httpDataBuff, (const char *) "md5Hash")) {
-//        //            char tempStr[35];
-//        //            uint8_t i, j;
-//        //            snprintf(tempStr, sizeof (tempStr), "%s", (char *) (httpDataBuff + 12));
-//        //            for (i = 0, j = 0; i < 16; i++, j++) {
-//        //                md5Hash[j] = utilities_HexFromChars(tempStr[2 * i], tempStr[2 * i + 1]);
-//        //            }
-//        //        }
-//    }
-//
-//    if (bConfigFailure == false) {
-//        strcpy((char *) httpDataBuff, "index.htm?");
-//    } else { // Configuration error
-//        lastFailure = true;
-//        if (httpDataBuff) {
-//            strcpy((char *) httpDataBuff, "index.htm");
-//        }
-//    }
-//
-//    TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
-//
-//    return TCPIP_HTTP_NET_IO_RES_DONE;
-//}
-//
-//static TCPIP_HTTP_NET_IO_RESULT HTTPPostNetworkConfig(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
-//    bool bConfigFailure = false;
-//    uint8_t *httpDataBuff = 0;
-//    uint16_t httpBuffSize;
-//    uint32_t byteCount;
-//
-//    //    char newAppUsernameDevice[24];
-//    //    char newAppPasswordDevice[24];
-//    //    char oldAppPasswordDevice[24];
-//
-//    // Check to see if the browser is attempting to submit more data than we
-//    // can parse at once.  This function needs to receive all updated
-//    // parameters and validate them all before committing them to memory so that
-//    // orphaned configuration parameters do not get written (for example, if a
-//    // static IP address is given, but the subnet mask fails parsing, we
-//    // should not use the static IP address).  Everything needs to be processed
-//    // in a single transaction.  If this is impossible, fail and notify the user.
-//    // As a web devloper, if you add parameters to the network info and run into this
-//    // problem, you could fix this by to splitting your update web page into two
-//    // seperate web pages (causing two transactional writes).  Alternatively,
-//    // you could fix it by storing a static shadow copy of network info someplace
-//    // in memory and using it when info is complete.
-//    // Lastly, you could increase the TCP RX FIFO size for the HTTP server.
-//    // This will allow more data to be POSTed by the web browser before hitting this limit.
-//    byteCount = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
-//
-//    if (byteCount > TCPIP_HTTP_NET_ConnectionReadBufferSize(connHandle)) { // Configuration Failure
-//        lastFailure = true;
-//        TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
-//        return TCPIP_HTTP_NET_IO_RES_DONE;
-//    }
-//
-//    // Ensure that all data is waiting to be parsed.  If not, keep waiting for
-//    // all of it to arrive.
-//    if (TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle) < byteCount)
-//        return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
-//
-//    // Use current config in non-volatile memory as defaults
-//    httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle); // chi lay con tro, tro den buffer, chua co data
-//    httpBuffSize = TCPIP_HTTP_NET_ConnectionDataBufferSizeGet(connHandle);
-//
-//    // Read all browser POST data
-//    while (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle)) {
-//        // Read a form field name
-//        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 12) != TCPIP_HTTP_NET_READ_OK) {
-//            bConfigFailure = true;
-//            break;
-//        }
-//
-//        // Read a form field value
-//        if (TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 12, httpBuffSize - 12 - 2) != TCPIP_HTTP_NET_READ_OK) {
-//            bConfigFailure = true;
-//            break;
-//        }
-//
-//        // Parse the value that was read
-//        //        if (!strcmp((char *) httpDataBuff, (const char *) "dhcp_en")) {// Save new static IP Address
-//        //            uint8_t isDHCPEnable = atoi((char *) (httpDataBuff + 12));
-//        //            if (isDHCPEnable != 1 && isDHCPEnable != 0) {
-//        //                bConfigFailure = true;
-//        //                break;
-//        //            }
-//        //            glbAppCfg.network.isDHCPEn = isDHCPEnable;
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "IPAddress")) {// Save new static IP Address
-//        //            if (glbAppCfg.network.isDHCPEn == false) {
-//        //                if (!TCPIP_Helper_StringToIPAddress((char *) (httpDataBuff + 12), &glbAppCfg.network.ipAddr)) {
-//        //                    bConfigFailure = true;
-//        //                    break;
-//        //                }
-//        //            }
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "gateway")) {// Read new gateway address
-//        //            if (glbAppCfg.network.isDHCPEn == false) {
-//        //                if (!TCPIP_Helper_StringToIPAddress((char *) (httpDataBuff + 12), &glbAppCfg.network.gateway)) {
-//        //                    bConfigFailure = true;
-//        //                    break;
-//        //                }
-//        //            }
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "Subnet")) {// Read new static subnet
-//        //            if (glbAppCfg.network.isDHCPEn == false) {
-//        //                if (!TCPIP_Helper_StringToIPAddress((char *) (httpDataBuff + 12), &glbAppCfg.network.ipMask)) {
-//        //                    bConfigFailure = true;
-//        //                    break;
-//        //                }
-//        //            }
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "username")) {
-//        //            snprintf(newAppUsernameDevice, sizeof (newAppUsernameDevice), "%s", (char *) (httpDataBuff + 12));
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "oldpass")) {
-//        //            snprintf(oldAppPasswordDevice, sizeof (oldAppPasswordDevice), "%s", (char *) (httpDataBuff + 12));
-//        //        } else if (!strcmp((char *) httpDataBuff, (const char *) "newpass")) {
-//        //            snprintf(newAppPasswordDevice, sizeof (newAppPasswordDevice), "%s", (char *) (httpDataBuff + 12));
-//        //            if (strncmp(glbAppCfg.network.app_password_device, oldAppPasswordDevice, strlen(glbAppCfg.network.app_password_device)) == 0) {
-//        //                snprintf(glbAppCfg.network.app_username_device, sizeof (glbAppCfg.network.app_username_device), "%s", newAppUsernameDevice);
-//        //                snprintf(glbAppCfg.network.app_password_device, sizeof (glbAppCfg.network.app_password_device), "%s", newAppPasswordDevice);
-//        //                _passwordIsChanged = true;
-//        //            } else if (strncmp(glbAppCfg.network.app_password_device, oldAppPasswordDevice, strlen(glbAppCfg.network.app_password_device)) != 0) {
-//        //                _passwordIsChanged = false;
-//        //            }
-//        //        }
-//    }
-//
-//    if (bConfigFailure == false) {
-//        //        if (glbAppCfg.network.isDHCPEn == false) {
-//        //            TCPIP_NET_HANDLE netH;
-//        //            bool dhcpRes;
-//        //            netH = TCPIP_STACK_IndexToNet(0);
-//        //            dhcpRes = TCPIP_DHCP_Disable(netH);
-//        //            if (dhcpRes) {
-//        //                TCPIP_STACK_NetAddressSet(netH, &glbAppCfg.network.ipAddr, &glbAppCfg.network.ipMask, true);
-//        //                TCPIP_STACK_NetAddressGatewaySet(netH, &glbAppCfg.network.gateway);
-//        //            }
-//        //            TCPIP_STACK_NetBiosNameSet(netH, glbAppCfg.network.NetBIOSName);
-//        //        } else if (glbAppCfg.network.isDHCPEn == true) {
-//        //            TCPIP_NET_HANDLE netH;
-//        //            netH = TCPIP_STACK_IndexToNet(0);
-//        //            TCPIP_DHCP_Request(netH, glbAppCfg.network.ipAddr);
-//        //            TCPIP_STACK_NetBiosNameSet(netH, glbAppCfg.network.NetBIOSName);
-//        //        }
-//        //
-//        //        SaveAppConfig(false);
-//
-//        //        CORETIMER_DelayMs(1000);
-//
-//        SYS_RESET_SoftwareReset();
-//        // All parsing complete!  Save new settings and force an interface restart
-//        // Set the interface to restart and display reconnecting information
-//        strcpy((char *) httpDataBuff, "network.htm?");
-//        //        TCPIP_Helper_FormatNetBIOSName((uint8_t *) httpNetData.nbnsName);
-//        //        memcpy((void *) (httpDataBuff + 20), httpNetData.nbnsName, 16);
-//        //        httpDataBuff[20 + 16] = 0x00; // Force null termination
-//        //        for (i = 20; i < 20u + 16u; ++i) {
-//        //            if (httpDataBuff[i] == ' ')
-//        //                httpDataBuff[i] = 0x00;
-//        //        }
-//        //        // save current interface and mark as valid
-//        //        httpNetData.currNet = TCPIP_HTTP_NET_ConnectionNetHandle(connHandle);
-//        //        strncpy(httpNetData.ifName, TCPIP_STACK_NetNameGet(httpNetData.currNet), sizeof (httpNetData.ifName) - 1);
-//        //        httpNetData.ifName[sizeof (httpNetData.ifName) - 1] = 0;
-//    } else { // Configuration error
-//        lastFailure = true;
-//        if (httpDataBuff) {
-//            strcpy((char *) httpDataBuff, "index.htm");
-//        }
-//    }
-//
-//    TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
-//
-//    return TCPIP_HTTP_NET_IO_RES_DONE;
-//}
+
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostIndex(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
+    bool bConfigFailure = false;
+    uint8_t *httpDataBuff = 0;
+    uint16_t httpBuffSize;
+    uint32_t byteCount;
+
+    bool doReset = false;
+    bool doJump = false;
+
+    byteCount = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
+
+    if (byteCount > TCPIP_HTTP_NET_ConnectionReadBufferSize(connHandle)) {
+        TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
+        return TCPIP_HTTP_NET_IO_RES_DONE;
+    }
+
+    if (TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle) < byteCount)
+        return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+
+    httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle);
+    httpBuffSize = TCPIP_HTTP_NET_ConnectionDataBufferSizeGet(connHandle);
+
+    while (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle)) {
+        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 32) != TCPIP_HTTP_NET_READ_OK ||
+                TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 32, httpBuffSize - 32 - 2) != TCPIP_HTTP_NET_READ_OK) {
+            bConfigFailure = true;
+            break;
+        }
+
+        char *paramName = (char *) httpDataBuff;
+        char *paramValue = (char *) (httpDataBuff + 32);
+
+        if (!strcmp(paramName, "action")) {
+            if (!strcmp(paramValue, "resetSystem")) {
+                doReset = true;
+            } else if (!strcmp(paramValue, "jumpFirmware")) {
+                doJump = true;
+            }
+        } else if (!strcmp(paramName, "md5Hash")) {
+            if (strlen(paramValue) == 32) {
+                for (int i = 0; i < 16; i++) {
+                    md5Hash[i] = Helpers_HexFromChars(paramValue[i * 2], paramValue[i * 2 + 1]);
+                }
+            }
+        }
+    }
+
+    TCPIP_HTTP_NET_STATUS status = TCPIP_HTTP_NET_STAT_UPLOAD_ERROR;
+
+    if (bConfigFailure == false) {
+        if (doJump && showJumpFirmware == 1)
+            bootloader_SwapAndReset();
+
+        if (doReset)
+            mainForceReset = true;
+
+        status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
+    }
+
+    TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, status);
+
+    return TCPIP_HTTP_NET_IO_RES_DONE;
+}
 
 static TCPIP_HTTP_NET_IO_RESULT HTTPPostSensorGeneral(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
     bool bConfigFailure = false;
@@ -646,8 +488,18 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostSensorGeneral(TCPIP_HTTP_NET_CONN_HANDLE
             configChanged = true;
         }
 
-        if (configChanged)
+        if (configChanged) {
             ExtFlash_SaveConfig(EXTFL_DATA_SENSOR_CFG, NULL);
+
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_UNIT);
+        }
 
         status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
     }
@@ -705,7 +557,201 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostHmiDisplay(TCPIP_HTTP_NET_CONN_HANDLE co
         memcpy(&gAppCfg.hmi, &tempHmiCfg, sizeof (HMI_CONFIG));
 
         ExtFlash_SaveConfig(EXTFL_DATA_APP_CFG, NULL);
+
+        HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_NAME);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_UNIT);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_NAME);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_UNIT);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_NAME);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_UNIT);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_NAME);
+        HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_UNIT);
+
         status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
+    }
+
+    TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, status);
+
+    return TCPIP_HTTP_NET_IO_RES_DONE;
+}
+
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostRuleEngine(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
+    bool bConfigFailure = false;
+    uint8_t *httpDataBuff = 0;
+    uint16_t httpBuffSize;
+    uint32_t byteCount;
+
+    RULE_ENTRY_CONFIG tempRule = {0};
+    int ruleId = -1;
+    char action[16] = {0};
+
+    struct {
+        bool action;
+        bool ruleId;
+        bool ruleName;
+        bool ruleType;
+        bool enable;
+        bool sensor1;
+        bool operator1;
+        bool value1;
+        bool enableCondition2;
+        bool logicOperator;
+        bool sensor2;
+        bool operator2;
+        bool value2;
+        bool enableDebounce;
+        bool debounceValue;
+        bool debounceUnit;
+        bool notifyAction;
+    } received = {0};
+
+    byteCount = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
+    if (byteCount > TCPIP_HTTP_NET_ConnectionReadBufferSize(connHandle)) {
+        TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
+        return TCPIP_HTTP_NET_IO_RES_DONE;
+    }
+
+    if (TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle) < byteCount)
+        return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+
+    httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle);
+    httpBuffSize = TCPIP_HTTP_NET_ConnectionDataBufferSizeGet(connHandle);
+
+    while (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle)) {
+        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 32) != TCPIP_HTTP_NET_READ_OK ||
+                TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 32, httpBuffSize - 32 - 2) != TCPIP_HTTP_NET_READ_OK) {
+            bConfigFailure = true;
+            break;
+        }
+
+        char *paramName = (char *) httpDataBuff;
+        char *paramValue = (char *) (httpDataBuff + 32);
+
+        if (!strcmp(paramName, "action")) {
+            strncpy(action, paramValue, sizeof (action) - 1);
+            received.action = true;
+        } else if (!strcmp(paramName, "ruleId")) {
+            if (strlen(paramValue) > 0) {
+                ruleId = atoi(paramValue);
+                if (ruleId > 0) ruleId--;
+                received.ruleId = true;
+            }
+        } else if (!strcmp(paramName, "ruleName")) {
+            strncpy(tempRule.name, paramValue, SENSOR_NAME_LEN - 1);
+            tempRule.name[SENSOR_NAME_LEN - 1] = '\0';
+            received.ruleName = true;
+        } else if (!strcmp(paramName, "ruleType")) {
+            tempRule.type = (RULE_TYPE) atoi(paramValue);
+            received.ruleType = true;
+        } else if (!strcmp(paramName, "enable")) {
+            tempRule.enable = (!strcmp(paramValue, "1") || !strcmp(paramValue, "true"));
+            received.enable = true;
+        } else if (!strcmp(paramName, "sensor1")) {
+            tempRule.sensorId1 = (uint8_t) atoi(paramValue);
+            received.sensor1 = true;
+        } else if (!strcmp(paramName, "operator1")) {
+            tempRule.op1 = (RULE_OPERATOR) atoi(paramValue);
+            received.operator1 = true;
+        } else if (!strcmp(paramName, "value1")) {
+            tempRule.value1 = atof(paramValue);
+            received.value1 = true;
+        } else if (!strcmp(paramName, "enableCondition2")) {
+            tempRule.enableCondition1 = (!strcmp(paramValue, "1") || !strcmp(paramValue, "true"));
+            received.enableCondition2 = true;
+        } else if (!strcmp(paramName, "logicOperator")) {
+            tempRule.logic = (RULE_LOGIC) atoi(paramValue);
+            received.logicOperator = true;
+        } else if (!strcmp(paramName, "sensor2")) {
+            tempRule.sensorId2 = (uint8_t) atoi(paramValue);
+            received.sensor2 = true;
+        } else if (!strcmp(paramName, "operator2")) {
+            tempRule.op2 = (RULE_OPERATOR) atoi(paramValue);
+            received.operator2 = true;
+        } else if (!strcmp(paramName, "value2")) {
+            tempRule.value2 = atof(paramValue);
+            received.value2 = true;
+        } else if (!strcmp(paramName, "enableDebounce")) {
+            tempRule.enableDebounce = (!strcmp(paramValue, "1") || !strcmp(paramValue, "true"));
+            received.enableDebounce = true;
+        } else if (!strcmp(paramName, "debounceValue")) {
+            tempRule.debounceValue = atof(paramValue);
+            received.debounceValue = true;
+        } else if (!strcmp(paramName, "debounceUnit")) {
+            tempRule.debounceUnit = (RULE_DEBOUNCE_UNIT) atoi(paramValue);
+            received.debounceUnit = true;
+        } else if (!strcmp(paramName, "notifyAction")) {
+            tempRule.notifyAction = (RULE_NOTIFY_ACTION) atoi(paramValue);
+            received.notifyAction = true;
+        }
+    }
+
+    TCPIP_HTTP_NET_STATUS status = TCPIP_HTTP_NET_STAT_UPLOAD_ERROR;
+
+    if (!bConfigFailure && received.action) {
+        bool configChanged = false;
+
+        if (!strcmp(action, "add")) {
+            if (gSensorCfg.numRule < MAX_RULE) {
+                int targetIdx = gSensorCfg.numRule;
+
+                memset(&gSensorCfg.ruleEntry[targetIdx], 0, sizeof (RULE_ENTRY_CONFIG));
+                if (received.enable) gSensorCfg.ruleEntry[targetIdx].enable = tempRule.enable;
+                if (received.ruleName) strcpy(gSensorCfg.ruleEntry[targetIdx].name, tempRule.name);
+                if (received.ruleType) gSensorCfg.ruleEntry[targetIdx].type = tempRule.type;
+                if (received.sensor1) gSensorCfg.ruleEntry[targetIdx].sensorId1 = tempRule.sensorId1;
+                if (received.operator1) gSensorCfg.ruleEntry[targetIdx].op1 = tempRule.op1;
+                if (received.value1) gSensorCfg.ruleEntry[targetIdx].value1 = tempRule.value1;
+                if (received.enableCondition2) gSensorCfg.ruleEntry[targetIdx].enableCondition1 = tempRule.enableCondition1;
+                if (received.logicOperator) gSensorCfg.ruleEntry[targetIdx].logic = tempRule.logic;
+                if (received.sensor2) gSensorCfg.ruleEntry[targetIdx].sensorId2 = tempRule.sensorId2;
+                if (received.operator2) gSensorCfg.ruleEntry[targetIdx].op2 = tempRule.op2;
+                if (received.value2) gSensorCfg.ruleEntry[targetIdx].value2 = tempRule.value2;
+                if (received.enableDebounce) gSensorCfg.ruleEntry[targetIdx].enableDebounce = tempRule.enableDebounce;
+                if (received.debounceValue) gSensorCfg.ruleEntry[targetIdx].debounceValue = tempRule.debounceValue;
+                if (received.debounceUnit) gSensorCfg.ruleEntry[targetIdx].debounceUnit = tempRule.debounceUnit;
+                if (received.notifyAction) gSensorCfg.ruleEntry[targetIdx].notifyAction = tempRule.notifyAction;
+
+                gSensorCfg.numRule++;
+                configChanged = true;
+            }
+        } else if (!strcmp(action, "update")) {
+            if (received.ruleId && ruleId >= 0 && ruleId < gSensorCfg.numRule) {
+
+                if (received.enable) gSensorCfg.ruleEntry[ruleId].enable = tempRule.enable;
+                if (received.ruleName) strcpy(gSensorCfg.ruleEntry[ruleId].name, tempRule.name);
+                if (received.ruleType) gSensorCfg.ruleEntry[ruleId].type = tempRule.type;
+                if (received.sensor1) gSensorCfg.ruleEntry[ruleId].sensorId1 = tempRule.sensorId1;
+                if (received.operator1) gSensorCfg.ruleEntry[ruleId].op1 = tempRule.op1;
+                if (received.value1) gSensorCfg.ruleEntry[ruleId].value1 = tempRule.value1;
+                if (received.enableCondition2) gSensorCfg.ruleEntry[ruleId].enableCondition1 = tempRule.enableCondition1;
+                if (received.logicOperator) gSensorCfg.ruleEntry[ruleId].logic = tempRule.logic;
+                if (received.sensor2) gSensorCfg.ruleEntry[ruleId].sensorId2 = tempRule.sensorId2;
+                if (received.operator2) gSensorCfg.ruleEntry[ruleId].op2 = tempRule.op2;
+                if (received.value2) gSensorCfg.ruleEntry[ruleId].value2 = tempRule.value2;
+                if (received.enableDebounce) gSensorCfg.ruleEntry[ruleId].enableDebounce = tempRule.enableDebounce;
+                if (received.debounceValue) gSensorCfg.ruleEntry[ruleId].debounceValue = tempRule.debounceValue;
+                if (received.debounceUnit) gSensorCfg.ruleEntry[ruleId].debounceUnit = tempRule.debounceUnit;
+                if (received.notifyAction) gSensorCfg.ruleEntry[ruleId].notifyAction = tempRule.notifyAction;
+
+                configChanged = true;
+            }
+        } else if (!strcmp(action, "delete")) {
+            if (received.ruleId && ruleId >= 0 && ruleId < gSensorCfg.numRule) {
+                for (int i = ruleId; i < gSensorCfg.numRule - 1; i++) {
+                    gSensorCfg.ruleEntry[i] = gSensorCfg.ruleEntry[i + 1];
+                }
+
+                memset(&gSensorCfg.ruleEntry[gSensorCfg.numRule - 1], 0, sizeof (RULE_ENTRY_CONFIG));
+
+                gSensorCfg.numRule--;
+                configChanged = true;
+            }
+        }
+
+        if (configChanged) {
+            ExtFlash_SaveConfig(EXTFL_DATA_SENSOR_CFG, NULL);
+            status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
+        }
     }
 
     TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, status);
@@ -836,6 +882,16 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostAnalog(TCPIP_HTTP_NET_CONN_HANDLE connHa
             Adc_TriggerReinit();
             gAnalogCfg.entry[id] = finalCfg;
             ExtFlash_SaveConfig(EXTFL_DATA_ANALOG_CFG, NULL);
+
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_UNIT);
+
             status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
         }
     }
@@ -1058,6 +1114,16 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostModbus(TCPIP_HTTP_NET_CONN_HANDLE connHa
                 memset(&gMbrtuCfg.entry[gMbrtuCfg.numTag], 0, sizeof (MODBUSRTU_TAG_ENTRY));
 
                 ExtFlash_SaveConfig(EXTFL_DATA_MBRTU_CFG, NULL);
+
+                HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_NAME);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_UNIT);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_NAME);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_UNIT);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_NAME);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_UNIT);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_NAME);
+                HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_UNIT);
+
                 status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
             }
         }
@@ -1174,6 +1240,16 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostInputCapture(TCPIP_HTTP_NET_CONN_HANDLE 
         if (!bConfigFailure) {
             gInCaptureCfg.entry[id] = finalCfg;
             ExtFlash_SaveConfig(EXTFL_DATA_INCAPTURE_CFG, NULL);
+
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE1_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE2_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE3_ROW_UNIT);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_NAME);
+            HMIDwin_TriggerSend(HMI_TAG_PAGE4_ROW_UNIT);
+
             status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
         }
     }
@@ -1600,6 +1676,7 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostNetwork(TCPIP_HTTP_NET_CONN_HANDLE connH
         if (received.dns_secondary) gAppCfg.network.secondDNS = tempNetCfg.secondDNS;
         if (received.hostname) strcpy(gAppCfg.network.netBIOSName, tempNetCfg.netBIOSName);
 
+        mainForceReset = true;
         ExtFlash_SaveConfig(EXTFL_DATA_APP_CFG, NULL);
 
         status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
@@ -1799,6 +1876,22 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostMqtt(TCPIP_HTTP_NET_CONN_HANDLE connHand
     uint16_t httpBuffSize;
     uint32_t byteCount;
 
+    MQTT_CONFIG tempMqttCfg = {0};
+
+    struct {
+        bool host;
+        bool port;
+        bool clientId;
+        bool username;
+        bool password;
+        bool sensorValueTopic;
+        bool sensorNotifyTopic;
+        bool deviceStatusTopic;
+        bool qos;
+        bool ssl;
+        bool publishInterval;
+    } received = {0};
+
     byteCount = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
 
     if (byteCount > TCPIP_HTTP_NET_ConnectionReadBufferSize(connHandle)) {
@@ -1813,23 +1906,83 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostMqtt(TCPIP_HTTP_NET_CONN_HANDLE connHand
     httpBuffSize = TCPIP_HTTP_NET_ConnectionDataBufferSizeGet(connHandle);
 
     while (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle)) {
-        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 32) != TCPIP_HTTP_NET_READ_OK) {
+        if (TCPIP_HTTP_NET_ConnectionPostNameRead(connHandle, httpDataBuff, 32) != TCPIP_HTTP_NET_READ_OK ||
+                TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 32, httpBuffSize - 32 - 2) != TCPIP_HTTP_NET_READ_OK) {
             bConfigFailure = true;
             break;
         }
 
-        if (TCPIP_HTTP_NET_ConnectionPostValueRead(connHandle, httpDataBuff + 32, httpBuffSize - 32 - 2) != TCPIP_HTTP_NET_READ_OK) {
-            bConfigFailure = true;
-            break;
-        }
+        char *paramName = (char *) httpDataBuff;
+        char *paramValue = (char *) (httpDataBuff + 32);
 
+        if (!strcmp(paramName, "host")) {
+            strncpy(tempMqttCfg.host, paramValue, URL_LEN - 1);
+            tempMqttCfg.host[URL_LEN - 1] = '\0';
+            received.host = true;
+        } else if (!strcmp(paramName, "port")) {
+            tempMqttCfg.port = (uint16_t) atoi(paramValue);
+            received.port = true;
+        } else if (!strcmp(paramName, "clientId")) {
+            strncpy(tempMqttCfg.clientId, paramValue, USERNAME_LEN - 1);
+            tempMqttCfg.clientId[USERNAME_LEN - 1] = '\0';
+            received.clientId = true;
+        } else if (!strcmp(paramName, "username")) {
+            strncpy(tempMqttCfg.username, paramValue, USERNAME_LEN - 1);
+            tempMqttCfg.username[USERNAME_LEN - 1] = '\0';
+            received.username = true;
+        } else if (!strcmp(paramName, "password")) {
+            if (strlen(paramValue) > 0 && strcmp(paramValue, "......") != 0) {
+                strncpy(tempMqttCfg.password, paramValue, PASSWORD_LEN - 1);
+                tempMqttCfg.password[PASSWORD_LEN - 1] = '\0';
+            }
+            received.password = true;
+        } else if (!strcmp(paramName, "sensorValueTopic")) {
+            strncpy(tempMqttCfg.valueTopic, paramValue, MQTT_TOPIC_LEN - 1);
+            tempMqttCfg.valueTopic[MQTT_TOPIC_LEN - 1] = '\0';
+            received.sensorValueTopic = true;
+        } else if (!strcmp(paramName, "sensorNotifyTopic")) {
+            strncpy(tempMqttCfg.notifyTopic, paramValue, MQTT_TOPIC_LEN - 1);
+            tempMqttCfg.notifyTopic[MQTT_TOPIC_LEN - 1] = '\0';
+            received.sensorNotifyTopic = true;
+        } else if (!strcmp(paramName, "deviceStatusTopic")) {
+            strncpy(tempMqttCfg.statusTopic, paramValue, MQTT_TOPIC_LEN - 1);
+            tempMqttCfg.statusTopic[MQTT_TOPIC_LEN - 1] = '\0';
+            received.deviceStatusTopic = true;
+        } else if (!strcmp(paramName, "qos")) {
+            tempMqttCfg.qos = (uint8_t) atoi(paramValue);
+            received.qos = true;
+        } else if (!strcmp(paramName, "ssl")) {
+            tempMqttCfg.useTls = (!strcmp(paramValue, "1") || !strcmp(paramValue, "true"));
+            received.ssl = true;
+        } else if (!strcmp(paramName, "publishInterval")) {
+            tempMqttCfg.publishInterval = (uint32_t) atoi(paramValue);
+            received.publishInterval = true;
+        }
     }
 
-    TCPIP_HTTP_NET_STATUS status;
-    if (bConfigFailure == false) {
+    TCPIP_HTTP_NET_STATUS status = TCPIP_HTTP_NET_STAT_UPLOAD_ERROR;
+
+    if (!bConfigFailure) {
+        if (received.host) strcpy(gAppCfg.mqtt.host, tempMqttCfg.host);
+        if (received.port) gAppCfg.mqtt.port = tempMqttCfg.port;
+        if (received.clientId) strcpy(gAppCfg.mqtt.clientId, tempMqttCfg.clientId);
+        if (received.username) strcpy(gAppCfg.mqtt.username, tempMqttCfg.username);
+
+        if (received.password && strlen(tempMqttCfg.password) > 0) {
+            strcpy(gAppCfg.mqtt.password, tempMqttCfg.password);
+        }
+
+        if (received.sensorValueTopic) strcpy(gAppCfg.mqtt.valueTopic, tempMqttCfg.valueTopic);
+        if (received.sensorNotifyTopic) strcpy(gAppCfg.mqtt.notifyTopic, tempMqttCfg.notifyTopic);
+        if (received.deviceStatusTopic) strcpy(gAppCfg.mqtt.statusTopic, tempMqttCfg.statusTopic);
+        if (received.qos) gAppCfg.mqtt.qos = tempMqttCfg.qos;
+        if (received.ssl) gAppCfg.mqtt.useTls = tempMqttCfg.useTls;
+        if (received.publishInterval) gAppCfg.mqtt.publishInterval = tempMqttCfg.publishInterval;
+
+        ExtFlash_SaveConfig(EXTFL_DATA_APP_CFG, NULL);
+
         status = TCPIP_HTTP_NET_STAT_UPLOAD_OK;
-    } else
-        status = TCPIP_HTTP_NET_STAT_UPLOAD_ERROR;
+    }
 
     TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, status);
 
@@ -1878,6 +2031,147 @@ static TCPIP_HTTP_NET_IO_RESULT HTTPPostStorage(TCPIP_HTTP_NET_CONN_HANDLE connH
 
     return TCPIP_HTTP_NET_IO_RES_DONE;
 }
+
+static TCPIP_HTTP_NET_IO_RESULT HTTPPostFirmwareUpload(TCPIP_HTTP_NET_CONN_HANDLE connHandle) {
+
+    /* State machine identifiers for the multipart/form-data parser */
+    enum {
+        SM_READ_SEPARATOR = 0, /* Locate the boundary line */
+        SM_SKIP_TO_DATA = 1, /* Skip MIME part headers (until CRLFCRLF) */
+        SM_ERASE_FLASH = 2, /* Erase application flash region */
+        SM_READ_DATA = 3, /* Stream hex records, hash and program */
+        SM_POST_COMPLETE = 4
+    };
+
+    static CRYPT_MD5_CTX md5;
+    static uint8_t md5Digest[20];
+
+    uint8_t *httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle);
+    uint8_t val[64];
+    uint32_t bytesAvailable, bytesRemaining, lineLen;
+    bool bConfigFailure = false;
+
+    switch (TCPIP_HTTP_NET_ConnectionPostSmGet(connHandle)) {
+
+            /* ---------------- Locate the boundary separator ---------------- */
+        case SM_READ_SEPARATOR:
+            CRYPT_MD5_Initialize(&md5);
+
+            lineLen = TCPIP_HTTP_NET_ConnectionStringFind(connHandle, "\r\n", 0, 0);
+            if (lineLen == 0xffff) {
+                return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+            }
+
+            /* Payload ends with CRLF<boundary>--CRLF -> reserve lineLen + 6 bytes */
+            TCPIP_HTTP_NET_ConnectionByteCountDec(connHandle, lineLen + 6);
+            TCPIP_HTTP_NET_ConnectionByteCountDec(connHandle,
+                    TCPIP_HTTP_NET_ConnectionRead(connHandle, NULL, lineLen + 2));
+
+            TCPIP_HTTP_NET_ConnectionPostSmSet(connHandle, SM_SKIP_TO_DATA);
+            /* fall through */
+
+            /* ---------------- Discard part headers ---------------- */
+        case SM_SKIP_TO_DATA:
+            lineLen = TCPIP_HTTP_NET_ConnectionStringFind(connHandle, "\r\n\r\n", 0, 0);
+
+            if (lineLen == 0xffff) {
+                /* Headers not fully received: drain what we can and wait */
+                bytesAvailable = TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle) - 4;
+                bytesAvailable = TCPIP_HTTP_NET_ConnectionRead(connHandle, NULL, bytesAvailable);
+                TCPIP_HTTP_NET_ConnectionByteCountDec(connHandle, bytesAvailable);
+                return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+            }
+
+            lineLen = TCPIP_HTTP_NET_ConnectionRead(connHandle, NULL, lineLen + 4);
+            TCPIP_HTTP_NET_ConnectionByteCountDec(connHandle, lineLen);
+            TCPIP_HTTP_NET_ConnectionPostSmSet(connHandle, SM_ERASE_FLASH);
+            /* fall through */
+
+            /* ---------------- Erase application flash ---------------- */
+        case SM_ERASE_FLASH:
+            /* Keep last 49152 B (data storage) + 16384 B (bank metadata / bootloader) */
+            bootloader_NvmAppErase(APP_START_ADDRESS,
+                    FLASH_END_ADDRESS - 49152 - 16384);
+            bootloader_NvmAppErase(FLASH_END_ADDRESS - 16384, FLASH_END_ADDRESS);
+
+            TCPIP_HTTP_NET_ConnectionPostSmSet(connHandle, SM_READ_DATA);
+            /* fall through */
+
+            /* ---------------- Stream hex records ---------------- */
+        case SM_READ_DATA:
+            httpDataBuff = TCPIP_HTTP_NET_ConnectionDataBufferGet(connHandle);
+            bytesAvailable = TCPIP_HTTP_NET_ConnectionReadIsReady(connHandle);
+            bytesRemaining = TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle);
+
+            if (bytesAvailable > bytesRemaining) {
+                bytesAvailable = bytesRemaining;
+            }
+
+            while (bytesAvailable > 0u) {
+                /* Each hex record is terminated by CRLF; need a full line */
+                lineLen = TCPIP_HTTP_NET_ConnectionStringFind(connHandle, "\r\n", 0, 0);
+                if (lineLen == 0xffff) {
+                    return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+                }
+
+                lineLen = TCPIP_HTTP_NET_ConnectionRead(connHandle, httpDataBuff, lineLen + 2);
+                TCPIP_HTTP_NET_ConnectionByteCountDec(connHandle, lineLen);
+
+                CRYPT_MD5_DataAdd(&md5, httpDataBuff, lineLen);
+                bytesAvailable -= lineLen;
+
+                /* Convert ASCII hex pairs into raw bytes, skipping the leading ':' */
+                uint16_t i, j;
+                for (i = 1, j = 0; i <= (lineLen - 3) / 2; i++, j++) {
+                    val[j] = Helpers_HexFromChars(httpDataBuff[2 * i - 1],
+                            httpDataBuff[2 * i]);
+                }
+
+                if (bootloader_NvmProgramHexRecord(val, j) != HEX_REC_NORMAL) {
+                    bConfigFailure = true;
+                    goto FIRMWARE_UPLOAD_DONE;
+                }
+            }
+
+            /* Whole payload consumed: finalize and verify MD5 */
+            if (TCPIP_HTTP_NET_ConnectionByteCountGet(connHandle) == 0u) {
+                TCPIP_HTTP_NET_ConnectionPostSmSet(connHandle, SM_POST_COMPLETE);
+                CRYPT_MD5_Finalize(&md5, md5Digest);
+
+                showJumpFirmware = 1;
+
+                for (uint8_t x = 0; x < 16; x++) {
+                    if (md5Digest[x] != md5Hash[x]) {
+                        bConfigFailure = true;
+                        break;
+                    }
+                }
+                goto FIRMWARE_UPLOAD_DONE;
+            }
+
+            return TCPIP_HTTP_NET_IO_RES_NEED_DATA;
+
+        default:
+            break;
+    }
+
+FIRMWARE_UPLOAD_DONE:
+    if (!bConfigFailure) {
+        /* Persist new firmware hash, then redirect to home */
+        for (uint8_t i = 0; i < 16; i++) {
+            gDeviceInfo.fwHashCode[i] = md5Digest[i];
+        }
+        InFlash_SaveDeviceInfo((uint8_t *) & gDeviceInfo, sizeof (gDeviceInfo));
+
+        strcpy((char *) httpDataBuff, "index.html");
+    } else if (httpDataBuff) {
+        strcpy((char *) httpDataBuff, "upload.html");
+    }
+
+    TCPIP_HTTP_NET_ConnectionStatusSet(connHandle, TCPIP_HTTP_NET_STAT_REDIRECT);
+    return TCPIP_HTTP_NET_IO_RES_DONE;
+}
+
 #endif // #if defined(TCPIP_HTTP_NET_USE_POST)
 
 /**********************************************************
@@ -1920,8 +2214,8 @@ uint8_t TCPIP_HTTP_NET_ConnectionFileAuthenticate(TCPIP_HTTP_NET_CONN_HANDLE con
 #if defined(TCPIP_HTTP_NET_USE_AUTHENTICATION)
 
 uint8_t TCPIP_HTTP_NET_ConnectionUserAuthenticate(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const char *cUser, const char *cPass, const TCPIP_HTTP_NET_USER_CALLBACK * pCBack) {
-    if (strcmp(cUser, (const char *) "admin") == 0
-            && strcmp(cPass, (const char *) "admin") == 0)
+    if (strcmp(cUser, (const char *) gAppCfg.network.deviceUsername) == 0
+            && strcmp(cPass, (const char *) gAppCfg.network.devicePassword) == 0)
 
         return 0x80; // accept
 
@@ -2576,7 +2870,8 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_ftpconfig(TCPIP_HTTP_NET_CONN_HANDLE c
     return TCPIP_HTTP_DYN_PRINT_RES_DONE;
 }
 
-TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE connHandle,
+        const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
     HTTP_APP_DYNVAR_BUFFER *pBuffer = HTTP_APP_GetDynamicBuffer();
     if (pBuffer == 0) {
         return TCPIP_HTTP_DYN_PRINT_RES_AGAIN;
@@ -2587,13 +2882,27 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE con
     int written = 0;
 
     TCPIP_NET_HANDLE netH = TCPIP_STACK_IndexToNet(0);
-    const uint8_t* mac = (const uint8_t*) TCPIP_STACK_NetAddressMac(netH);
 
-    IPV4_ADDR *ip = (IPV4_ADDR *) & gAppCfg.network.ipAddr;
-    IPV4_ADDR *mask = (IPV4_ADDR *) & gAppCfg.network.ipMask;
-    IPV4_ADDR *gw = (IPV4_ADDR *) & gAppCfg.network.gateway;
-    IPV4_ADDR *dns1 = (IPV4_ADDR *) & gAppCfg.network.primaryDNS;
-    IPV4_ADDR *dns2 = (IPV4_ADDR *) & gAppCfg.network.secondDNS;
+    /* MAC */
+    const uint8_t *mac = (const uint8_t *) TCPIP_STACK_NetAddressMac(netH);
+
+    IPV4_ADDR ip;
+    ip.Val = TCPIP_STACK_NetAddress(netH);
+    IPV4_ADDR mask;
+    mask.Val = TCPIP_STACK_NetMask(netH);
+    IPV4_ADDR gw;
+    gw.Val = TCPIP_STACK_NetAddressGateway(netH);
+    IPV4_ADDR dns1;
+    dns1.Val = TCPIP_STACK_NetAddressDnsPrimary(netH);
+    IPV4_ADDR dns2;
+    dns2.Val = TCPIP_STACK_NetAddressDnsSecond(netH);
+
+    const char *hostname = TCPIP_STACK_NetBIOSName(netH);
+    if (hostname == 0) {
+        hostname = gAppCfg.network.netBIOSName;
+    }
+
+    bool dhcpOn = TCPIP_DHCP_IsEnabled(netH);
 
     written = snprintf(ptr, spaceLeft,
             "{"
@@ -2610,14 +2919,15 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE con
             "\"username\": \"%s\","
             "\"password\": \"%s\""
             "}",
-            gAppCfg.network.isDHCPEn ? 1 : 0,
-            ip->v[0], ip->v[1], ip->v[2], ip->v[3],
-            mask->v[0], mask->v[1], mask->v[2], mask->v[3],
-            gw->v[0], gw->v[1], gw->v[2], gw->v[3],
-            dns1->v[0], dns1->v[1], dns1->v[2], dns1->v[3],
-            dns2->v[0], dns2->v[1], dns2->v[2], dns2->v[3],
-            gAppCfg.network.netBIOSName,
-            mac ? mac[0] : 0, mac ? mac[1] : 0, mac ? mac[2] : 0, mac ? mac[3] : 0, mac ? mac[4] : 0, mac ? mac[5] : 0,
+            dhcpOn ? 1 : 0,
+            ip.v[0], ip.v[1], ip.v[2], ip.v[3],
+            mask.v[0], mask.v[1], mask.v[2], mask.v[3],
+            gw.v[0], gw.v[1], gw.v[2], gw.v[3],
+            dns1.v[0], dns1.v[1], dns1.v[2], dns1.v[3],
+            dns2.v[0], dns2.v[1], dns2.v[2], dns2.v[3],
+            hostname,
+            mac ? mac[0] : 0, mac ? mac[1] : 0, mac ? mac[2] : 0,
+            mac ? mac[3] : 0, mac ? mac[4] : 0, mac ? mac[5] : 0,
             (int) gAppCfg.network.uplink,
             "eth0",
             gAppCfg.network.deviceUsername,
@@ -2626,7 +2936,8 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_network(TCPIP_HTTP_NET_CONN_HANDLE con
 
     ptr += written;
 
-    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data,
+            (ptr - (char *) pBuffer->data), true);
     return TCPIP_HTTP_DYN_PRINT_RES_DONE;
 }
 
@@ -2642,12 +2953,9 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_sim(TCPIP_HTTP_NET_CONN_HANDLE connHan
 
     SIM_BASIC_INFO* simInfo = SIMBasic_GetInfo();
     if (simInfo != NULL) {
-        int bars = 0;
-        if (simInfo->rssi < 0 && simInfo->rssi >= -70) bars = 4;
-        else if (simInfo->rssi >= -85) bars = 3;
-        else if (simInfo->rssi >= -100) bars = 2;
-        else if (simInfo->rssi >= -110) bars = 1;
-        else bars = 0;
+        uint8_t percent;
+        if (simInfo->rssi == 99 || simInfo->rssi == 0) percent = 0;
+        else percent = (uint8_t) ((float) simInfo->rssi / 31.0f * 4.0f + 0.5f);
 
         written = snprintf(ptr, spaceLeft,
                 "{"
@@ -2678,7 +2986,7 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_sim(TCPIP_HTTP_NET_CONN_HANDLE connHan
                 gAppCfg.gsm.APN,
                 gAppCfg.gsm.usernameAPN,
                 "......",
-                bars,
+                percent,
                 1
                 );
     } else {
@@ -2778,4 +3086,361 @@ TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_hmi(TCPIP_HTTP_NET_CONN_HANDLE connHan
     TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) (uintptr_t) step);
 
     return TCPIP_HTTP_DYN_PRINT_RES_PROCESS_AGAIN;
+}
+
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_dashboard(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
+    HTTP_APP_DYNVAR_BUFFER *pBuffer = HTTP_APP_GetDynamicBuffer();
+    if (pBuffer == 0) {
+        return TCPIP_HTTP_DYN_PRINT_RES_AGAIN;
+    }
+
+    char *ptr = (char *) pBuffer->data;
+    size_t spaceLeft = pBuffer->bufferSize;
+    int written = 0;
+
+    uint32_t step = (uint32_t) (uintptr_t) TCPIP_HTTP_NET_ConnectionUserDataGet(connHandle);
+
+    if (step == 0) {
+        written = snprintf(ptr, spaceLeft, "[");
+        ptr += written;
+        spaceLeft -= written;
+    }
+
+    while (step < gAppCfg.hmi.numEntry && step < MAX_HMI_PARA) {
+        if (spaceLeft < 180)
+            break;
+
+        uint8_t sensorIdx = gAppCfg.hmi.sensorIdx[step];
+        if (sensorIdx > 0 && sensorIdx < MAX_SENSOR && gSensorCfg.entry[sensorIdx - 1].enable) {
+            SENSOR_ENTRY_CONFIG* s = &gSensorCfg.entry[sensorIdx - 1];
+
+            const char* nameStr = "";
+            const char* unitStr = "";
+            float value = 0.0f;
+            char statusStr[8] = "00";
+
+            float minVal = 0.0f;
+            float maxVal = 100.0f;
+            bool validToPrint = true;
+
+            if (s->type == SENSOR_ANALOG && s->indexOfType < MAX_ANALOG_CHANNEL) {
+                nameStr = gAnalogCfg.entry[s->indexOfType].name;
+                unitStr = gAnalogCfg.entry[s->indexOfType].unit;
+
+                value = adcDt.entry[s->indexOfType].value;
+
+            } else if (s->type == SENSOR_MBRTU && s->indexOfType < MAX_MODBUS_TAG) {
+                nameStr = gMbrtuCfg.entry[s->indexOfType].name;
+                unitStr = gMbrtuCfg.entry[s->indexOfType].unit;
+
+                if (mbrtuMasterDt.entry[s->indexOfType].dataType == DATA_FLOAT)
+                    value = mbrtuMasterDt.entry[s->indexOfType].value.floatVal;
+                if (mbrtuMasterDt.entry[s->indexOfType].dataType == DATA_INT)
+                    value = mbrtuMasterDt.entry[s->indexOfType].value.intVal;
+                if (mbrtuMasterDt.entry[s->indexOfType].dataType == DATA_UINT)
+                    value = mbrtuMasterDt.entry[s->indexOfType].value.uintVal;
+
+                minVal = 0.0f;
+                maxVal = 500.0f;
+
+            } else if (s->type == SENSOR_INPUT_CAPTURE && s->indexOfType < MAX_INPUT_CAPTURE) {
+                nameStr = gInCaptureCfg.entry[s->indexOfType].name;
+                unitStr = gInCaptureCfg.entry[s->indexOfType].unit;
+
+                value = inputCaptureDt.entry[s->indexOfType].value;
+
+                minVal = 0.0f;
+                maxVal = 999.0f;
+            }
+
+            int8_t stt = SensorGeneral_calculateSensorStatusInput(sensorIdx - 1);
+            if (stt == 0) snprintf(statusStr, sizeof (statusStr), "00"); // GOOD
+            else if (stt == 1) snprintf(statusStr, sizeof (statusStr), "01"); // CALIBRATION
+            else if (stt == 2) snprintf(statusStr, sizeof (statusStr), "02"); // BAD/ERROR
+            else {
+                if (s->calibrate)
+                    snprintf(statusStr, sizeof (statusStr), "%s", "01");
+                else {
+                    stt = SensorGeneral_calculateSensorStatusAuto(s->type, s->indexOfType);
+                    if (stt == -1)
+                        validToPrint = false;
+                    else
+                        snprintf(statusStr, sizeof (statusStr), "%02u", stt);
+                }
+            }
+
+            if (validToPrint) {
+                written = snprintf(ptr, spaceLeft,
+                        "%s{\"id\": %d, \"name\": \"%s\", \"type\": %d, \"value\": %.2f, \"unit\": \"%s\", \"status\": \"%s\", \"min\": %.0f, \"max\": %.0f}",
+                        (step == 0) ? "" : ",",
+                        sensorIdx,
+                        nameStr,
+                        (int) s->type,
+                        value,
+                        unitStr,
+                        statusStr,
+                        minVal,
+                        maxVal
+                        );
+
+                ptr += written;
+                spaceLeft -= written;
+            }
+        }
+
+        step++;
+    }
+
+    if (step >= gAppCfg.hmi.numEntry || step >= MAX_HMI_PARA) {
+        if (spaceLeft >= 2) {
+            written = snprintf(ptr, spaceLeft, "]");
+            ptr += written;
+        }
+
+        TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+        TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) 0); // Reset tr?ng thái
+
+        return TCPIP_HTTP_DYN_PRINT_RES_DONE;
+    }
+
+    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+    TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) (uintptr_t) step);
+
+    return TCPIP_HTTP_DYN_PRINT_RES_PROCESS_AGAIN;
+}
+
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_mqtt(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
+    HTTP_APP_DYNVAR_BUFFER *pBuffer = HTTP_APP_GetDynamicBuffer();
+    if (pBuffer == 0) {
+        return TCPIP_HTTP_DYN_PRINT_RES_AGAIN;
+    }
+
+    char *ptr = (char *) pBuffer->data;
+    size_t spaceLeft = pBuffer->bufferSize;
+    int written = 0;
+
+    written = snprintf(ptr, spaceLeft,
+            "{"
+            "\"host\": \"%s\","
+            "\"port\": %u,"
+            "\"clientId\": \"%s\","
+            "\"username\": \"%s\","
+            "\"password\": \"%s\","
+            "\"ssl\": %d,"
+            "\"sensorValueTopic\": \"%s\","
+            "\"sensorNotifyTopic\": \"%s\","
+            "\"deviceStatusTopic\": \"%s\","
+            "\"publishInterval\": %u,"
+            "\"qos\": %d"
+            "}",
+            gAppCfg.mqtt.host,
+            (unsigned int) gAppCfg.mqtt.port,
+            gAppCfg.mqtt.clientId,
+            gAppCfg.mqtt.username,
+            "......",
+            gAppCfg.mqtt.useTls ? 1 : 0,
+            gAppCfg.mqtt.valueTopic,
+            gAppCfg.mqtt.notifyTopic,
+            gAppCfg.mqtt.statusTopic,
+            gAppCfg.mqtt.publishInterval,
+            (int) gAppCfg.mqtt.qos
+            );
+
+    if (written > 0 && written < spaceLeft) {
+        ptr += written;
+    }
+
+    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+    return TCPIP_HTTP_DYN_PRINT_RES_DONE;
+}
+
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_ruleEngine(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
+    HTTP_APP_DYNVAR_BUFFER *pBuffer = HTTP_APP_GetDynamicBuffer();
+
+    if (pBuffer == 0) {
+        return TCPIP_HTTP_DYN_PRINT_RES_AGAIN;
+    }
+
+    uint32_t step = (uint32_t) (uintptr_t) TCPIP_HTTP_NET_ConnectionUserDataGet(connHandle);
+    char *ptr = (char *) pBuffer->data;
+    size_t spaceLeft = pBuffer->bufferSize;
+    int written = 0;
+
+    if (step == 0) {
+        written = snprintf(ptr, spaceLeft, "{\"sensors\":[");
+        ptr += written;
+        spaceLeft -= written;
+
+        bool isFirst = true;
+        for (int i = 0; i < MAX_SENSOR; i++) {
+            if (gSensorCfg.entry[i].enable) {
+                const char* nameStr = "";
+
+                if (gSensorCfg.entry[i].type == SENSOR_ANALOG && gSensorCfg.entry[i].indexOfType < MAX_ANALOG_CHANNEL) {
+                    nameStr = gAnalogCfg.entry[gSensorCfg.entry[i].indexOfType].name;
+                } else if (gSensorCfg.entry[i].type == SENSOR_MBRTU && gSensorCfg.entry[i].indexOfType < MAX_MODBUS_TAG) {
+                    nameStr = gMbrtuCfg.entry[gSensorCfg.entry[i].indexOfType].name;
+                } else if (gSensorCfg.entry[i].type == SENSOR_INPUT_CAPTURE && gSensorCfg.entry[i].indexOfType < MAX_INPUT_CAPTURE) {
+                    nameStr = gInCaptureCfg.entry[gSensorCfg.entry[i].indexOfType].name;
+                }
+
+                written = snprintf(ptr, spaceLeft, "%s{\"id\":%d,\"name\":\"%s\"}", isFirst ? "" : ",", i, nameStr);
+                ptr += written;
+                spaceLeft -= written;
+                isFirst = false;
+            }
+        }
+
+        written = snprintf(ptr, spaceLeft, "],\"rules\":[");
+        ptr += written;
+        spaceLeft -= written;
+
+        TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+        TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) 1);
+
+        return TCPIP_HTTP_DYN_PRINT_RES_PROCESS_AGAIN;
+    }
+
+    uint32_t idx = step - 1;
+
+    while (idx < gSensorCfg.numRule) {
+        if (spaceLeft < 350)
+            break;
+
+        RULE_ENTRY_CONFIG* r = &gSensorCfg.ruleEntry[idx];
+
+        written = snprintf(ptr, spaceLeft,
+                "%s{"
+                "\"id\": %lu,"
+                "\"name\": \"%s\","
+                "\"enable\": %d,"
+                "\"ruleType\": %d,"
+                "\"sensor1\": %d,"
+                "\"operator1\": %d,"
+                "\"value1\": %.2f,"
+                "\"enableCondition2\": %d,"
+                "\"logicOperator\": %d,"
+                "\"sensor2\": %d,"
+                "\"operator2\": %d,"
+                "\"value2\": %.2f,"
+                "\"enableDebounce\": %d,"
+                "\"debounceValue\": %.2f,"
+                "\"debounceUnit\": %d,"
+                "\"notifyAction\": %d"
+                "}",
+                (idx == 0) ? "" : ",",
+                (unsigned long) idx + 1,
+                r->name,
+                r->enable ? 1 : 0,
+                (int) r->type,
+                (int) r->sensorId1,
+                (int) r->op1,
+                r->value1,
+                r->enableCondition1 ? 1 : 0, // L?u ý: field này map v?i enableCondition2 trên Web
+                (int) r->logic,
+                (int) r->sensorId2,
+                (int) r->op2,
+                r->value2,
+                r->enableDebounce ? 1 : 0,
+                r->debounceValue,
+                (int) r->debounceUnit,
+                (int) r->notifyAction
+                );
+
+        ptr += written;
+        spaceLeft -= written;
+        idx++;
+    }
+
+    if (idx >= gSensorCfg.numRule) {
+        if (spaceLeft >= 3) {
+            written = snprintf(ptr, spaceLeft, "]}");
+            ptr += written;
+        }
+        TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+        TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) 0);
+
+        return TCPIP_HTTP_DYN_PRINT_RES_DONE;
+    }
+
+    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+    step = idx + 1;
+    TCPIP_HTTP_NET_ConnectionUserDataSet(connHandle, (const void*) (uintptr_t) step);
+
+    return TCPIP_HTTP_DYN_PRINT_RES_PROCESS_AGAIN;
+}
+
+TCPIP_HTTP_DYN_PRINT_RES TCPIP_HTTP_Print_systemInfo(TCPIP_HTTP_NET_CONN_HANDLE connHandle, const TCPIP_HTTP_DYN_VAR_DCPT *vDcpt) {
+    HTTP_APP_DYNVAR_BUFFER *pBuffer = HTTP_APP_GetDynamicBuffer();
+    if (pBuffer == 0) {
+        return TCPIP_HTTP_DYN_PRINT_RES_AGAIN;
+    }
+
+    char *ptr = (char *) pBuffer->data;
+    size_t spaceLeft = pBuffer->bufferSize;
+    int written = 0;
+
+    int cpuLoad = 34;
+    int memory = 58;
+    int storage = 72;
+
+    char uptimeStr[32];
+    snprintf(uptimeStr, sizeof (uptimeStr), "14d 07h 23m");
+
+    int mqttStatus = (EthMqtt_IsConnected());
+    int ftpStatus = (ssGeneralDt.ftpStatus == FTP_STS_GOOD);
+    int modbusStatus = (gMbrtuCfg.numTag > 0);
+    int networkStatus = 1;
+    int sdcardStatus = (sdcardDt.status == SDCARD_STS_READY || sdcardDt.status == SDCARD_STS_GOOD);
+
+    int showResetSystem = 0;
+
+    written = snprintf(ptr, spaceLeft,
+            "{"
+            "\"systemInfo\": {"
+            "\"version\": \"%s\","
+            "\"firmware\": \"%s\","
+            "\"model\": \"%s\","
+            "\"serial\": \"%s\","
+            "\"cpuLoad\": %d,"
+            "\"memory\": %d,"
+            "\"storage\": %d,"
+            "\"uptime\": \"%s\""
+            "},"
+            "\"services\": {"
+            "\"mqtt\": %d,"
+            "\"ftp\": %d,"
+            "\"modbus\": %d,"
+            "\"network\": %d,"
+            "\"sdcard\": %d"
+            "},"
+            "\"buttons\": {"
+            "\"showJumpFirmware\": %d,"
+            "\"showResetSystem\": %d"
+            "}"
+            "}",
+            gDeviceInfo.hwVer,
+            gDeviceInfo.fwVer,
+            gDeviceInfo.model,
+            gDeviceInfo.serial,
+            cpuLoad,
+            memory,
+            storage,
+            uptimeStr,
+            mqttStatus,
+            ftpStatus,
+            modbusStatus,
+            networkStatus,
+            sdcardStatus,
+            showJumpFirmware,
+            showResetSystem
+            );
+
+    if (written > 0 && written < spaceLeft) {
+        ptr += written;
+    }
+
+    TCPIP_HTTP_NET_DynamicWrite(vDcpt, pBuffer->data, (ptr - (char *) pBuffer->data), true);
+
+    return TCPIP_HTTP_DYN_PRINT_RES_DONE;
 }

@@ -55,17 +55,21 @@ static HTTP_APP_DYNVAR_ENTRY HTTP_APP_DynVarTbl[] =
 {
  // varName                      varFnc
 {"analog",					TCPIP_HTTP_Print_analog},
+{"dashboard",					TCPIP_HTTP_Print_dashboard},
+{"ftpconfig",					TCPIP_HTTP_Print_ftpconfig},
+{"hmi",					TCPIP_HTTP_Print_hmi},
 {"inputcapture",					TCPIP_HTTP_Print_inputcapture},
 {"modbus",					TCPIP_HTTP_Print_modbus},
+{"mqtt",					TCPIP_HTTP_Print_mqtt},
+{"network",					TCPIP_HTTP_Print_network},
 {"output",					TCPIP_HTTP_Print_output},
-{"systime",					TCPIP_HTTP_Print_systime},
-{"timeconfig",					TCPIP_HTTP_Print_timeconfig},
+{"ruleEngine",					TCPIP_HTTP_Print_ruleEngine},
 {"sensorGeneral",					TCPIP_HTTP_Print_sensorGeneral},
 {"exportSettings",					TCPIP_HTTP_Print_exportSettings},
-{"ftpconfig",					TCPIP_HTTP_Print_ftpconfig},
-{"network",					TCPIP_HTTP_Print_network},
 {"sim",					TCPIP_HTTP_Print_sim},
-{"hmi",					TCPIP_HTTP_Print_hmi},
+{"systime",					TCPIP_HTTP_Print_systime},
+{"timeconfig",					TCPIP_HTTP_Print_timeconfig},
+{"systemInfo",					TCPIP_HTTP_Print_systemInfo},
 };
 
 // Function that processes the dynamic variables

@@ -1,10 +1,91 @@
 #include "app.h"
 #include "http_net_print.h"
 
+DEVICE_INFO gDeviceInfo;
+
 static const char * __TAG__ = "APP";
 static APP_STATES _state = 0;
-static DEVICE_INFO _deviceInfo = {0};
 static uint32_t _initDelayTick = 0;
+
+/* ===================================================================
+ * Apply network configuration (DHCP on/off, static IP, NetBIOS name)
+ * =================================================================*/
+static void _applyNetworkConfig(TCPIP_NET_HANDLE netH) {
+    if (netH == 0) {
+        LOG_ERROR("%s:\t ApplyNetCfg: invalid netH", __TAG__);
+        return;
+    }
+
+    if (gAppCfg.network.netBIOSName[0] != '\0') {
+        TCPIP_STACK_NetBiosNameSet(netH, gAppCfg.network.netBIOSName);
+        LOG_INFO("%s:\t NetBIOS name set to '%s'",
+                __TAG__, gAppCfg.network.netBIOSName);
+    }
+
+    if (gAppCfg.network.isDHCPEn) {
+        /* ============================================================
+         *  DHCP MODE
+         * ============================================================*/
+        if (!TCPIP_DHCP_IsEnabled(netH)) {
+            TCPIP_DHCP_Enable(netH);
+        }
+
+        IPV4_ADDR lastIp;
+        lastIp.Val = gAppCfg.network.ipAddr.Val;
+
+        if (lastIp.Val != 0) {
+            if (TCPIP_DHCP_Request(netH, lastIp)) {
+                LOG_INFO("%s:\t DHCP enabled, requesting last IP %d.%d.%d.%d",
+                        __TAG__, lastIp.v[0], lastIp.v[1], lastIp.v[2], lastIp.v[3]);
+            } else {
+                LOG_WARN("%s:\t DHCP enabled, hint last IP failed, fallback DISCOVER",
+                        __TAG__);
+            }
+        } else {
+            LOG_INFO("%s:\t DHCP enabled, no last IP hint", __TAG__);
+        }
+    } else {
+        /* ============================================================
+         *  STATIC MODE
+         *  - Disable DHCP client
+         *  - Set IP / Mask / Gateway / DNS
+         * ============================================================*/
+        if (TCPIP_DHCP_IsEnabled(netH)) {
+            TCPIP_DHCP_Disable(netH);
+            LOG_INFO("%s:\t DHCP disabled (static mode)", __TAG__);
+        }
+
+        IPV4_ADDR ip;
+        ip.Val = gAppCfg.network.ipAddr.Val;
+        IPV4_ADDR mask;
+        mask.Val = gAppCfg.network.ipMask.Val;
+        IPV4_ADDR gw;
+        gw.Val = gAppCfg.network.gateway.Val;
+        IPV4_ADDR dns1;
+        dns1.Val = gAppCfg.network.primaryDNS.Val;
+        IPV4_ADDR dns2;
+        dns2.Val = gAppCfg.network.secondDNS.Val;
+
+        if (!TCPIP_STACK_NetAddressSet(netH, &ip, &mask, true)) {
+            LOG_ERROR("%s:\t Static IP set FAILED", __TAG__);
+        }
+
+        TCPIP_STACK_NetAddressGatewaySet(netH, &gw);
+        TCPIP_STACK_NetDnsPrimarySet(netH, &dns1);
+        TCPIP_STACK_NetDnsSecondSet(netH, &dns2);
+
+        LOG_INFO("%s:\t Static IP   : %d.%d.%d.%d",
+                __TAG__, ip.v[0], ip.v[1], ip.v[2], ip.v[3]);
+        LOG_INFO("%s:\t Subnet Mask : %d.%d.%d.%d",
+                __TAG__, mask.v[0], mask.v[1], mask.v[2], mask.v[3]);
+        LOG_INFO("%s:\t Gateway     : %d.%d.%d.%d",
+                __TAG__, gw.v[0], gw.v[1], gw.v[2], gw.v[3]);
+        LOG_INFO("%s:\t DNS1 / DNS2 : %d.%d.%d.%d / %d.%d.%d.%d",
+                __TAG__,
+                dns1.v[0], dns1.v[1], dns1.v[2], dns1.v[3],
+                dns2.v[0], dns2.v[1], dns2.v[2], dns2.v[3]);
+    }
+}
 
 void App_Initialize(void) {
     /* Place the App state machine in its initial state. */
@@ -40,6 +121,11 @@ void App_Tasks(void) {
             EthNtp_Initialize();
             SensorGeneral_Initialize();
             EthFtp_Initialize();
+            HMIDwin_Initialize();
+            EthMqtt_Initialize();
+            InFlash_Initialize();
+            EthHttp_Initialize();
+            Fota_Initialize(NULL);
 
             if (appInitialized) {
                 LOG_SUCCESS("%s:\t Module Init SUCCESS!", __TAG__);
@@ -79,34 +165,43 @@ void App_Tasks(void) {
 
         case APP_LOAD_DEVICE_INFO:
         {
-            //            bool ret = InFlash_LoadDeviceInfo((uint8_t *) & _deviceInfo, sizeof (DEVICE_INFO));
-            //            LOG_DEBUG("%s:\t APP_LOAD_DEVICE_INFO ret=%u", __TAG__, ret);
-            //
-            //            uint32_t crc = Helpers_CRC32Calculate((uint8_t *) & _deviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (_deviceInfo.crc));
-            //            if (crc != _deviceInfo.crc)
-            _state = APP_SAVE_DEVICE_INFO;
-            //            else
-            //                _state = APP_TCPIP_INIT;
-            //            break;
+            bool ret = InFlash_LoadDeviceInfo((uint8_t *) & gDeviceInfo, sizeof (DEVICE_INFO));
+            LOG_DEBUG("%s:\t APP_LOAD_DEVICE_INFO ret=%u", __TAG__, ret);
+
+            uint32_t crc = Helpers_CRC32Calculate((uint8_t *) & gDeviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (gDeviceInfo.crc));
+            if (crc != gDeviceInfo.crc)
+                _state = APP_SAVE_DEVICE_INFO;
+            else {
+                LOG_INFO("%s:\t Device Info Loaded Successfully:", __TAG__);
+                LOG_INFO("\tManufacturer : %s", gDeviceInfo.manufacturer);
+                LOG_INFO("\tFW Version   : %s", gDeviceInfo.fwVer);
+                LOG_INFO("\tHW Version   : %s", gDeviceInfo.hwVer);
+                LOG_INFO("\tDate Time    : %s", gDeviceInfo.dateTime);
+                LOG_INFO("\tModel        : %s", gDeviceInfo.model);
+                LOG_INFO("\tSerial       : %s", gDeviceInfo.serial);
+                LOG_INFO("\tCRC          : 0x%08X", gDeviceInfo.crc);
+                _state = APP_TCPIP_INIT;
+            }
+            break;
         }
 
         case APP_SAVE_DEVICE_INFO:
         {
-            //            snprintf(_deviceInfo.manufacturer, MANUFACTURER_LEN, "%s", MANUFACTURER);
-            //            snprintf(_deviceInfo.fwVer, FW_VER_LEN, "%s", FIRMWARE_VERSION);
-            //            snprintf(_deviceInfo.hwVer, HW_VER_LEN, "%s", HARDWARE_VERSION);
-            //            snprintf(_deviceInfo.dateTime, DATE_LEN, "%s", DATE_TIME);
-            //            snprintf(_deviceInfo.model, MODEL_LEN, "%s", MODEL);
-            //            snprintf(_deviceInfo.serial, SERIAL_LEN, "%s", SERIAL_NUMBER);
-            //            _deviceInfo.crc = Helpers_CRC32Calculate((uint8_t *) & _deviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (_deviceInfo.crc));
-            //
-            //            bool ret = InFlash_SaveDeviceInfo((uint8_t *) & _deviceInfo, sizeof (DEVICE_INFO));
-            //            LOG_DEBUG("%s:\t APP_SAVE_DEVICE_INFO ret=%u", __TAG__, ret);
-            //            if (++attempCount > numAttemps)
-            _state = APP_TCPIP_INIT;
-            //            else
-            //                _state = APP_LOAD_DEVICE_INFO;
-            //            break;
+            snprintf(gDeviceInfo.manufacturer, MANUFACTURER_LEN, "%s", MANUFACTURER);
+            snprintf(gDeviceInfo.fwVer, FW_VER_LEN, "%s", FIRMWARE_VERSION);
+            snprintf(gDeviceInfo.hwVer, HW_VER_LEN, "%s", HARDWARE_VERSION);
+            snprintf(gDeviceInfo.dateTime, DATE_LEN, "%s", DATE_TIME);
+            snprintf(gDeviceInfo.model, MODEL_LEN, "%s", MODEL);
+            snprintf(gDeviceInfo.serial, SERIAL_LEN, "%s", SERIAL_NUMBER);
+            gDeviceInfo.crc = Helpers_CRC32Calculate((uint8_t *) & gDeviceInfo.manufacturer, sizeof (DEVICE_INFO) - sizeof (gDeviceInfo.crc));
+
+            bool ret = InFlash_SaveDeviceInfo((uint8_t *) & gDeviceInfo, sizeof (DEVICE_INFO));
+            LOG_DEBUG("%s:\t APP_SAVE_DEVICE_INFO ret=%u", __TAG__, ret);
+            if (++attempCount > numAttemps)
+                _state = APP_TCPIP_INIT;
+            else
+                _state = APP_LOAD_DEVICE_INFO;
+            break;
         }
 
         case APP_TCPIP_INIT:
@@ -130,12 +225,15 @@ void App_Tasks(void) {
             const char *netName, *netBiosName;
             for (int i = 0; i < nNets; i++) {
                 TCPIP_NET_HANDLE netH = TCPIP_STACK_IndexToNet(i);
+                _applyNetworkConfig(netH);
+
                 netName = TCPIP_STACK_NetNameGet(netH);
                 netBiosName = TCPIP_STACK_NetBIOSName(netH);
 
                 LOG_DEBUG("%s:\t TCP/IP stack\t Interface %s on host %s - NBNS disabled", __TAG__, netName, netBiosName);
             }
 
+            EthMqtt_Open();
             HTTP_APP_Initialize();
             _state = APP_TCPIP_TRANSACT;
 
@@ -176,6 +274,10 @@ void App_Tasks(void) {
         EthNtp_Task();
         SensorGeneral_Task();
         EthFtp_Task();
+        HMIDwin_Tasks();
+        EthMqtt_Task();
+        EthHttp_Task();
+        Fota_Task();
     }
 }
 

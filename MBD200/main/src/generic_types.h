@@ -38,8 +38,8 @@
 //#define     DEBUG_MODULE_DEE
 
 #define MANUFACTURER_LEN                32
-#define FW_CODE_LEN                     16
-#define HW_CODE_LEN                     16
+#define FW_VER_LEN                      16
+#define HW_VER_LEN                      16
 #define DATE_LEN                        32
 #define MODEL_LEN                       32
 #define SERIAL_LEN                      32
@@ -56,6 +56,8 @@
 #define URL_LEN                         128
 #define APN_LEN                         24
 #define BIOS_NAME_LEN                   24
+#define MQTT_TOPIC_LEN                  64
+#define MQTT_PAYLOAD_LEN                2048
 
 #define MAX_DIGITAL_OUTPUT              2
 #define MAX_HMI_PARA                    20
@@ -63,6 +65,7 @@
 #define MAX_MODBUS_TAG                  14
 #define MAX_INPUT_CAPTURE               4
 #define MAX_SENSOR                      20
+#define MAX_RULE                        20
 #define MAX_ROW_PER_PAGE                10
 #define MAX_FTP_SERVER                  2
 #define MAX_POSITION_SIZE               MAX_INPUT_CAPTURE + MAX_ANALOG_CHANNEL + MAX_MODBUS_TAG
@@ -196,6 +199,38 @@ extern "C" {
         STATUS_BAD
     } SENSOR_STATUS;
 
+    typedef enum {
+        RULE_THRESHOLD = 0,
+        RULE_DELTA
+    } RULE_TYPE;
+
+    typedef enum {
+        RULE_GREATER_THAN = 0,
+        RULE_LESS_THAN,
+        RULE_GREATER_OR_EQUAL,
+        RULE_LESS_OR_EQUAL,
+        RULE_EQUAL,
+        RULE_NOT_EQUAL
+    } RULE_OPERATOR;
+
+    typedef enum {
+        RULE_AND = 0,
+        RULE_OR
+    } RULE_LOGIC;
+
+    typedef enum {
+        RULE_DEBOUNCE_MILISECOND = 0,
+        RULE_DEBOUNCE_SECOND,
+        RULE_DEBOUNCE_MINUTE,
+        RULE_DEBOUNCE_HOUR
+    } RULE_DEBOUNCE_UNIT;
+
+    typedef enum {
+        RULE_NOTIFY_MQTT = 0,
+        RULE_NOTIFY_SMS,
+        RULE_NOTIFY_ALL
+    } RULE_NOTIFY_ACTION;
+
     typedef struct {
         uint8_t hour;
         uint8_t minute;
@@ -288,6 +323,36 @@ extern "C" {
     } HMI_CONFIG;
 
     typedef struct {
+        char host[URL_LEN];
+        uint16_t port;
+        char clientId[USERNAME_LEN];
+        char username[USERNAME_LEN];
+        char password[PASSWORD_LEN];
+        uint8_t qos;
+        bool useTls;
+        uint8_t publishInterval;
+
+        char valueTopic[MQTT_TOPIC_LEN];
+        char notifyTopic[MQTT_TOPIC_LEN];
+        char statusTopic[MQTT_TOPIC_LEN];
+    } MQTT_CONFIG;
+
+    typedef struct {
+        NETWORK_CONFIG network;
+        FTP_SERVER_CONFIG ftpServer[MAX_FTP_SERVER];
+        MODBUSRTU_PHY_CONFIG modbusRtu;
+        GSM_CONFIG gsm;
+        DATETIME_CONFIG time;
+        IO_CONFIG io;
+        SDCARD_CONFIG sdCard;
+        HMI_CONFIG hmi;
+        MQTT_CONFIG mqtt;
+
+        uint16_t position[MAX_POSITION_SIZE];
+    }
+    APP_CONFIG;
+
+    typedef struct {
         bool enable;
         SENSOR_TYPE type;
         uint8_t indexOfType;
@@ -311,6 +376,27 @@ extern "C" {
     } SENSOR_ENTRY_CONFIG;
 
     typedef struct {
+        bool enable;
+        char name[SENSOR_NAME_LEN];
+        RULE_TYPE type;
+        uint8_t sensorId1;
+        RULE_OPERATOR op1;
+        float value1;
+
+        bool enableCondition1;
+        RULE_LOGIC logic;
+        uint8_t sensorId2;
+        RULE_OPERATOR op2;
+        float value2;
+
+        bool enableDebounce;
+        float debounceValue;
+        RULE_DEBOUNCE_UNIT debounceUnit;
+
+        RULE_NOTIFY_ACTION notifyAction;
+    } RULE_ENTRY_CONFIG;
+
+    typedef struct {
         SENSOR_ENTRY_CONFIG entry[MAX_SENSOR];
         uint8_t numSensor;
 
@@ -322,22 +408,11 @@ extern "C" {
         bool uploadFtp;
         bool uploadMqtt;
         bool saveSdcard;
+
+        RULE_ENTRY_CONFIG ruleEntry[MAX_RULE];
+        uint8_t numRule;
     }
     SENSOR_CONFIG;
-
-    typedef struct {
-        NETWORK_CONFIG network;
-        FTP_SERVER_CONFIG ftpServer[MAX_FTP_SERVER];
-        MODBUSRTU_PHY_CONFIG modbusRtu;
-        GSM_CONFIG gsm;
-        DATETIME_CONFIG time;
-        IO_CONFIG io;
-        SDCARD_CONFIG sdCard;
-
-        HMI_CONFIG hmi;
-        uint16_t position[MAX_POSITION_SIZE];
-    }
-    APP_CONFIG;
 
     typedef struct {
         bool enable;
@@ -426,9 +501,10 @@ extern "C" {
     INPUT_CAPTURE_CONFIG;
 
     typedef struct {
+        uint32_t crc;
         char manufacturer[MANUFACTURER_LEN];
-        char fwVer[FW_CODE_LEN];
-        char hwVer[HW_CODE_LEN];
+        char fwVer[FW_VER_LEN];
+        char hwVer[HW_VER_LEN];
         char dateTime[DATE_LEN];
         char model[MODEL_LEN];
         char serial[SERIAL_LEN];

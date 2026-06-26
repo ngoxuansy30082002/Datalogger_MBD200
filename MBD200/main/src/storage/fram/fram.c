@@ -15,7 +15,7 @@ static uint8_t _framData[2048] = {0};
 
 static const FRAM_PARTITION _partition[FRAM_DATA_COUNT] = {
     {},
-    {.type = FRAM_DATA_COUNTER, .address = FRAM_ADDR_COUNTER, .maxSize = 16},
+    {.type = FRAM_DATA_COUNTER, .address = FRAM_ADDR_COUNTER, .maxSize = 23},
 };
 
 static uint16_t _packFramData(const FRAM_QUEUE_ITEM * item) {
@@ -43,7 +43,7 @@ static bool _unpackFramData(const FRAM_QUEUE_ITEM * item) {
 
     uint32_t crc = Helpers_CRC32Calculate((uint8_t *) & _framData[headerSize], header.len);
     if (header.crc != crc) return false;
-    
+
     memcpy(item->buffer, &_framData[headerSize], item->size);
 
     return true;
@@ -69,9 +69,9 @@ void Fram_Task(void) {
         openTick = TICK_NOW();
         _initStatus = DrvFM25CL_Open();
         if (_initStatus == SYS_STATUS_READY)
-            SYS_CONSOLE_PRINT("%s - %s\t Init SUCCESS\r\n", __TAG__, __func__);
+            LOG_SUCCESS("%s - %s\t Init SUCCESS\r\n", __TAG__, __func__);
         else if (_initStatus == SYS_STATUS_ERROR)
-            SYS_CONSOLE_PRINT("%s - %s\t Init FAIL\r\n", __TAG__, __func__);
+            LOG_ERROR("%s - %s\t Init FAIL\r\n", __TAG__, __func__);
 
         return;
     }
@@ -129,7 +129,7 @@ void Fram_Task(void) {
         }
         case FRAM_DONE:
         {
-            //            SYS_CONSOLE_PRINT("write done: %u\r\n", rslt);
+//            LOG_DEBUG("%s - %s\t Save done %d", __TAG__, __func__,rslt);
             if (item.callback) item.callback(item.type, rslt);
             _writeState = FRAM_IDLE;
             break;
@@ -176,7 +176,6 @@ void Fram_Task(void) {
 
             bool res = _unpackFramData(&item);
             if (!res) rslt = FRAM_RES_FAIL;
-
             _readState = FRAM_DONE;
             break;
         }
@@ -193,7 +192,7 @@ void Fram_Task(void) {
 bool Fram_SaveBlockData(FRAM_DATA_TYPE type, void * buffer, uint16_t size, void (*clb)(int type, int rlst)) {
     if (type < 0 || type >= FRAM_DATA_COUNT || !buffer || size == 0) return false;
     const FRAM_PARTITION * part = &_partition[type];
-    if (part->maxSize < size) return false;
+    if ((size + sizeof(FRAM_METADATA)) > part->maxSize) return false;
 
     FRAM_QUEUE_ITEM item = {
         .type = type,
@@ -207,7 +206,7 @@ bool Fram_SaveBlockData(FRAM_DATA_TYPE type, void * buffer, uint16_t size, void 
 bool Fram_LoadBlockData(FRAM_DATA_TYPE type, void * buffer, uint16_t size, void (*clb)(int type, int rlst)) {
     if (type < 0 || type >= FRAM_DATA_COUNT || !buffer || size == 0) return false;
     const FRAM_PARTITION * part = &_partition[type];
-    if (part->maxSize < size) return false;
+    if ((size + sizeof(FRAM_METADATA)) > part->maxSize) return false;
 
     FRAM_QUEUE_ITEM item = {
         .type = type,

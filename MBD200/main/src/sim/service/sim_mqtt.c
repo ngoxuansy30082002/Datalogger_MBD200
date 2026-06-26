@@ -4,28 +4,11 @@
 #include "sim/core/sim_net.h"
 #include "sim_mqtt.h"
 
-typedef struct {
-    uint8_t client_idx;
-    const char* host;
-    uint16_t port;
-    const char* client_id;
-    const char* username;
-    const char* password;
-} MQTT_CONFIG_T;
-
-static MQTT_CONFIG_T _mqttCfg = {
-    .client_idx = 0,
-    .host = "broker.emqx.io",
-    .port = 1883,
-    .client_id = "clientExample",
-    .username = "user123",
-    .password = "pass123"
-};
-
 static char _pubTopic[64];
 static char _pubPayload[256];
 static int _pubLen = 0;
 static uint16_t _pubMsgId = 1;
+static uint8_t _clientIndex = 0;
 
 static const char * __TAG__ = "SIMMQTT";
 
@@ -69,23 +52,23 @@ static int _cmdBuilder(int state, char* buffer, size_t maxLen, const char* forma
     switch (state) {
         case SIM_MQTT_CFG_RECV:
             return snprintf(buffer, maxLen, format,
-                    _mqttCfg.client_idx);
+                    _clientIndex);
 
         case SIM_MQTT_OPEN:
             return snprintf(buffer, maxLen, format,
-                    _mqttCfg.client_idx, _mqttCfg.host, _mqttCfg.port);
+                   _clientIndex, gAppCfg.mqtt.host, gAppCfg.mqtt.port);
 
         case SIM_MQTT_CONN:
             return snprintf(buffer, maxLen, format,
-                    _mqttCfg.client_idx, _mqttCfg.client_id, _mqttCfg.username, _mqttCfg.password);
+                   _clientIndex, gAppCfg.mqtt.clientId, gAppCfg.mqtt.username, gAppCfg.mqtt.password);
 
         case SIM_MQTT_SUB:
             return snprintf(buffer, maxLen, format,
-                    _mqttCfg.client_idx);
+                   _clientIndex);
 
         case SIM_MQTT_PUB_CMD:
             return snprintf(buffer, maxLen, format,
-                    _mqttCfg.client_idx, ++_pubMsgId, _pubTopic, _pubLen);
+                   _clientIndex, ++_pubMsgId, _pubTopic, _pubLen);
 
         case SIM_MQTT_PUB_DATA:
             return snprintf(buffer, maxLen, "%s",
@@ -111,7 +94,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
             if (pMatch != NULL) {
                 parsedItems = sscanf(pMatch, "+QMTOPEN: %d,%d", &clientIdx, &result);
                 SYS_CONSOLE_PRINT("%s - %s:\t SIM_MQTT_OPEN: result=%d, client=%d\r\n", __TAG__, __func__, result, clientIdx);
-                if (parsedItems == 2 && clientIdx == _mqttCfg.client_idx && result == 0)
+                if (parsedItems == 2 && clientIdx == _clientIndex && result == 0)
                     return true;
             }
             return false;
@@ -122,7 +105,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
             if (pMatch != NULL) {
                 parsedItems = sscanf(pMatch, "+QMTCONN: %d,%d,%d", &clientIdx, &result, &retCode);
                 SYS_CONSOLE_PRINT("%s - %s:\t SIM_MQTT_CONN: result=%d, retCode=%d\r\n", __TAG__, __func__, result, retCode);
-                if (parsedItems == 3 && clientIdx == _mqttCfg.client_idx && result == 0 && retCode == 0)
+                if (parsedItems == 3 && clientIdx == _clientIndex && result == 0 && retCode == 0)
                     return true;
             }
             return false;
@@ -131,7 +114,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
             pMatch = strstr(buffer, "+QMTSUB:");
             if (pMatch != NULL) {
                 if (sscanf(pMatch, "+QMTSUB: %d,%d,%d,%d", &clientIdx, &msgId, &result, &val) >= 3) {
-                    if (clientIdx == _mqttCfg.client_idx && result == 0)
+                    if (clientIdx == _clientIndex && result == 0)
                         return true;
                 }
             }
@@ -141,7 +124,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
             pMatch = strstr(buffer, "+QMTPUBEX:");
             if (pMatch != NULL) {
                 if (sscanf(pMatch, "+QMTPUBEX: %d,%d,%d", &clientIdx, &msgId, &result) >= 3) {
-                    if (clientIdx == _mqttCfg.client_idx && result == 0)
+                    if (clientIdx == _clientIndex && result == 0)
                         return true;
                 }
             }

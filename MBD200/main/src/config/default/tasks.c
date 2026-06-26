@@ -82,20 +82,22 @@ SYS_FS_Tasks();
     /* Maintain Device Drivers */
     DRV_SDSPI_Tasks(sysObj.drvSDSPI0);
 
-DRV_MEMORY_Tasks(sysObj.drvMemory0);
+    bootloader_UDP_Tasks();
 
    DRV_MIIM_OBJECT_BASE_Default.miim_Tasks(sysObj.drvMiim_0);
 
+
+DRV_MEMORY_Tasks(sysObj.drvMemory0);
 
 
 
     /* Maintain Middleware & Other Libraries */
     
-   TCPIP_STACK_Task(sysObj.tcpip);
-
-
-
 NET_PRES_Tasks(sysObj.netPres);
+
+
+
+   TCPIP_STACK_Task(sysObj.tcpip);
 
 
 

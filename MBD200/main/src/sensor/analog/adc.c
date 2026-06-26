@@ -3,10 +3,6 @@
 
 ADC_DATA adcDt;
 
-float _calculator_analog_float(float scale_float, uint8_t index);
-static void _ADC_PrintHMI(uint8_t adcIdxCh, bool noGood);
-
-
 static const char * __TAG__ = "ADC";
 static ADC_DEVICE _devices[NUM_ADC_DEVICE] = {0};
 static ADC_CHANNEL_BUFFER _chnBuffer[MAX_ANALOG_CHANNEL] = {0};
@@ -150,6 +146,40 @@ static double _calculatorAdvancedScaling(double value, uint8_t thisAdc) {
     return outValue;
 }
 
+static void _printToHMI(uint8_t thisAdc) {
+    for (uint8_t i = 0; i < gAppCfg.hmi.numEntry; i++) {
+        uint8_t idxHMI = gAppCfg.hmi.sensorIdx[i] - 1;
+        SENSOR_ENTRY_CONFIG *sEntry = &gSensorCfg.entry[idxHMI];
+
+        if (!sEntry->enable)
+            continue;
+
+        if (sEntry->type == SENSOR_ANALOG &&
+                sEntry->indexOfType == thisAdc) {
+            uint8_t status = 0;
+
+            int8_t stt = SensorGeneral_calculateSensorStatusInput(idxHMI);
+            if (stt == 0) status = 0;
+            else if (stt == 1) status = 1;
+            else if (stt == 2) status = 2;
+            else {
+                if (sEntry->calibrate)
+                    status = 1;
+                else {
+                    stt = SensorGeneral_calculateSensorStatusAuto(sEntry->type, thisAdc);
+                    if (stt == -1)
+                        continue;
+
+                    status = stt;
+                }
+            }
+
+            HMIDwin_TriggerSendStatus(i, status);
+            HMIDwin_TriggerSendValue(i, HMI_DATA_FLOAT, (float) adcDt.entry[thisAdc].value);
+        }
+    };
+}
+
 void Adc_Initialize(void) {
     DrvSpiAdc_Initialize();
 
@@ -265,7 +295,8 @@ void Adc_Task(void) {
                 /* Scale */
                 adcDt.entry[thisAdc].value = _calculatorAdvancedScaling(value, thisAdc);
 
-//                LOG_INFO("%s - %s:\t Device %u Channel %u, raw = %.5f, value = %.5f\r\n", __TAG__, __func__, idxAdcDevice, dev->curChannel, Iin, adcDt.entry[thisAdc].value);
+                //                LOG_INFO("%s - %s:\t Device %u Channel %u, raw = %.5f, value = %.5f\r\n", __TAG__, __func__, idxAdcDevice, dev->curChannel, Iin, adcDt.entry[thisAdc].value);
+                _printToHMI(thisAdc);
                 NEXT_STATE(ADC_IDLE);
             }
             break;
@@ -274,8 +305,9 @@ void Adc_Task(void) {
         case ADC_ERROR:
         {
             dev->reInit = true;
+            uint8_t thisAdc = idxChannelActually[idxAdcDevice];
+            _printToHMI(thisAdc);
             NEXT_STATE(ADC_IDLE);
-            //            _ADC_PrintHMI(thisAdc, (adcDt.ADCChStatus[thisAdc] != GOOD));
             break;
         }
 
@@ -290,33 +322,4 @@ void Adc_TriggerReinit(void) {
         ADC_DEVICE * dev = &_devices[i];
         dev->reInit = true;
     }
-}
-
-static void _ADC_PrintHMI(uint8_t adcChActually, bool noGood) {
-    //    for (uint8_t i = 0; i < MAX_HMI_PARA; i++) {
-    //        uint8_t idxHMI = glbAppCfg.tag_hmi[i];
-    //        if (idxHMI == 30 || glbAppCfg.sensor.entry[idxHMI].enable == false)
-    //            continue;
-    //
-    //        if (glbAppCfg.sensor.entry[idxHMI].type == SENSOR_ANALOG &&
-    //                glbAppCfg.sensor.entry[idxHMI].idxInType == adcChActually) {
-    //            uint8_t status = 2;
-    //
-    //            int8_t stt = APP_CalculateStatusSensor(idxHMI);
-    //
-    //            if (stt == (STATUS) BAD) status = 2;
-    //            else if (stt == (STATUS) CALIBRATION) status = 1;
-    //            else if (stt == (STATUS) GOOD) status = 0;
-    //            else if (stt == (-1)) {
-    //                if (noGood) status = 2;
-    //                else status = 0;
-    //            }
-    //
-    //            if (glbAppCfg.sensor.entry[idxHMI].calibrated) status = 1;
-    //
-    //            HMIDwin_TriggerSendStatus(i, status);
-    //            HMIDwin_TriggerSendValue(i, HMI_DATA_FLOAT, (float) adcDt.valueAnalog[adcChActually]);
-    //            //            (void) status;
-    //        }
-    //    };
 }

@@ -86,6 +86,7 @@ void UART2_TX_Handler (void);
 void I2C2_BUS_Handler (void);
 void I2C2_MASTER_Handler (void);
 void ETHERNET_Handler (void);
+void FLASH_CONTROL_Handler (void);
 void UART4_FAULT_Handler (void);
 void UART4_RX_Handler (void);
 void UART4_TX_Handler (void);
@@ -196,6 +197,11 @@ void __attribute__((used)) __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handl
 void __attribute__((used)) __ISR(_ETHERNET_VECTOR, ipl1SRS) ETHERNET_Handler (void)
 {
     ETHERNET_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_FLASH_CONTROL_VECTOR, ipl1SRS) FLASH_CONTROL_Handler (void)
+{
+    NVM_InterruptHandler();
 }
 
 void __attribute__((used)) __ISR(_UART4_FAULT_VECTOR, ipl1SRS) UART4_FAULT_Handler (void)

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project>                                  
+  <executable name="dist/pic32mz_ef_sk/debug/pic32mz_ef_sk.X.debug.elf">                 
+    <memory name="program">                 
+      <units>bytes</units>                 
+      <length>66432</length>                 
+      <used>4284</used>                     
+      <free>62148</free>                     
+    </memory>                              
+    <memory name="data">              
+      <units>bytes</units>                 
+      <length>525184</length>                 
+      <used>1832</used>                     
+      <free>523352</free>                     
+    </memory>                              
+  </executable>                            
+</project>                                 

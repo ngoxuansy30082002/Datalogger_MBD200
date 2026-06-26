@@ -105,11 +105,28 @@ extern "C" {
         out[MAX_DIGITAL_OUTPUT];
     }
     IO_PACKED;
-    
-     typedef struct {
+
+    typedef struct __attribute__((__packed__)) {
         uint8_t sensorIdx[MAX_HMI_PARA];
         uint8_t numEntry;
-    } HMI_PACKED;
+    }
+    HMI_PACKED;
+
+    typedef struct __attribute__((__packed__)) {
+        char host[URL_LEN];
+        uint16_t port;
+        char clientId[USERNAME_LEN];
+        char username[USERNAME_LEN];
+        char password[PASSWORD_LEN];
+        uint8_t qos;
+        bool useTls;
+        uint8_t publishInterval;
+
+        char valueTopic[MQTT_TOPIC_LEN];
+        char notifyTopic[MQTT_TOPIC_LEN];
+        char statusTopic[MQTT_TOPIC_LEN];
+    }
+    MQTT_PACKED;
 
     typedef struct __attribute__((__packed__)) {
         EXTFL_METADATA metadata;
@@ -121,8 +138,9 @@ extern "C" {
         DATETIME_PACKED time;
         IO_PACKED io;
         SDCARD_PACKED sdCard;
-
         HMI_PACKED hmi;
+        MQTT_PACKED mqtt;
+
         uint16_t position[MAX_POSITION_SIZE];
     }
     APP_PACKED;
@@ -163,6 +181,29 @@ extern "C" {
         bool uploadFtp;
         bool uploadMqtt;
         bool saveSdcard;
+
+        struct __attribute__((__packed__)) {
+            bool enable;
+            char name[SENSOR_NAME_LEN];
+            RULE_TYPE type;
+            uint8_t sensorId1;
+            RULE_OPERATOR op1;
+            float value1;
+
+            bool enableCondition1;
+            RULE_LOGIC logic;
+            uint8_t sensorId2;
+            RULE_OPERATOR op2;
+            float value2;
+
+            bool enableDebounce;
+            float debounceValue;
+            RULE_DEBOUNCE_UNIT debounceUnit;
+
+            RULE_NOTIFY_ACTION notifyAction;
+        }
+        ruleEntry[MAX_RULE];
+        uint8_t numRule;
     }
     SENSOR_PACKED;
 

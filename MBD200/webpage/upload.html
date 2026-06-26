@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BKLOGY - Data Acquisition Device">
+    <meta name="keywords" content="device monitoring, system monitor, ">
+    <meta name="author" content="BKLOGY - BK Technology">
+    <title>Datalogger-Bklogy</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+    <link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+    <link hrefsrc="assets/plugins/prettify/prettify.min.css" rel="stylesheet">
+    <link hrefsrc="assets/plugins/modal/jquery.min.css" rel="stylesheet">
+    <script src="assets/vendor/cryptoJs/rollups/md5.js"></script>
+
+</head>
+
+<body>
+
+    <div class="uploadfile-container">
+        <div class="uploadfile-card">
+            <div class="uploadfile-header">
+                <h3>Upload Firmware</h3>
+                <img src="assets/img/bk_logo.png" alt="Firmware Icon" class="uploadfile-icon">
+            </div>
+            <div class="uploadfile-drop_box">
+                <header>
+                    <h4>Select File here</h4>
+                </header>
+                <p>Files Supported: .hex</p>
+                <input class="uploadfile-input" type="file" hidden accept=".hex" id="fileID" style="display:none;">
+                <button class="uploadfile-btn">Choose File</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+        const dropArea = document.querySelector(".uploadfile-drop_box"),
+            button = dropArea.querySelector(".uploadfile-btn"),
+            dragText = dropArea.querySelector("header"),
+            input = dropArea.querySelector(".uploadfile-input");
+        let file;
+        var filename;
+
+        button.onclick = () => {
+            input.click();
+        };
+
+
+        function postMd5Hash(md5Hash) {
+            var http = new XMLHttpRequest();
+            var url = "index.html";
+            var params = `md5Hash=${md5Hash}`;
+            http.open("POST", url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader(
+                "Content-type",
+                "application/x-www-form-urlencoded"
+            );
+            http.send(params);
+        }
+
+        document.getElementById("fileID").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const fileContent = e.target.result;
+
+                    const md5Hash = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(fileContent)).toString();
+
+                    dropArea.innerHTML = `
+            <form action="upload.html" method="post" enctype="multipart/form-data" id="dynamicUploadForm">
+                <h4>File Name: ${file.name}</h4>
+                <p><b>Hash Code:</b> <span>${md5Hash}</span></p>
+                <input style="display: none;"  type="file" name="md5file" id="dynamicFileInput" />
+                <button type="submit" class="uploadfile-btn">Submit</button>
+            </form>
+            `;
+
+                    const dynamicFileInput = document.getElementById("dynamicFileInput");
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    dynamicFileInput.files = dataTransfer.files;
+
+                    postMd5Hash(md5Hash);
+                };
+                reader.readAsBinaryString(file);
+            } else {
+                dropArea.innerHTML = `<p>No file selected</p>`;
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>

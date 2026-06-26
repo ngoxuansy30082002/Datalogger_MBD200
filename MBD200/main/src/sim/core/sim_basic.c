@@ -115,7 +115,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                             return true; /* SIM detected */
                         } else {
                             _simInfo.inserted = false;
-                            LOG_DEBUG("%s - %s:\t SIM NOT inserted", __TAG__, __func__);
+                            //                            LOG_DEBUG("%s - %s:\t SIM NOT inserted", __TAG__, __func__);
                             return false; /* SIM not detected */
                         }
                     }
@@ -218,6 +218,7 @@ static bool _respParser(int state, char* buffer, size_t maxLen) {
                         ptr++;
                     }
                     _simInfo.rssi = rssi;
+                    HMIDwin_TriggerSend(HMI_TAG_NETWORK_SIGNAL);
                     LOG_DEBUG("%s - %s:\t RSSI: %d", __TAG__, __func__, _simInfo.rssi);
                     return true;
                 }
@@ -296,6 +297,9 @@ void SIMBasic_Process(void) {
         reScanTick = TICK_NOW();
     }
     preDetect = currentDetect;
+
+    if (!currentDetect)
+        _simInfo.inserted = false;
 
     if (!_simInfo.inserted && TIME_IS_EXPIRED(reScanTick, 60000)) {
         reScanTick = TICK_NOW();

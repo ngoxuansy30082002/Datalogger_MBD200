@@ -39,6 +39,7 @@ static void _ntpRetryOrFail(void) {
     _ntpCtx.retryCount++;
     if (_ntpCtx.retryCount <= NTP_MAX_RETRY) {
         LOG_DEBUG("%s - %s\t Retry %d/%d", __TAG__, __func__, _ntpCtx.retryCount, NTP_MAX_RETRY);
+        _ntpCtx.timer = TICK_NOW();
         _ntpCtx.state = NTP_ST_NET_START;
     } else {
         LOG_DEBUG("%s - %s\t Failed after %d retries", __TAG__, __func__, NTP_MAX_RETRY);
@@ -133,6 +134,7 @@ static void _ftpRetryOrFail(void) {
     _ftpCtx.retryCount++;
     if (_ftpCtx.retryCount <= FTP_MAX_RETRY) {
         LOG_DEBUG("%s - %s\t Retry %d/%d", __TAG__, __func__, _ftpCtx.retryCount, FTP_MAX_RETRY);
+        _ftpCtx.timer = TICK_NOW();
         _ftpCtx.state = FTP_ST_NET_START;
     } else {
         LOG_DEBUG("%s - %s\t Failed after %d retries", __TAG__, __func__, FTP_MAX_RETRY);
@@ -164,10 +166,12 @@ static void _ftpFsmProcess(void) {
 
         case FTP_ST_NET_START:
             if (SIMNet_IsReady()) {
+                LOG_DEBUG("%s - %s\t SIMNet_IsReady OK", __TAG__, __func__);
                 _ftpCtx.state = FTP_ST_FTP_START;
             } else {
                 if (!SIMNet_Start(false)) {
                     if (TIME_IS_EXPIRED(_ftpCtx.timer, FTP_NET_TIMEOUT_MS)) {
+                        LOG_DEBUG("%s - %s\t SIMNet_Start Timeout", __TAG__, __func__);
                         _ftpRetryOrFail();
                     }
                     break;
@@ -180,18 +184,22 @@ static void _ftpFsmProcess(void) {
 
         case FTP_ST_NET_WAIT:
             if (SIMNet_IsReady()) {
+                LOG_DEBUG("%s - %s\t SIMNet_IsReady OK", __TAG__, __func__);
                 _ftpCtx.state = FTP_ST_FTP_START;
             } else if (SIMNet_HasError()) {
                 _ftpRetryOrFail();
             } else if (TIME_IS_EXPIRED(_ftpCtx.timer, FTP_NET_TIMEOUT_MS)) {
+                LOG_DEBUG("%s - %s\t SIMNet_IsReady Timeout", __TAG__, __func__);
                 _ftpRetryOrFail();
             }
             break;
 
         case FTP_ST_FTP_START:
             if (!SIMFtp_Start(_ftpCtx.useFtp1, _ftpCtx.useFtp2)) {
+                LOG_DEBUG("%s - %s\t SIMFtp_Start OK", __TAG__, __func__);
                 _ftpRetryOrFail();
             } else {
+                LOG_DEBUG("%s - %s\t SIMFtp_Start Fail", __TAG__, __func__);
                 _ftpCtx.timer = TICK_NOW();
                 _ftpCtx.state = FTP_ST_FTP_WAIT;
             }

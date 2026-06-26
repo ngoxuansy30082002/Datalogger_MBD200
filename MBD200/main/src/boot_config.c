@@ -136,7 +136,7 @@ void BootConfig_Initialize() {
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0, &gAppCfg.network.gateway);
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_DNS_IDX0, &gAppCfg.network.primaryDNS);
     TCPIP_Helper_StringToIPAddress(TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0, &gAppCfg.network.secondDNS);
-    snprintf(gAppCfg.network.netBIOSName, BIOS_NAME_LEN, "%s", SERIAL);
+    snprintf(gAppCfg.network.netBIOSName, BIOS_NAME_LEN, "%s", DESCRIBE_DEVICE);
     snprintf(gAppCfg.network.deviceUsername, USERNAME_LEN, "%s", DEFAULT_USERNAME_DEVICE);
     snprintf(gAppCfg.network.devicePassword, PASSWORD_LEN, "%s", DEFAULT_PASSWORD_DEVICE);
 
@@ -180,6 +180,17 @@ void BootConfig_Initialize() {
     gAppCfg.hmi.numEntry = 0;
     memset(gAppCfg.hmi.sensorIdx, 0, MAX_HMI_PARA * sizeof (uint8_t));
 
+    snprintf(gAppCfg.mqtt.host, URL_LEN, "%s", "broker.emqx.io");
+    snprintf(gAppCfg.mqtt.clientId, USERNAME_LEN, "%s", "datalogger");
+    snprintf(gAppCfg.mqtt.username, USERNAME_LEN, "%s", "");
+    snprintf(gAppCfg.mqtt.password, PASSWORD_LEN, "%s", "");
+    gAppCfg.mqtt.port = 1883;
+    gAppCfg.mqtt.qos = 1;
+    gAppCfg.mqtt.useTls = false;
+    gAppCfg.mqtt.publishInterval = 5;
+    snprintf(gAppCfg.mqtt.valueTopic, MQTT_TOPIC_LEN, "%s", "/datalogger/sensor");
+    snprintf(gAppCfg.mqtt.notifyTopic, MQTT_TOPIC_LEN, "%s", "/datalogger/notif");
+    snprintf(gAppCfg.mqtt.statusTopic, MQTT_TOPIC_LEN, "%s", "/datalogger/status");
 
 
     gMbrtuCfg.numTag = 0;
@@ -216,6 +227,8 @@ void BootConfig_Initialize() {
     snprintf(gSensorCfg.filenameTemplate, FILE_NAME_LEN, "datalogger_{YYYY}{MM}{DD}{hh}{mm}{ss}");
     gSensorCfg.uploadFtp = true;
     gSensorCfg.saveSdcard = true;
+    gSensorCfg.numRule = 0;
+    memset(gSensorCfg.ruleEntry, 0, sizeof (gSensorCfg.ruleEntry));
 }
 
 bool BootConfig_Task(void) {

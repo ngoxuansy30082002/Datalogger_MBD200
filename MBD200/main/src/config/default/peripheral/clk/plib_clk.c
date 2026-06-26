@@ -91,7 +91,6 @@ void CLK_Initialize( void )
 
     /* Peripheral Module Disable Configuration */
 
-    CFGCONbits.PMDLOCK = 0;
 
     PMD1 = 0x1001U;
     PMD2 = 0x3U;
@@ -101,7 +100,6 @@ void CLK_Initialize( void )
     PMD6 = 0x830001U;
     PMD7 = 0x500000U;
 
-    CFGCONbits.PMDLOCK = 1;
 
     /* Peripheral Bus 3 is by default enabled, set its divisor */
     PB3DIVbits.PBDIV = 9;

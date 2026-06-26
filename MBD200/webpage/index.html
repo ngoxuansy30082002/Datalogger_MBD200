@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <!-- Custom Styles -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
 </head>
 
 <body>
@@ -211,19 +212,19 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="text-muted fw-500" style="width:50%">Phiên bản</td>
-                                                    <td class="fw-600">v2.4.1</td>
+                                                    <td class="fw-600" id="version">--</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted fw-500">Firmware</td>
-                                                    <td class="fw-600">FW-2024.12</td>
+                                                    <td class="fw-600" id="firmware">--</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted fw-500">Model</td>
-                                                    <td class="fw-600">DL-PRO 400</td>
+                                                    <td class="fw-600" id="model">--</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted fw-500">Serial</td>
-                                                    <td class="fw-600">SN-20241201-001</td>
+                                                    <td class="fw-600" id="serial">--</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -236,10 +237,11 @@
                                                     <td>
                                                         <div class="d-flex align-items-center gap-2">
                                                             <div class="progress flex-1" style="height:6px;flex:1">
-                                                                <div class="progress-bar"
-                                                                    style="width:34%;background:#267dc1"></div>
+                                                                <div class="progress-bar" id="cpuLoadBar"
+                                                                    style="width:0%;background:#267dc1"></div>
                                                             </div>
-                                                            <span class="fw-600" style="font-size:12px">34%</span>
+                                                            <span class="fw-600" id="cpuLoadValue"
+                                                                style="font-size:12px">--%</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -248,10 +250,12 @@
                                                     <td>
                                                         <div class="d-flex align-items-center gap-2">
                                                             <div class="progress flex-1" style="height:6px;flex:1">
-                                                                <div class="progress-bar bg-success" style="width:58%">
+                                                                <div class="progress-bar bg-success" id="memoryBar"
+                                                                    style="width:0%">
                                                                 </div>
                                                             </div>
-                                                            <span class="fw-600" style="font-size:12px">58%</span>
+                                                            <span class="fw-600" id="memoryValue"
+                                                                style="font-size:12px">--%</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -260,16 +264,18 @@
                                                     <td>
                                                         <div class="d-flex align-items-center gap-2">
                                                             <div class="progress flex-1" style="height:6px;flex:1">
-                                                                <div class="progress-bar bg-warning" style="width:72%">
+                                                                <div class="progress-bar bg-warning" id="storageBar"
+                                                                    style="width:0%">
                                                                 </div>
                                                             </div>
-                                                            <span class="fw-600" style="font-size:12px">72%</span>
+                                                            <span class="fw-600" id="storageValue"
+                                                                style="font-size:12px">--%</span>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted fw-500">Uptime</td>
-                                                    <td class="fw-600">14d 07h 23m</td>
+                                                    <td class="fw-600" id="uptime">--</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -290,42 +296,70 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex flex-column gap-3">
+                                <div class="d-flex flex-column gap-3" id="serviceStatusContainer">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-hdd-network-fill text-primary"></i>
                                             <span style="font-size:13.5px">MQTT Broker</span>
                                         </div>
-                                        <span class="badge badge-status-active">Active</span>
+                                        <span class="badge badge-status-inactive" id="serviceMqtt">--</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-folder-fill text-warning"></i>
                                             <span style="font-size:13.5px">FTP Server</span>
                                         </div>
-                                        <span class="badge badge-status-active">Active</span>
+                                        <span class="badge badge-status-inactive" id="serviceFtp">--</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-usb-plug-fill text-success"></i>
                                             <span style="font-size:13.5px">RS485 Modbus</span>
                                         </div>
-                                        <span class="badge badge-status-active">Active</span>
+                                        <span class="badge badge-status-inactive" id="serviceModbus">--</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-wifi text-info"></i>
                                             <span style="font-size:13.5px">Network</span>
                                         </div>
-                                        <span class="badge badge-status-active">Active</span>
+                                        <span class="badge badge-status-inactive" id="serviceNetwork">--</span>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-sd-card-fill text-secondary"></i>
                                             <span style="font-size:13.5px">SD card</span>
                                         </div>
-                                        <span class="badge badge-status-error">No insert</span>
+                                        <span class="badge badge-status-inactive" id="serviceSdcard">--</span>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Actions -->
+                <div class="row g-4 mt-1">
+                    <div class="col-12">
+                        <div class="card" id="systemActionContainer">
+                            <div class="card-header" style="padding:12px 20px">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-icon" style="background:#fef3c7;color:#d97706">
+                                        <i class="bi bi-gear-wide-connected"></i>
+                                    </div>
+                                    <h6 style="margin:0">System Actions</h6>
+                                </div>
+                            </div>
+                            <div class="card-body" style="padding:14px 20px">
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <button type="button" class="btn btn-primary" id="btnJumpFirmware"
+                                        style="display:none" onclick="jumpFirmware()">
+                                        <i class="bi bi-cloud-upload-fill me-2"></i>Jump New Firmware
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="btnResetSystem"
+                                        style="display:none" onclick="resetSystem()">
+                                        <i class="bi bi-arrow-repeat me-2"></i>Reset System
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -356,6 +390,186 @@
     <script src="assets/js/layout.js"></script>
     <!-- Main JS -->
     <script src="assets/js/main.js"></script>
+
+    <script>
+        /* ═══════════════════════════════════════════════
+           INDEX PAGE — Dynamic Data via AJAX
+           ═══════════════════════════════════════════════ */
+
+        var systemInfo = {};
+
+        /* ── Render System Info card ── */
+        function renderSystemInfo() {
+            var info = systemInfo.systemInfo;
+            if (!info) return;
+
+            // Text fields
+            $('#version').text(info.version || '--');
+            $('#firmware').text(info.firmware || '--');
+            $('#model').text(info.model || '--');
+            $('#serial').text(info.serial || '--');
+            $('#uptime').text(info.uptime || '--');
+
+            // CPU Load
+            var cpu = info.cpuLoad !== undefined ? info.cpuLoad : 0;
+            $('#cpuLoadValue').text(cpu + '%');
+            $('#cpuLoadBar').css('width', cpu + '%');
+
+            // Memory
+            var mem = info.memory !== undefined ? info.memory : 0;
+            $('#memoryValue').text(mem + '%');
+            $('#memoryBar').css('width', mem + '%');
+
+            // Storage
+            var sto = info.storage !== undefined ? info.storage : 0;
+            $('#storageValue').text(sto + '%');
+            $('#storageBar').css('width', sto + '%');
+        }
+
+        /* ── Render Service Status card ── */
+        function renderServiceStatus() {
+            var services = systemInfo.services;
+            if (!services) return;
+
+            // Helper: set badge Active/Inactive
+            function setServiceBadge(elementId, value) {
+                var $el = $('#' + elementId);
+                if (value === 1 || value === true) {
+                    $el.text('Active')
+                        .removeClass('badge-status-inactive badge-status-error')
+                        .addClass('badge-status-active');
+                } else {
+                    $el.text('Inactive')
+                        .removeClass('badge-status-active badge-status-inactive')
+                        .addClass('badge-status-error');
+                }
+            }
+
+            setServiceBadge('serviceMqtt', services.mqtt);
+            setServiceBadge('serviceFtp', services.ftp);
+            setServiceBadge('serviceModbus', services.modbus);
+            setServiceBadge('serviceNetwork', services.network);
+            setServiceBadge('serviceSdcard', services.sdcard);
+        }
+
+        /* ── Render System Actions buttons ── */
+        function renderSystemActions() {
+            var buttons = systemInfo.buttons;
+            if (!buttons) return;
+
+            // Toggle button visibility
+            if (buttons.showJumpFirmware === 1 || buttons.showJumpFirmware === true) {
+                $('#btnJumpFirmware').show();
+            } else {
+                $('#btnJumpFirmware').hide();
+            }
+
+            if (buttons.showResetSystem === 1 || buttons.showResetSystem === true) {
+                $('#btnResetSystem').show();
+            } else {
+                $('#btnResetSystem').hide();
+            }
+        }
+
+        /* ── AJAX Update Callback ── */
+        function updatedata(xmlData) {
+            var dataString;
+            dataString = getXMLValue(xmlData, 'systemInfo');
+
+            // dataString = `
+            // {
+            //     "systemInfo": {
+            //         "version": "v2.4.1",
+            //         "firmware": "v3.0.1",
+            //         "model": "DL-PRO 400",
+            //         "serial": "SN-20241201-001",
+            //         "cpuLoad": 34,
+            //         "memory": 58,
+            //         "storage": 72,
+            //         "uptime": "14d 07h 23m"
+            //     },
+            //     "services": {
+            //         "mqtt": 1,
+            //         "ftp": 1,
+            //         "modbus": 1,
+            //         "network": 1,
+            //         "sdcard": 0
+            //     },
+            //     "buttons": {
+            //         "showJumpFirmware": 1,
+            //         "showResetSystem": 1
+            //     }
+            // }
+            // `;
+
+            try {
+                systemInfo = JSON.parse(dataString);
+                renderSystemInfo();
+                renderServiceStatus();
+                renderSystemActions();
+            } catch (e) {
+                console.error("Error parsing systemInfo JSON:", e);
+            }
+        }
+
+        /* ── Polling ── */
+        setTimeout("newAJAXCommand('xml/index.xml', updatedata, true)", 500);
+
+        /* ── POST: Jump New Firmware ── */
+        function jumpFirmware() {
+            var params = "action=jumpFirmware";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", "index.html", true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function () {
+                if (http.readyState === 4) {
+                    if (http.status === 200 || http.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã gửi lệnh Jump Firmware thành công!', 'success');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi lệnh: ' + http.status, 'error');
+                        }
+                    }
+                }
+            };
+            http.send(params);
+        }
+
+        /* ── POST: Reset System ── */
+        function resetSystem() {
+            if (!confirm('Bạn có chắc muốn khởi động lại hệ thống?')) {
+                return;
+            }
+
+            var params = "action=resetSystem";
+
+            var http = new XMLHttpRequest();
+            http.open("POST", "index.html", true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function () {
+                if (http.readyState === 4) {
+                    if (http.status === 200 || http.status === 0) {
+                        if (typeof showToast === 'function') {
+                            showToast('Đã gửi lệnh Reset System thành công!', 'success');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Lỗi khi gửi lệnh: ' + http.status, 'error');
+                        }
+                    }
+                }
+            };
+            http.send(params);
+        }
+
+        /* ── Document Ready ── */
+        $(document).ready(function () {
+            newAJAXCommand('xml/index.xml', updatedata, false);
+        });
+    </script>
 
 </body>
 

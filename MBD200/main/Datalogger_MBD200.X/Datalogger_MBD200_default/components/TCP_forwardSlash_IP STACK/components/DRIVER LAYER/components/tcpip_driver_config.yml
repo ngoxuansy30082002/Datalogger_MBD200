@@ -1,0 +1,31 @@
+configVersion: 1.0.0
+componentName: tcpip_driver_config
+coreVersion: 5.8.4
+device: PIC32MZ2048EFM100
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: tcpip_driver_config
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: net
+  type: package
+  version: v3.14.4
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments: {}
+  elementPosition: {}
+  symbols:
+    TCPIP_AUTOCONFIG_ENABLE_ETHMAC:
+      attributes:
+        id: TCPIP_AUTOCONFIG_ENABLE_ETHMAC
+      children:
+      - children:
+        - attributes:
+            id: udp_bootloader
+            value: 'true'
+          type: Dynamic
+        type: Values
+      type: Boolean
+  userData: {}

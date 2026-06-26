@@ -75,6 +75,7 @@ void UART2_TX_InterruptHandler( void );
 void I2C2_BUS_InterruptHandler( void );
 void I2C2_MASTER_InterruptHandler( void );
 void ETHERNET_InterruptHandler( void );
+void NVM_InterruptHandler( void );
 void UART4_FAULT_InterruptHandler( void );
 void UART4_RX_InterruptHandler( void );
 void UART4_TX_InterruptHandler( void );

@@ -16,11 +16,11 @@
 #define MPFS_RESERVE_BLOCK              DRV_SST26_START_ADDRESS
 
 #define MANUFACTURER                    "Bklogy JSC"
-#define FW_CODE                         "v3.2.0"
-#define HW_CODE                         "v2.2.0"
-#define DATE                            "28-12-2024"
-#define MODEL                           "MBD300C-DualSIM"
-#define SERIAL                          "022500003"
+#define FIRMWARE_VERSION                "v3.0.0"
+#define HARDWARE_VERSION                "v2.1.0"
+#define DATE_TIME                       "25-06-2026"
+#define MODEL                           "MBD200"
+#define SERIAL_NUMBER                   "BKT-MBD-022500003"
 #define DESCRIBE_DEVICE                 "Datalogger"
 
 #define DEFAULT_USERNAME_DEVICE         "admin"
@@ -54,17 +54,6 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-    typedef struct __attribute__((__packed__)) {
-        char manufacturer[MANUFACTURER_LEN];
-        char fwVer[FW_CODE_LEN];
-        char hwVer[HW_CODE_LEN];
-        char dateTime[DATE_LEN];
-        char model[MODEL_LEN];
-        char serial[SERIAL_LEN];
-        uint8_t fwHashCode[HASHCODE_SIZE];
-    }
-    DEVICE_INFO_PACKED;
 
     typedef struct {
         GPIO_PIN button;

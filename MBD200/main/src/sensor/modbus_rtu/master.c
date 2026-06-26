@@ -51,17 +51,17 @@ static void _calculatorAdvancedScaling(uint8_t i) {
 
     switch (thisCfg->rawDataType) {
         case DATA_UINT:
-            SYS_CONSOLE_PRINT("reuint: %u --------\r\n", rawValue.reuint);
+            //            LOG_DEBUG("reuint: %u --------\r\n", rawValue.reuint);
             calcVal = (double) rawValue.reuint;
             break;
 
         case DATA_INT:
-            SYS_CONSOLE_PRINT("reint: %d --------\r\n", rawValue.reint);
+            //            LOG_DEBUG("reint: %d --------\r\n", rawValue.reint);
             calcVal = (double) rawValue.reint;
             break;
 
         case DATA_FLOAT:
-            SYS_CONSOLE_PRINT("refloat: %f --------\r\n", (double) rawValue.refloat.f);
+            //            LOG_DEBUG("refloat: %f --------\r\n", (double) rawValue.refloat.f);
             calcVal = (double) rawValue.refloat.f;
             break;
 
@@ -96,22 +96,72 @@ static void _calculatorAdvancedScaling(uint8_t i) {
     switch (targetDataType) {
         case DATA_UINT:
             mbrtuMasterDt.entry[i].value.uintVal = (uint64_t) calcVal;
-            SYS_CONSOLE_PRINT("u_val222: %llu \r\n", mbrtuMasterDt.entry[i].value.uintVal);
+            //            LOG_DEBUG("u_val222: %llu \r\n", mbrtuMasterDt.entry[i].value.uintVal);
             break;
 
         case DATA_INT:
             mbrtuMasterDt.entry[i].value.intVal = (int64_t) calcVal;
-            SYS_CONSOLE_PRINT("i_val222: %lld \r\n", mbrtuMasterDt.entry[i].value.intVal);
+            //            LOG_DEBUG("i_val222: %lld \r\n", mbrtuMasterDt.entry[i].value.intVal);
             break;
 
         case DATA_FLOAT:
             mbrtuMasterDt.entry[i].value.floatVal = (float) calcVal;
-            SYS_CONSOLE_PRINT("f_val222: %.5f \r\n", mbrtuMasterDt.entry[i].value.floatVal);
+            //            LOG_DEBUG("f_val222: %.5f \r\n", mbrtuMasterDt.entry[i].value.floatVal);
             break;
 
         default:
             break;
     }
+}
+
+static void _printToHMI(uint8_t thisTag) {
+    for (uint8_t i = 0; i < gAppCfg.hmi.numEntry; i++) {
+        uint8_t idxHMI = gAppCfg.hmi.sensorIdx[i] - 1;
+        SENSOR_ENTRY_CONFIG *sEntry = &gSensorCfg.entry[idxHMI];
+
+        if (!sEntry->enable)
+            continue;
+
+        if (sEntry->type == SENSOR_MBRTU &&
+                sEntry->indexOfType == thisTag) {
+            uint8_t status = 0;
+
+            int8_t stt = SensorGeneral_calculateSensorStatusInput(idxHMI);
+            if (stt == 0) status = 0;
+            else if (stt == 1) status = 1;
+            else if (stt == 2) status = 2;
+            else {
+                if (sEntry->calibrate)
+                    status = 1;
+                else {
+                    stt = SensorGeneral_calculateSensorStatusAuto(sEntry->type, thisTag);
+                    if (stt == -1)
+                        continue;
+
+                    status = stt;
+                }
+            }
+
+            HMIDwin_TriggerSendStatus(i, status);
+
+            if (mbrtuMasterDt.entry[thisTag].dataType == DATA_UINT) {
+                float val = (float) mbrtuMasterDt.entry[thisTag].value.uintVal;
+                //                LOG_DEBUG("%s - %s\t Status:%u Val(raw):%u Val(float):%f",
+                //                        __TAG__, __func__, status, (unsigned int) mbrtuMasterDt.entry[thisTag].value.uintVal, val);
+                HMIDwin_TriggerSendValue(i, HMI_DATA_UINT, val);
+            } else if (mbrtuMasterDt.entry[thisTag].dataType == DATA_INT) {
+                float val = (float) mbrtuMasterDt.entry[thisTag].value.intVal;
+                //                LOG_DEBUG("%s - %s\t Status:%u Val(raw):%d Val(float):%f",
+                //                        __TAG__, __func__, status, (int) mbrtuMasterDt.entry[thisTag].value.intVal, val);
+                HMIDwin_TriggerSendValue(i, HMI_DATA_INT, val);
+            } else if (mbrtuMasterDt.entry[thisTag].dataType == DATA_FLOAT) {
+                float val = mbrtuMasterDt.entry[thisTag].value.floatVal;
+                //                LOG_DEBUG("%s - %s\t Status:%u Val(float):%f",
+                //                        __TAG__, __func__, status, val);
+                HMIDwin_TriggerSendValue(i, HMI_DATA_FLOAT, val);
+            }
+        }
+    };
 }
 
 void MbrtuMaster_Initialize(void) {
@@ -262,10 +312,10 @@ void MbrtuMaster_Tasks(void) {
 
         case MBRTU_MASTER_COMPLETE:
         {
+            _printToHMI(_rowIndex);
             _rowIndex = _gotoNextRow(_rowIndex);
             pollTick = TICK_NOW();
             NEXT_STATE(MBRTU_MASTER_IDLE);
-            //            _MBRTU_PrintHMI(mbCurrentRow, (mbrtuMasterDt.mbRTUQuality[mbCurrentRow] != GOOD));
             break;
         }
 
@@ -285,52 +335,14 @@ void MbRtuMaster_SetCurrentTagData(MBRTU_RAW_VALUE raw, bool statusIsGood) {
 }
 
 uint16_t MbRtu_getValueFromIndex(uint8_t idxMb) {
-    if (mbrtuMasterDt.entry[idxMb].dataType == DATA_UINT) 
+    if (mbrtuMasterDt.entry[idxMb].dataType == DATA_UINT)
         return (uint16_t) (mbrtuMasterDt.entry[idxMb].value.uintVal);
 
-    else if (mbrtuMasterDt.entry[idxMb].dataType == DATA_FLOAT) 
+    else if (mbrtuMasterDt.entry[idxMb].dataType == DATA_FLOAT)
         return (uint16_t) (mbrtuMasterDt.entry[idxMb].value.floatVal);
 
-    else if (mbrtuMasterDt.entry[idxMb].dataType == DATA_INT) 
+    else if (mbrtuMasterDt.entry[idxMb].dataType == DATA_INT)
         return (uint16_t) (mbrtuMasterDt.entry[idxMb].value.intVal);
 
     return 0;
 }
-
-static void _MBRTU_PrintHMI(uint8_t mbCurrentRow, bool noGood) {
-    //    for (uint8_t i = 0; i < MAX_HMI_PARA; i++) {
-    //        uint8_t idxHMI = glbAppCfg.tag_hmi[i];
-    //        if (idxHMI == OPERATOR_MULTIPLICATION0 || glbAppCfg.sensor.entry[idxHMI].enable == false)
-    //            continue;
-    //
-    //        if (glbAppCfg.sensor.entry[idxHMI].type == SENSOR_RTU &&
-    //                glbAppCfg.sensor.entry[idxHMI].idxInType == mbCurrentRow) {
-    //            uint8_t status = 2;
-    //            int8_t stt = APP_CalculateStatusSensor(idxHMI);
-    //            if (stt == (STATUS) BAD) status = 2;
-    //            else if (stt == (STATUS) CALIBRATION) status = 1;
-    //            else if (stt == (STATUS) GOOD) status = 0;
-    //            else if (stt == (-1)) {
-    //                if (noGood) status = 2;
-    //                else status = 0;
-    //            }
-    //
-    //            if (glbAppCfg.sensor.entry[idxHMI].calibrated) status = 1;
-    //
-    //            HMIDwin_TriggerSendStatus(i, status);
-    //
-    //            if (glbAppRtu.analog_modbus[mbCurrentRow].scaled_data_type == OPERATOR_ADDITION) //uint
-    //                HMIDwin_TriggerSendValue(i, HMI_DATA_UINT, (float) mbrtuMasterDt.value[mbCurrentRow].value_uint);
-    //
-    //            if (glbAppRtu.analog_modbus[mbCurrentRow].scaled_data_type == OPERATOR_SUBTRACTION) //float
-    //                HMIDwin_TriggerSendValue(i, HMI_DATA_FLOAT, (float) mbrtuMasterDt.value[mbCurrentRow].value_float);
-    //
-    //            if (glbAppRtu.analog_modbus[mbCurrentRow].scaled_data_type == OPERATOR_DIVISION) //int
-    //                HMIDwin_TriggerSendValue(i, HMI_DATA_INT, (float) mbrtuMasterDt.value[mbCurrentRow].value_int);
-    //
-    //            //            (void) status;
-    //        }
-    //    }
-}
-
-

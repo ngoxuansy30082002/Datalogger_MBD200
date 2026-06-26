@@ -44,10 +44,9 @@ static bool _openTask() {
 
     if (!_isCardDetect() &&
             openState >= SDCARD_OPEN_MOUNT && openState <= SDCARD_OPEN_UNMOUNT) {
-        SYS_CONSOLE_PRINT("%s - %s\t Removed unexpectedly\r\n", __TAG__, __func__);
+        //        SYS_CONSOLE_PRINT("%s - %s\t Removed unexpectedly\r\n", __TAG__, __func__);
         //        lenLog = snprintf(logs, sizeof (logs), "%s: Removed", __TAG__);
         //        ConsoleLos_Push(logs, lenLog, CONSOLE_INFO);
-
         _loadedIni = false;
         sdcardDt.status = SDCARD_STS_NOINSERT;
         SET_BOOT_STATE(SDCARD_OPEN_UNMOUNT);
@@ -62,7 +61,7 @@ static bool _openTask() {
 
         case SDCARD_OPEN_DETECT:
             if (_isCardDetect()) {
-                SYS_CONSOLE_PRINT("%s - %s\t Inserted\r\n", __TAG__, __func__);
+                //                SYS_CONSOLE_PRINT("%s - %s\t Inserted\r\n", __TAG__, __func__);
                 //                lenLog = snprintf(logs, sizeof (logs), "%s: Inserted", __TAG__);
                 //                ConsoleLos_Push(logs, lenLog, CONSOLE_INFO);
 
@@ -91,7 +90,7 @@ static bool _openTask() {
                     openState = SDCARD_OPEN_SET_DRIVER;
                 } else {
                     if (++openRetry > openNumRetry) {
-                        SYS_CONSOLE_PRINT("%s - %s\t Mount failed after retries\r\n", __TAG__, __func__);
+                        //                        SYS_CONSOLE_PRINT("%s - %s\t Mount failed after retries\r\n", __TAG__, __func__);
                         _totalErr++;
                         SET_BOOT_STATE(SDCARD_OPEN_IDLE);
                     }
@@ -101,10 +100,9 @@ static bool _openTask() {
 
         case SDCARD_OPEN_SET_DRIVER:
             if (SYS_FS_CurrentDriveSet(SYS_FS_SDCARD_MOUNT_POINT) == SYS_FS_RES_SUCCESS) {
-                SYS_CONSOLE_PRINT("%s - %s\t Init SUCCESS\r\n", __TAG__, __func__);
+                //                SYS_CONSOLE_PRINT("%s - %s\t Init SUCCESS\r\n", __TAG__, __func__);
                 //                lenLog = snprintf(logs, sizeof (logs), "%s: Init SUCCESS", __TAG__);
                 //                ConsoleLos_Push(logs, lenLog, CONSOLE_SUCCESS);
-
                 sdcardDt.status = SDCARD_STS_READY;
                 openState = SDCARD_OPEN_READY;
             } else {
@@ -119,7 +117,7 @@ static bool _openTask() {
         case SDCARD_OPEN_UNMOUNT:
             if (_f.bits.isMounted) {
                 if (SYS_FS_Unmount(SYS_FS_SDCARD_MOUNT_POINT) == SYS_FS_RES_SUCCESS || ++openRetry > openNumRetry) {
-                    SYS_CONSOLE_PRINT("%s - %s\t Unmounted\r\n", __TAG__, __func__);
+                    //                    SYS_CONSOLE_PRINT("%s - %s\t Unmounted\r\n", __TAG__, __func__);
                     _f.bits.isMounted = false;
                     openRetry = 0;
                     _enablePowerForCard(false);
@@ -132,7 +130,7 @@ static bool _openTask() {
             break;
 
         case SDCARD_OPEN_ERROR:
-            SYS_CONSOLE_PRINT("%s - %s\t Critical FS Error: %u\r\n", __TAG__, __func__, SYS_FS_Error());
+            //            SYS_CONSOLE_PRINT("%s - %s\t Critical FS Error: %u\r\n", __TAG__, __func__, SYS_FS_Error());
             sdcardDt.status = SDCARD_STS_ERROR;
             SET_BOOT_STATE(SDCARD_OPEN_UNMOUNT);
             break;
@@ -736,12 +734,6 @@ void SDcard_Task() {
             sdcardDt.ledDisp = !sdcardDt.ledDisp;
         }
     } else sdcardDt.ledDisp = 0;
-
-    static uint8_t preStatus = 255;
-    if (preStatus != sdcardDt.status) {
-        //        HMIDwin_TriggerSend(HMI_TAG_DEVICE_STATUS);
-        preStatus = sdcardDt.status;
-    }
 
     bool opened = _openTask();
     if (!opened) return;

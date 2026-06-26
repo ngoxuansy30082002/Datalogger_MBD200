@@ -94,13 +94,6 @@ extern "C" {
 
 
 
-#define SYS_DEBUG_ENABLE
-#define SYS_DEBUG_GLOBAL_ERROR_LEVEL       SYS_ERROR_DEBUG
-#define SYS_DEBUG_BUFFER_DMA_READY
-#define SYS_DEBUG_USE_CONSOLE
-
-
-
 /* File System Service Configuration */
 
 #define SYS_FS_MEDIA_NUMBER               (2U)
@@ -125,6 +118,13 @@ extern "C" {
 
 
 
+
+
+
+#define SYS_DEBUG_ENABLE
+#define SYS_DEBUG_GLOBAL_ERROR_LEVEL       SYS_ERROR_DEBUG
+#define SYS_DEBUG_BUFFER_DMA_READY
+#define SYS_DEBUG_USE_CONSOLE
 
 
 #define SYS_CONSOLE_DEVICE_MAX_INSTANCES   			(1U)
@@ -156,15 +156,6 @@ extern "C" {
 
 /* Memory Driver Global Configuration Options */
 #define DRV_MEMORY_INSTANCES_NUMBER          (1U)
-/* SDSPI Driver Common Configuration Options */
-#define DRV_SDSPI_INSTANCES_NUMBER              (1U)
-
-
-/* Memory Driver Instance 0 Configuration */
-#define DRV_MEMORY_INDEX_0                   0
-#define DRV_MEMORY_CLIENTS_NUMBER_IDX0       1
-#define DRV_MEMORY_BUF_Q_SIZE_IDX0    1
-
 /*** MIIM Driver Configuration ***/
 #define DRV_MIIM_ETH_MODULE_ID_0                _ETH_BASE_ADDRESS
 #define DRV_MIIM_DRIVER_INDEX_0                 0
@@ -176,6 +167,15 @@ extern "C" {
 #define DRV_MIIM_DRIVER_OBJECT              DRV_MIIM_OBJECT_BASE_Default            
 
 
+
+/* SDSPI Driver Common Configuration Options */
+#define DRV_SDSPI_INSTANCES_NUMBER              (1U)
+
+
+/* Memory Driver Instance 0 Configuration */
+#define DRV_MEMORY_INDEX_0                   0
+#define DRV_MEMORY_CLIENTS_NUMBER_IDX0       1
+#define DRV_MEMORY_BUF_Q_SIZE_IDX0    1
 
 /* SST26 Driver Instance Configuration */
 #define DRV_SST26_INDEX                 (0U)
@@ -192,6 +192,164 @@ extern "C" {
 // Section: Middleware & Other Library Configuration
 // *****************************************************************************
 // *****************************************************************************
+
+/*** ICMPv4 Server Configuration ***/
+#define TCPIP_STACK_USE_ICMP_SERVER
+#define TCPIP_ICMP_ECHO_ALLOW_BROADCASTS    false
+
+
+/******************************************************************************/
+/*wolfSSL TLS Layer Configuration*/
+/******************************************************************************/
+
+#define WOLFSSL_ALT_NAMES
+#define WOLFSSL_DER_LOAD
+#define KEEP_OUR_CERT
+#define KEEP_PEER_CERT
+#define HAVE_CRL_IO
+#define HAVE_IO_TIMEOUT
+#define TFM_NO_ASM
+#define WOLFSSL_NO_ASM
+#define SIZEOF_LONG_LONG 8
+#define WOLFSSL_USER_IO
+#define NO_WRITEV
+#define MICROCHIP_TCPIP
+#define WOLFSSL_DTLS
+#define NO_PWDBASED
+#define NO_ERROR_STRINGS
+#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
+#define NO_OLD_TLS
+
+
+/*** TCP Configuration ***/
+#define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
+#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			512
+#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			512
+#define TCPIP_TCP_DYNAMIC_OPTIONS             			true
+#define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
+#define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
+#define TCPIP_TCP_FIN_WAIT_2_TIMEOUT		    		5000
+#define TCPIP_TCP_KEEP_ALIVE_TIMEOUT		    		10000
+#define TCPIP_TCP_CLOSE_WAIT_TIMEOUT		    		0
+#define TCPIP_TCP_MAX_RETRIES		            		5
+#define TCPIP_TCP_MAX_UNACKED_KEEP_ALIVES			6
+#define TCPIP_TCP_MAX_SYN_RETRIES		        	3
+#define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
+#define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
+#define TCPIP_TCP_MAX_SOCKETS		                10
+#define TCPIP_TCP_TASK_TICK_RATE		        	5
+#define TCPIP_TCP_MSL_TIMEOUT		        	    0
+#define TCPIP_TCP_QUIET_TIME		        	    0
+#define TCPIP_TCP_COMMANDS   false
+#define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
+#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    false
+
+
+
+/*** ARP Configuration ***/
+#define TCPIP_ARP_CACHE_ENTRIES                 		20
+#define TCPIP_ARP_CACHE_DELETE_OLD		        	true
+#define TCPIP_ARP_CACHE_SOLVED_ENTRY_TMO			1200
+#define TCPIP_ARP_CACHE_PENDING_ENTRY_TMO			60
+#define TCPIP_ARP_CACHE_PENDING_RETRY_TMO			2
+#define TCPIP_ARP_CACHE_PERMANENT_QUOTA		    		50
+#define TCPIP_ARP_CACHE_PURGE_THRESHOLD		    		75
+#define TCPIP_ARP_CACHE_PURGE_QUANTA		    		1
+#define TCPIP_ARP_CACHE_ENTRY_RETRIES		    		3
+#define TCPIP_ARP_GRATUITOUS_PROBE_COUNT			1
+#define TCPIP_ARP_TASK_PROCESS_RATE		        	2000
+#define TCPIP_ARP_PRIMARY_CACHE_ONLY		        	true
+#define TCPIP_ARP_COMMANDS false
+
+
+
+/* Network Configuration Index 0 */
+#define TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0 "ETHMAC"
+#define TCPIP_IF_ETHMAC
+
+#define TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0              "MCHPBOARD_E"
+#define TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0               0
+
+#define TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0         "192.168.0.10"
+#define TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0            "255.255.255.0"
+#define TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0            "192.168.0.1"
+#define TCPIP_NETWORK_DEFAULT_DNS_IDX0                "192.168.0.1"
+#define TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0         "0.0.0.0"
+#define TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0         "full"
+#define TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0            \
+                                                    TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON |\
+                                                    TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON |\
+                                                    TCPIP_NETWORK_CONFIG_IP_STATIC
+                                                    
+#define TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0         DRV_ETHMAC_PIC32MACObject
+
+
+
+#define TCPIP_NETWORK_VLAN_ID_IDX0         0
+#define TCPIP_NETWORK_VLAN_PCP_IDX0         0
+
+
+
+/*** FTPC Configuration ***/
+#define TCPIP_STACK_USE_FTP_CLIENT
+#define TCPIP_FTPC_TASK_TICK_RATE        5
+#define TCPIP_FTPC_TMO                   2
+#define TCPIP_FTPC_MAX_NUM_CLIENT        3
+#define TCPIP_FTPC_DATA_SKT_TX_BUFF_SIZE_DFLT        0
+#define TCPIP_FTPC_DATA_SKT_RX_BUFF_SIZE_DFLT        0
+
+
+/*** IPv4 Configuration ***/
+#define TCPIP_IPV4_ARP_SLOTS                        20
+#define TCPIP_IPV4_EXTERN_PACKET_PROCESS   false
+
+#define TCPIP_IPV4_COMMANDS false
+
+#define TCPIP_IPV4_FORWARDING_ENABLE    false 
+
+
+
+
+
+/*** announce Configuration ***/
+#define TCPIP_STACK_USE_ANNOUNCE
+#define TCPIP_ANNOUNCE_MAX_PAYLOAD 	512
+#define TCPIP_ANNOUNCE_TASK_RATE    333
+#define TCPIP_ANNOUNCE_NETWORK_DIRECTED_BCAST             			false
+
+
+
+/*** UDP Configuration ***/
+#define TCPIP_UDP_MAX_SOCKETS		                	10
+#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	512
+#define TCPIP_UDP_SOCKET_DEFAULT_TX_QUEUE_LIMIT    	 	3
+#define TCPIP_UDP_SOCKET_DEFAULT_RX_QUEUE_LIMIT			3
+#define TCPIP_UDP_USE_POOL_BUFFERS   false
+#define TCPIP_UDP_USE_TX_CHECKSUM             			true
+#define TCPIP_UDP_USE_RX_CHECKSUM             			true
+#define TCPIP_UDP_COMMANDS   false
+#define TCPIP_UDP_EXTERN_PACKET_PROCESS   false
+
+
+#define DRV_LAN8740_PHY_CONFIG_FLAGS       ( 0 \
+                                                    | DRV_ETHPHY_CFG_AUTO \
+                                                    )
+                                                    
+#define DRV_LAN8740_PHY_LINK_INIT_DELAY            500
+#define DRV_LAN8740_PHY_ADDRESS                    0
+#define DRV_LAN8740_PHY_PERIPHERAL_ID              _ETH_BASE_ADDRESS
+#define DRV_ETHPHY_LAN8740_NEG_INIT_TMO            1
+#define DRV_ETHPHY_LAN8740_NEG_DONE_TMO            2000
+#define DRV_ETHPHY_LAN8740_RESET_CLR_TMO           500
+
+
+/* MPLAB Harmony Net Presentation Layer Definitions*/
+#define NET_PRES_NUM_INSTANCE 1
+#define NET_PRES_NUM_SOCKETS 10
+
+
+	
+
 
 
 /*** DNS Client Configuration ***/
@@ -210,12 +368,6 @@ extern "C" {
 #define TCPIP_DNS_CLIENT_DELETE_OLD_ENTRIES			true
 #define TCPIP_DNS_CLIENT_CONSOLE_CMD               	true
 #define TCPIP_DNS_CLIENT_USER_NOTIFICATION   false
-
-
-
-/*** ICMPv4 Server Configuration ***/
-#define TCPIP_STACK_USE_ICMP_SERVER
-#define TCPIP_ICMP_ECHO_ALLOW_BROADCASTS    false
 
 
 
@@ -300,28 +452,6 @@ extern "C" {
 #define TCPIP_HTTP_NET_CONSOLE_CMD           		false
 
 
-/******************************************************************************/
-/*wolfSSL TLS Layer Configuration*/
-/******************************************************************************/
-
-#define WOLFSSL_ALT_NAMES
-#define WOLFSSL_DER_LOAD
-#define KEEP_OUR_CERT
-#define KEEP_PEER_CERT
-#define HAVE_CRL_IO
-#define HAVE_IO_TIMEOUT
-#define TFM_NO_ASM
-#define WOLFSSL_NO_ASM
-#define SIZEOF_LONG_LONG 8
-#define WOLFSSL_USER_IO
-#define NO_WRITEV
-#define MICROCHIP_TCPIP
-#define WOLFSSL_DTLS
-#define NO_PWDBASED
-#define NO_ERROR_STRINGS
-#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
-#define NO_OLD_TLS
-
 /*** TCPIP MAC Configuration ***/
 #define TCPIP_EMAC_TX_DESCRIPTORS				    8
 #define TCPIP_EMAC_RX_DESCRIPTORS				    8
@@ -367,31 +497,6 @@ extern "C" {
 
 
 
-/*** TCP Configuration ***/
-#define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
-#define TCPIP_TCP_SOCKET_DEFAULT_TX_SIZE			512
-#define TCPIP_TCP_SOCKET_DEFAULT_RX_SIZE			512
-#define TCPIP_TCP_DYNAMIC_OPTIONS             			true
-#define TCPIP_TCP_START_TIMEOUT_VAL		        	1000
-#define TCPIP_TCP_DELAYED_ACK_TIMEOUT		    		100
-#define TCPIP_TCP_FIN_WAIT_2_TIMEOUT		    		5000
-#define TCPIP_TCP_KEEP_ALIVE_TIMEOUT		    		10000
-#define TCPIP_TCP_CLOSE_WAIT_TIMEOUT		    		0
-#define TCPIP_TCP_MAX_RETRIES		            		5
-#define TCPIP_TCP_MAX_UNACKED_KEEP_ALIVES			6
-#define TCPIP_TCP_MAX_SYN_RETRIES		        	3
-#define TCPIP_TCP_AUTO_TRANSMIT_TIMEOUT_VAL			40
-#define TCPIP_TCP_WINDOW_UPDATE_TIMEOUT_VAL			200
-#define TCPIP_TCP_MAX_SOCKETS		                10
-#define TCPIP_TCP_TASK_TICK_RATE		        	5
-#define TCPIP_TCP_MSL_TIMEOUT		        	    0
-#define TCPIP_TCP_QUIET_TIME		        	    0
-#define TCPIP_TCP_COMMANDS   false
-#define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
-#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    false
-
-
-
 /*** DHCP Configuration ***/
 #define TCPIP_STACK_USE_DHCP_CLIENT
 #define TCPIP_DHCP_TIMEOUT                          10
@@ -407,71 +512,6 @@ extern "C" {
 #define TCPIP_DHCP_NTP_SERVER_ADDRESSES             0
 #define TCPIP_DHCP_ARP_LEASE_CHECK_TMO              1000
 #define TCPIP_DHCP_WAIT_ARP_FAIL_CHECK_TMO          10
-
-
-
-/*** ARP Configuration ***/
-#define TCPIP_ARP_CACHE_ENTRIES                 		20
-#define TCPIP_ARP_CACHE_DELETE_OLD		        	true
-#define TCPIP_ARP_CACHE_SOLVED_ENTRY_TMO			1200
-#define TCPIP_ARP_CACHE_PENDING_ENTRY_TMO			60
-#define TCPIP_ARP_CACHE_PENDING_RETRY_TMO			2
-#define TCPIP_ARP_CACHE_PERMANENT_QUOTA		    		50
-#define TCPIP_ARP_CACHE_PURGE_THRESHOLD		    		75
-#define TCPIP_ARP_CACHE_PURGE_QUANTA		    		1
-#define TCPIP_ARP_CACHE_ENTRY_RETRIES		    		3
-#define TCPIP_ARP_GRATUITOUS_PROBE_COUNT			1
-#define TCPIP_ARP_TASK_PROCESS_RATE		        	2000
-#define TCPIP_ARP_PRIMARY_CACHE_ONLY		        	true
-#define TCPIP_ARP_COMMANDS false
-
-
-
-/* Network Configuration Index 0 */
-#define TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0 "ETHMAC"
-#define TCPIP_IF_ETHMAC
-
-#define TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0              "MCHPBOARD_E"
-#define TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0               0
-
-#define TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0         "192.168.0.10"
-#define TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0            "255.255.255.0"
-#define TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0            "192.168.0.1"
-#define TCPIP_NETWORK_DEFAULT_DNS_IDX0                "192.168.0.1"
-#define TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0         "0.0.0.0"
-#define TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0         "full"
-#define TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0            \
-                                                    TCPIP_NETWORK_CONFIG_DHCP_CLIENT_ON |\
-                                                    TCPIP_NETWORK_CONFIG_DNS_CLIENT_ON |\
-                                                    TCPIP_NETWORK_CONFIG_IP_STATIC
-                                                    
-#define TCPIP_NETWORK_DEFAULT_MAC_DRIVER_IDX0         DRV_ETHMAC_PIC32MACObject
-
-
-
-#define TCPIP_NETWORK_VLAN_ID_IDX0         0
-#define TCPIP_NETWORK_VLAN_PCP_IDX0         0
-
-
-
-/*** FTPC Configuration ***/
-#define TCPIP_STACK_USE_FTP_CLIENT
-#define TCPIP_FTPC_TASK_TICK_RATE        5
-#define TCPIP_FTPC_TMO                   2
-#define TCPIP_FTPC_MAX_NUM_CLIENT        3
-#define TCPIP_FTPC_DATA_SKT_TX_BUFF_SIZE_DFLT        0
-#define TCPIP_FTPC_DATA_SKT_RX_BUFF_SIZE_DFLT        0
-
-
-/*** IPv4 Configuration ***/
-#define TCPIP_IPV4_ARP_SLOTS                        20
-#define TCPIP_IPV4_EXTERN_PACKET_PROCESS   false
-
-#define TCPIP_IPV4_COMMANDS false
-
-#define TCPIP_IPV4_FORWARDING_ENABLE    false 
-
-
 
 
 
@@ -553,39 +593,6 @@ extern "C" {
 
 
 
-/*** announce Configuration ***/
-#define TCPIP_STACK_USE_ANNOUNCE
-#define TCPIP_ANNOUNCE_MAX_PAYLOAD 	512
-#define TCPIP_ANNOUNCE_TASK_RATE    333
-#define TCPIP_ANNOUNCE_NETWORK_DIRECTED_BCAST             			false
-
-
-
-/*** UDP Configuration ***/
-#define TCPIP_UDP_MAX_SOCKETS		                	10
-#define TCPIP_UDP_SOCKET_DEFAULT_TX_SIZE		    	512
-#define TCPIP_UDP_SOCKET_DEFAULT_TX_QUEUE_LIMIT    	 	3
-#define TCPIP_UDP_SOCKET_DEFAULT_RX_QUEUE_LIMIT			3
-#define TCPIP_UDP_USE_POOL_BUFFERS   false
-#define TCPIP_UDP_USE_TX_CHECKSUM             			true
-#define TCPIP_UDP_USE_RX_CHECKSUM             			true
-#define TCPIP_UDP_COMMANDS   false
-#define TCPIP_UDP_EXTERN_PACKET_PROCESS   false
-
-
-#define DRV_LAN8740_PHY_CONFIG_FLAGS       ( 0 \
-                                                    | DRV_ETHPHY_CFG_AUTO \
-                                                    )
-                                                    
-#define DRV_LAN8740_PHY_LINK_INIT_DELAY            500
-#define DRV_LAN8740_PHY_ADDRESS                    0
-#define DRV_LAN8740_PHY_PERIPHERAL_ID              _ETH_BASE_ADDRESS
-#define DRV_ETHPHY_LAN8740_NEG_INIT_TMO            1
-#define DRV_ETHPHY_LAN8740_NEG_DONE_TMO            2000
-#define DRV_ETHPHY_LAN8740_RESET_CLR_TMO           500
-
-
-
 /*** wolfCrypt Library Configuration ***/
 #define MICROCHIP_PIC32
 #define MICROCHIP_MPLAB_HARMONY
@@ -637,13 +644,6 @@ extern "C" {
 #define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
 #define NO_WOLFSSL_MEMORY
 // ---------- FUNCTIONAL CONFIGURATION END ----------
-
-/* MPLAB Harmony Net Presentation Layer Definitions*/
-#define NET_PRES_NUM_INSTANCE 1
-#define NET_PRES_NUM_SOCKETS 10
-
-
-	
 
 #define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1
 

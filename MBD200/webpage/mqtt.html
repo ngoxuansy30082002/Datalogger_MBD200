@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <!-- This project runs fully offline (no CDN required) -->
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MQTT Configuration - Cấu hình MQTT Broker để truyền dữ liệu cảm biến thời gian thực">
+    <meta name="description"
+        content="MQTT Configuration - Cấu hình MQTT Broker để truyền dữ liệu cảm biến thời gian thực">
     <title>Bklogy JSC | Datalogger</title>
     <link rel="shortcut icon" href="assets/img/bk_icon.png">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
     <style>
-        .mqtt-status { display:flex; align-items:center; gap:8px; }
+        .mqtt-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .topic-tag {
             background: #e8f4fd;
             color: #267dc1;
@@ -24,422 +32,434 @@
             align-items: center;
             gap: 6px;
         }
+
         .topic-tag .remove-topic {
             cursor: pointer;
             color: #9ca3af;
             font-size: 14px;
             line-height: 1;
         }
-        .topic-tag .remove-topic:hover { color: #ef4444; }
+
+        .topic-tag .remove-topic:hover {
+            color: #ef4444;
+        }
     </style>
 </head>
+
 <body>
-<div class="layout-wrapper">
-    <div id="sidebarMount"></div>
-    <div class="main-wrapper" id="mainWrapper">
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
 
-        <header class="top-header">
-            <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
-            <div class="header-breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                    <li class="breadcrumb-item">System Configuration</li>
-                    <li class="breadcrumb-item active">MQTT Configuration</li>
-                </ol>
-            </div>
-            <div class="header-actions">
-                <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
-                <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
-                <div class="header-divider"></div>
-                <div class="user-info dropdown" data-bs-toggle="dropdown">
-                    <div class="user-avatar">AD</div>
-                    <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">System Configuration</li>
+                        <li class="breadcrumb-item active">MQTT Configuration</li>
+                    </ol>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
-                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                </ul>
-            </div>
-        </header>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px">
+                        <li><a class="dropdown-item text-danger" href="#"><i
+                                    class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </header>
 
-        <main class="page-content">
-            <div class="page-header">
-                <h1><i class="bi bi-broadcast-pin text-primary me-2"></i>MQTT Configuration</h1>
-                <p>Cấu hình kết nối MQTT Broker để publish/subscribe dữ liệu cảm biến thời gian thực</p>
-            </div>
+            <main class="page-content">
+                <div class="page-header">
+                    <h1><i class="bi bi-broadcast-pin text-primary me-2"></i>MQTT Configuration</h1>
+                    <p>Cấu hình kết nối MQTT Broker để publish/subscribe dữ liệu cảm biến thời gian thực</p>
+                </div>
 
-            <form class="needs-validation" id="mqttForm" novalidate>
-                <div class="row g-4">
-                    <div class="col-lg-8">
+                <form class="needs-validation" id="mqttForm" novalidate>
+                    <div class="row g-4">
+                        <div class="col-lg-8">
 
-                        <!-- Enable -->
-                        <div class="alert d-flex align-items-center justify-content-between mb-4" style="background:#e8f4fd;border:none;border-left:4px solid #267dc1">
-                            <div class="d-flex align-items-center gap-3">
-                                <i class="bi bi-broadcast-pin fs-4 text-primary"></i>
-                                <div>
-                                    <strong style="color:#267dc1">MQTT Publisher</strong>
-                                    <div style="font-size:12px;color:#6b7280">Tự động gửi dữ liệu cảm biến lên MQTT Broker</div>
+                            <!-- Broker Settings & Authentication -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-hdd-network-fill"></i></div>
+                                    <div>
+                                        <h6>MQTT Broker &amp; Authentication</h6>
+                                        <p>Cấu hình máy chủ MQTT và thông tin xác thực</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <!-- Broker Host/IP -->
+                                        <div class="col-md-8">
+                                            <label class="form-label" for="mqttHost">Broker Host/IP <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-server"></i></span>
+                                                <input type="text" class="form-control" id="mqttHost" name="host"
+                                                    required>
+                                            </div>
+                                        </div>
+                                        <!-- Port -->
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="mqttPort">Port <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="number" class="form-control port-field" id="mqttPort"
+                                                name="port" required>
+                                            <div class="form-text">MQTT: 1883 | TLS: 8883</div>
+                                        </div>
+                                        <!-- Client ID -->
+                                        <div class="col-12">
+                                            <label class="form-label" for="mqttClientId">Client ID</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="mqttClientId"
+                                                    name="clientId">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    id="genClientId">
+                                                    <i class="bi bi-arrow-counterclockwise"></i> Generate
+                                                </button>
+                                            </div>
+                                            <div class="form-text">Mỗi client cần ID duy nhất trên broker</div>
+                                        </div>
+                                        <!-- Authentication: Username -->
+                                        <div class="col-md-6 mt-4">
+                                            <label class="form-label" for="mqttUsername">Username</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                                <input type="text" class="form-control" id="mqttUsername"
+                                                    name="username">
+                                            </div>
+                                        </div>
+                                        <!-- Authentication: Password -->
+                                        <div class="col-md-6 mt-4">
+                                            <label class="form-label" for="mqttPassword">Password</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                                <input type="password" class="form-control" id="mqttPassword"
+                                                    name="password">
+                                                <button type="button"
+                                                    class="btn btn-outline-secondary toggle-password"><i
+                                                        class="bi bi-eye"></i></button>
+                                            </div>
+                                        </div>
+                                        <!-- SSL/TLS -->
+                                        <div class="col-12 mt-4">
+                                            <div class="form-check form-switch  d-flex align-items-center">
+                                                <input class="form-check-input" type="checkbox" id="mqttSsl" name="ssl"
+                                                    value="1">
+                                                <label class="form-check-label fw-500 ms-2" for="mqttSsl">Bật
+                                                    TLS/SSL</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-check form-switch m-0">
-                                <input class="form-check-input" type="checkbox" id="enableMqttToggle" name="enableMqtt" checked style="width:48px;height:24px">
+
+                            <!-- Topics -->
+                            <div class="form-section mb-0">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-tags-fill"></i></div>
+                                    <div>
+                                        <h6>Topics &amp; Publish Config</h6>
+                                        <p>Cấu hình topic publish dữ liệu cảm biến</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="sensorValueTopic">Topic Sensor Value <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                                                <input type="text" class="form-control" id="sensorValueTopic"
+                                                    name="sensorValueTopic" required>
+                                            </div>
+                                            <div class="form-text">Dùng để publish dữ liệu sensor.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="sensorNotifyTopic">Topic Sensor Notify <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-exclamation-triangle"></i></span>
+                                                <input type="text" class="form-control" id="sensorNotifyTopic"
+                                                    name="sensorNotifyTopic" required>
+                                            </div>
+                                            <div class="form-text">Dùng để publish cảnh báo: Error, Calibration, Alarm,
+                                                Fault.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="deviceStatusTopic">Topic Device Status <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-info-circle"></i></span>
+                                                <input type="text" class="form-control" id="deviceStatusTopic"
+                                                    name="deviceStatusTopic" required>
+                                            </div>
+                                            <div class="form-text">Dùng để publish: Online, Offline, Reboot, SD Card,
+                                                Network Status.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="publishInterval">Publish Interval <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="publishInterval"
+                                                    name="publishInterval" required>
+                                                <span class="input-group-text">Second (s)</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="qos">QoS Level</label>
+                                            <select class="form-select" id="qos" name="qos">
+                                                <option value="0">QoS 0 - At most once</option>
+                                                <option value="1">QoS 1 - At least once</option>
+                                                <option value="2">QoS 2 - Exactly once</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Broker Settings -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-hdd-network-fill"></i></div>
-                                <div>
-                                    <h6>Thông tin Broker</h6>
-                                    <p>Địa chỉ và cổng kết nối MQTT</p>
-                                </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-md-8">
-                                        <label class="form-label" for="mqttBroker">MQTT Broker Host <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-server"></i></span>
-                                            <input type="text" class="form-control" id="mqttBroker" name="mqttBroker" placeholder="broker.hivemq.com or 192.168.1.50" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label" for="mqttPort">Port <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control port-field" id="mqttPort" name="mqttPort" value="1883" required>
-                                        <div class="form-text">MQTT: 1883 | TLS: 8883</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Giao thức</label>
-                                        <div class="d-flex gap-3 mt-1">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="mqttProto" id="proto31" value="3.1" checked>
-                                                <label class="form-check-label fw-500" for="proto31">MQTT 3.1.1</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="mqttProto" id="proto5" value="5.0">
-                                                <label class="form-check-label fw-500" for="proto5">MQTT 5.0</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check form-switch mt-4">
-                                            <input class="form-check-input" type="checkbox" id="mqttTls" name="mqttTls">
-                                            <label class="form-check-label fw-500" for="mqttTls">Bật TLS/SSL</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label" for="mqttClientId">Client ID</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="mqttClientId" name="mqttClientId" value="datalogger_001_pro">
-                                            <button type="button" class="btn btn-outline-secondary" id="genClientId">
-                                                <i class="bi bi-arrow-counterclockwise"></i> Generate
-                                            </button>
-                                        </div>
-                                        <div class="form-text">Mỗi client cần ID duy nhất trên broker</div>
+                        <!-- Right Panel -->
+                        <div class="col-lg-4">
+                            <!-- Status -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"
+                                        style="background:linear-gradient(135deg,#267dc1,#3a9ad9)"><i
+                                            class="bi bi-broadcast-pin"></i></div>
+                                    <div>
+                                        <h6>Trạng thái MQTT</h6>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Authentication -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-shield-lock-fill"></i></div>
-                                <div>
-                                    <h6>Xác thực</h6>
-                                    <p>Username và Password cho Broker bảo mật</p>
-                                </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="form-check form-switch mb-3">
-                                            <input class="form-check-input" type="checkbox" id="mqttAuth" name="mqttAuth" checked>
-                                            <label class="form-check-label fw-500" for="mqttAuth">Yêu cầu xác thực</label>
+                                <div class="p-4">
+                                    <div class="text-center mb-4">
+                                        <div
+                                            style="width:64px;height:64px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;color:#267dc1">
+                                            <i class="bi bi-broadcast-pin"></i>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="mqttUser">Username</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                            <input type="text" class="form-control" id="mqttUser" name="mqttUser" placeholder="mqtt_user">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                            <span
+                                                style="width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse-green 2s infinite;display:inline-block"></span>
+                                            <span style="font-weight:600;color:#22c55e">Connected</span>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="mqttPass">Password</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                            <input type="password" class="form-control" id="mqttPass" name="mqttPass" placeholder="••••••••">
-                                            <button type="button" class="btn btn-outline-secondary toggle-password"><i class="bi bi-eye"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Topics -->
-                        <div class="form-section mb-0">
-                            <div class="form-section-header">
-                                <div class="section-icon"><i class="bi bi-tags-fill"></i></div>
-                                <div>
-                                    <h6>Topics &amp; Publish Config</h6>
-                                    <p>Cấu hình topic publish dữ liệu cảm biến</p>
-                                </div>
-                            </div>
-                            <div class="form-section-body">
-                                <div class="row g-3">
-                                    <div class="col-md-8">
-                                        <label class="form-label">Topic Base (Prefix) <span class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                                            <input type="text" class="form-control" id="topicBase" name="topicBase" value="datalogger/device001/sensors/" required>
-                                        </div>
-                                        <div class="form-text">Topic đầy đủ: <code id="topicPreview">datalogger/device001/sensors/{sensor_name}</code></div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label" for="mqttQos">QoS Level</label>
-                                        <select class="form-select" id="mqttQos" name="mqttQos">
-                                            <option value="0">QoS 0 - At most once</option>
-                                            <option value="1" selected>QoS 1 - At least once</option>
-                                            <option value="2">QoS 2 - Exactly once</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="publishInterval">Chu kỳ publish (ms)</label>
-                                        <select class="form-select" id="publishInterval" name="publishInterval">
-                                            <option value="500">500 ms</option>
-                                            <option value="1000" selected>1000 ms</option>
-                                            <option value="2000">2000 ms</option>
-                                            <option value="5000">5000 ms</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="payloadFormat">Định dạng payload</label>
-                                        <select class="form-select" id="payloadFormat" name="payloadFormat">
-                                            <option value="json" selected>JSON</option>
-                                            <option value="csv">CSV</option>
-                                            <option value="plain">Plain value</option>
-                                            <option value="sparkplug">Sparkplug B</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Topics publish (hiện tại)</label>
-                                        <div class="d-flex flex-wrap gap-2 mb-2" id="topicList">
-                                            <span class="topic-tag">datalogger/device001/sensors/temperature_01 <span class="remove-topic">×</span></span>
-                                            <span class="topic-tag">datalogger/device001/sensors/humidity_01 <span class="remove-topic">×</span></span>
-                                            <span class="topic-tag">datalogger/device001/sensors/pressure_01 <span class="remove-topic">×</span></span>
-                                            <span class="topic-tag">datalogger/device001/status <span class="remove-topic">×</span></span>
-                                        </div>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="addTopicInput" placeholder="Nhập topic mới...">
-                                            <button type="button" class="btn btn-outline-primary" id="addTopicBtn">
-                                                <i class="bi bi-plus-lg"></i> Thêm
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row g-2">
-                                            <div class="col-sm-4">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" id="mqttRetain">
-                                                    <label class="form-check-label fw-500" for="mqttRetain">Retain flag</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" id="mqttLwt" checked>
-                                                    <label class="form-check-label fw-500" for="mqttLwt">Last Will (LWT)</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" id="mqttTimestamp" checked>
-                                                    <label class="form-check-label fw-500" for="mqttTimestamp">Include timestamp</label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <div style="font-size:12px;color:#9ca3af">broker.hivemq.com:1883</div>
                                     </div>
 
-                                    <!-- Sample Payload Preview -->
-                                    <div class="col-12">
-                                        <label class="form-label">Mẫu payload JSON</label>
-                                        <pre style="background:#1a2332;color:#22c55e;border-radius:8px;padding:14px;font-size:12px;margin:0;overflow-x:auto">{
-  "device": "device001",
-  "sensor": "temperature_01",
-  "value": 26.4,
-  "unit": "°C",
-  "timestamp": "2024-12-01T13:45:02.234Z",
-  "quality": "good",
-  "status": 0
-}</pre>
+                                    <div class="separator"></div>
+
+                                    <div class="row g-2" style="font-size:13px">
+                                        <div class="col-7 text-muted">Session</div>
+                                        <div class="col-5 fw-600">14h 23m</div>
+                                        <div class="col-7 text-muted">Messages sent</div>
+                                        <div class="col-5 fw-600">104,832</div>
+                                        <div class="col-7 text-muted">Messages/s</div>
+                                        <div class="col-5 fw-600 text-primary">12.4</div>
+                                        <div class="col-7 text-muted">Errors</div>
+                                        <div class="col-5 fw-600 text-danger">0</div>
+                                        <div class="col-7 text-muted">Ping</div>
+                                        <div class="col-5 fw-600 text-success">18ms</div>
+                                        <div class="col-7 text-muted">Keepalive</div>
+                                        <div class="col-5 fw-600">60s</div>
                                     </div>
+
+                                    <div class="separator"></div>
+
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary flex-1"
+                                            id="testMqttBtn" style="flex:1">
+                                            <i class="bi bi-wifi me-1"></i>Test
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger flex-1"
+                                            id="disconnectMqttBtn" style="flex:1">
+                                            <i class="bi bi-x-circle me-1"></i>Disconnect
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MQTT Messages (live) -->
+                            <div class="form-section">
+                                <div class="form-section-header">
+                                    <div class="section-icon"
+                                        style="background:linear-gradient(135deg,#1a2332,#243447)"><i
+                                            class="bi bi-terminal-fill" style="color:#3a9ad9"></i></div>
+                                    <div>
+                                        <h6>Message Monitor</h6>
+                                        <p>Tin nhắn MQTT gần nhất</p>
+                                    </div>
+                                </div>
+                                <div id="mqttMonitor"
+                                    style="background:#1a2332;padding:12px;font-family:monospace;font-size:11px;max-height:220px;overflow-y:auto;border-radius:0 0 10px 10px">
+                                    <div style="color:#9ca3af">[13:45:00] PUB → temperature_01</div>
+                                    <div style="color:#22c55e">{"value":26.4,"unit":"°C"}</div>
+                                    <br>
+                                    <div style="color:#9ca3af">[13:45:01] PUB → humidity_01</div>
+                                    <div style="color:#22c55e">{"value":68.2,"unit":"%RH"}</div>
+                                    <br>
+                                    <div style="color:#9ca3af">[13:45:02] PUB → pressure_01</div>
+                                    <div style="color:#22c55e">{"value":1.025,"unit":"bar"}</div>
+                                    <br>
+                                    <div style="color:#9ca3af">[13:45:03] PING ↔ PONG</div>
+                                    <div style="color:#f59e0b">Keepalive OK - 18ms</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Panel -->
-                    <div class="col-lg-4">
-                        <!-- Status -->
-                        <div class="form-section mb-4">
-                            <div class="form-section-header">
-                                <div class="section-icon" style="background:linear-gradient(135deg,#267dc1,#3a9ad9)"><i class="bi bi-broadcast-pin"></i></div>
-                                <div>
-                                    <h6>Trạng thái MQTT</h6>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <div class="text-center mb-4">
-                                    <div style="width:64px;height:64px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;color:#267dc1">
-                                        <i class="bi bi-broadcast-pin"></i>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse-green 2s infinite;display:inline-block"></span>
-                                        <span style="font-weight:600;color:#22c55e">Connected</span>
-                                    </div>
-                                    <div style="font-size:12px;color:#9ca3af">broker.hivemq.com:1883</div>
-                                </div>
-
-                                <div class="separator"></div>
-
-                                <div class="row g-2" style="font-size:13px">
-                                    <div class="col-7 text-muted">Session</div>
-                                    <div class="col-5 fw-600">14h 23m</div>
-                                    <div class="col-7 text-muted">Messages sent</div>
-                                    <div class="col-5 fw-600">104,832</div>
-                                    <div class="col-7 text-muted">Messages/s</div>
-                                    <div class="col-5 fw-600 text-primary">12.4</div>
-                                    <div class="col-7 text-muted">Errors</div>
-                                    <div class="col-5 fw-600 text-danger">0</div>
-                                    <div class="col-7 text-muted">Ping</div>
-                                    <div class="col-5 fw-600 text-success">18ms</div>
-                                    <div class="col-7 text-muted">Keepalive</div>
-                                    <div class="col-5 fw-600">60s</div>
-                                </div>
-
-                                <div class="separator"></div>
-
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-primary flex-1" id="testMqttBtn" style="flex:1">
-                                        <i class="bi bi-wifi me-1"></i>Test
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger flex-1" id="disconnectMqttBtn" style="flex:1">
-                                        <i class="bi bi-x-circle me-1"></i>Disconnect
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- MQTT Messages (live) -->
-                        <div class="form-section">
-                            <div class="form-section-header">
-                                <div class="section-icon" style="background:linear-gradient(135deg,#1a2332,#243447)"><i class="bi bi-terminal-fill" style="color:#3a9ad9"></i></div>
-                                <div>
-                                    <h6>Message Monitor</h6>
-                                    <p>Tin nhắn MQTT gần nhất</p>
-                                </div>
-                            </div>
-                            <div id="mqttMonitor" style="background:#1a2332;padding:12px;font-family:monospace;font-size:11px;max-height:220px;overflow-y:auto;border-radius:0 0 10px 10px">
-                                <div style="color:#9ca3af">[13:45:00] PUB → temperature_01</div>
-                                <div style="color:#22c55e">{"value":26.4,"unit":"°C"}</div>
-                                <br>
-                                <div style="color:#9ca3af">[13:45:01] PUB → humidity_01</div>
-                                <div style="color:#22c55e">{"value":68.2,"unit":"%RH"}</div>
-                                <br>
-                                <div style="color:#9ca3af">[13:45:02] PUB → pressure_01</div>
-                                <div style="color:#22c55e">{"value":1.025,"unit":"bar"}</div>
-                                <br>
-                                <div style="color:#9ca3af">[13:45:03] PING ↔ PONG</div>
-                                <div style="color:#f59e0b">Keepalive OK - 18ms</div>
-                            </div>
-                        </div>
+                    <div class="d-flex gap-3 justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary btn-reset">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình MQTT
+                        </button>
                     </div>
-                </div>
+                </form>
+            </main>
 
-                <div class="d-flex gap-3 justify-content-end mt-4">
-                    <button type="button" class="btn btn-secondary btn-reset">
-                        <i class="bi bi-arrow-counterclockwise me-2"></i>Đặt lại
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-floppy-fill me-2"></i>Lưu cấu hình MQTT
-                    </button>
-                </div>
-            </form>
-        </main>
-
-        <footer class="page-footer">
-            <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
-            <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
-        </footer>
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
     </div>
-</div>
 
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/layout.js"></script>
-<script src="assets/js/main.js"></script>
-<script>
-$(document).ready(function(){
-    // Auto port on TLS toggle
-    $('#mqttTls').on('change', function(){
-        $('#mqttPort').val(this.checked ? 8883 : 1883);
-    });
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        function updatedata(xmlData) {
+            var dataString;
+            dataString = getXMLValue(xmlData, 'mqtt');
+            // dataString = `
+            //     {
+            //         "host": "broker.hivemq.com",
+            //         "port": 1883,
+            //         "clientId": "datalogger01",
+            //         "username": "admin",
+            //         "password": "123456",
+            //         "ssl": 0,
+            //         "sensorValueTopic": "factory/logger/sensor/value",
+            //         "sensorNotifyTopic": "factory/logger/sensor/notify",
+            //         "deviceStatusTopic": "factory/logger/device/status",
+            //         "publishInterval": 60,
+            //         "qos": 1
+            //     }
+            //     `;
 
-    // Generate Client ID
-    $('#genClientId').on('click', function(){
-        const randomId = 'datalogger_' + Math.random().toString(36).substr(2, 8);
-        $('#mqttClientId').val(randomId);
-    });
+            try {
+                var mqttConfig = JSON.parse(dataString);
 
-    // Topic preview update
-    $('#topicBase').on('input', function(){
-        $('#topicPreview').text($(this).val() + '{sensor_name}');
-    });
+                $('#mqttHost').val(mqttConfig.host);
+                $('#mqttPort').val(mqttConfig.port);
+                $('#mqttClientId').val(mqttConfig.clientId);
+                $('#mqttUsername').val(mqttConfig.username);
+                $('#mqttPassword').val(mqttConfig.password);
+                $('#mqttSsl').prop('checked', mqttConfig.ssl == 1 || mqttConfig.ssl == true);
+                $('#sensorValueTopic').val(mqttConfig.sensorValueTopic);
+                $('#sensorNotifyTopic').val(mqttConfig.sensorNotifyTopic);
+                $('#deviceStatusTopic').val(mqttConfig.deviceStatusTopic);
+                $('#publishInterval').val(mqttConfig.publishInterval);
+                $('#qos').val(mqttConfig.qos);
 
-    // Add topic
-    $('#addTopicBtn').on('click', function(){
-        const val = $('#addTopicInput').val().trim();
-        if (!val) return;
-        const $tag = $(`<span class="topic-tag">${val} <span class="remove-topic">×</span></span>`);
-        $('#topicList').append($tag);
-        $('#addTopicInput').val('');
-    });
+            } catch (e) {
+                console.error("Lỗi parse MQTT JSON: ", e);
+            }
+        }
 
-    // Remove topic
-    $(document).on('click', '.remove-topic', function(){
-        $(this).closest('.topic-tag').remove();
-    });
+        $(document).ready(function () {
+            // Lấy dữ liệu từ backend
+            newAJAXCommand('xml/mqtt.xml', updatedata, false);
 
-    // Test MQTT
-    $('#testMqttBtn').on('click', function(){
-        const $btn = $(this);
-        $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>...').prop('disabled', true);
-        setTimeout(() => {
-            $btn.html('<i class="bi bi-wifi me-1"></i>Test').prop('disabled', false);
-            showToast('MQTT Broker phản hồi thành công!', 'success');
-        }, 2000);
-    });
+            // Xử lý submit form
+            $('#mqttForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) {
+                    e.stopPropagation();
+                    $(this).addClass('was-validated');
+                    return;
+                }
 
-    // Disconnect
-    $('#disconnectMqttBtn').on('click', function(){
-        showToast('Đã ngắt kết nối MQTT Broker.', 'warning');
-    });
+                var params = $(this).serialize();
 
-    // Simulate live messages
-    const sensors = ['temperature_01', 'humidity_01', 'pressure_01', 'voltage_01', 'flowmeter_01'];
-    setInterval(() => {
-        const sensor = sensors[Math.floor(Math.random() * sensors.length)];
-        const val = (Math.random() * 100).toFixed(2);
-        const time = new Date().toTimeString().split(' ')[0];
-        const $monitor = $('#mqttMonitor');
-        $monitor.append(`
+                // Đảm bảo checkbox không check được gửi về dưới dạng 0 nếu backend cần
+                if (!$('#mqttSsl').is(':checked')) params += '&ssl=0';
+
+                var btn = $(this).find('button[type="submit"]');
+                var origText = btn.html();
+                btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Đang lưu...').prop('disabled', true);
+
+                var http = new XMLHttpRequest();
+                http.open("POST", "mqtt.html", true);
+                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                http.onreadystatechange = function () {
+                    if (http.readyState == 4) {
+                        btn.html(origText).prop('disabled', false);
+                        if (http.status == 200) {
+                            showToast('Lưu cấu hình MQTT thành công!', 'success');
+                        } else {
+                            showToast('Lỗi khi lưu cấu hình MQTT!', 'danger');
+                        }
+                    }
+                }
+                http.send(params);
+            });
+
+            // Auto port on TLS toggle
+            $('#mqttSsl').on('change', function () {
+                $('#mqttPort').val(this.checked ? 8883 : 1883);
+            });
+
+            // Generate Client ID
+            $('#genClientId').on('click', function () {
+                const randomId = 'datalogger_' + Math.random().toString(36).substr(2, 8);
+                $('#mqttClientId').val(randomId);
+            });
+
+            // Test MQTT
+            $('#testMqttBtn').on('click', function () {
+                const $btn = $(this);
+                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>...').prop('disabled', true);
+                setTimeout(() => {
+                    $btn.html('<i class="bi bi-wifi me-1"></i>Test').prop('disabled', false);
+                    showToast('MQTT Broker phản hồi thành công!', 'success');
+                }, 2000);
+            });
+
+            // Disconnect
+            $('#disconnectMqttBtn').on('click', function () {
+                showToast('Đã ngắt kết nối MQTT Broker.', 'warning');
+            });
+
+            // Simulate live messages
+            const sensors = ['temperature_01', 'humidity_01', 'pressure_01', 'voltage_01', 'flowmeter_01'];
+            setInterval(() => {
+                const sensor = sensors[Math.floor(Math.random() * sensors.length)];
+                const val = (Math.random() * 100).toFixed(2);
+                const time = new Date().toTimeString().split(' ')[0];
+                const $monitor = $('#mqttMonitor');
+                $monitor.append(`
             <br>
             <div style="color:#9ca3af">[${time}] PUB → ${sensor}</div>
             <div style="color:#22c55e">{"value":${val}}</div>
         `);
-        $monitor.scrollTop($monitor[0].scrollHeight);
-    }, 2500);
-});
-</script>
+                $monitor.scrollTop($monitor[0].scrollHeight);
+            }, 2500);
+        });
+    </script>
 </body>
+
 </html>

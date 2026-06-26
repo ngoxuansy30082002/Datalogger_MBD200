@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<!-- This project runs fully offline (no CDN required) -->
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rule Engine - Cấu hình logic kích hoạt thông báo">
+    <title>Bklogy JSC | Datalogger</title>
+    <link rel="shortcut icon" href="assets/img/bk_icon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/mchp.js"></script>
+    <style>
+        .rule-logic-preview {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 200px;
+        }
+
+        .rule-logic-preview .keyword {
+            color: #facc15;
+            font-weight: bold;
+        }
+
+        .rule-logic-preview .sensor {
+            color: #38bdf8;
+        }
+
+        .rule-logic-preview .operator {
+            color: #f87171;
+        }
+
+        .rule-logic-preview .value {
+            color: #4ade80;
+        }
+
+        .rule-logic-preview .action {
+            color: #c084fc;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper">
+        <div id="sidebarMount"></div>
+        <div class="main-wrapper" id="mainWrapper">
+
+            <header class="top-header">
+                <button class="toggle-sidebar-btn" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door me-1"></i>Home</a>
+                        </li>
+                        <li class="breadcrumb-item">Sensor Configuration</li>
+                        <li class="breadcrumb-item active">Rule Engine</li>
+                    </ol>
+                </div>
+                <div class="header-actions">
+                    <div class="conn-status"><span class="status-dot"></span><span>Connected</span></div>
+                    <button class="header-btn"><i class="bi bi-bell"></i><span class="badge-dot"></span></button>
+                    <div class="header-divider"></div>
+                    <div class="user-info dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-details">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1><i class="bi bi-gear-wide-connected text-primary me-2"></i>Rule Engine</h1>
+                        <p>Cấu hình luật để kích hoạt thông báo (Notify, Alarm, Event)</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" id="btnAddRule">
+                            <i class="bi bi-plus-circle me-1"></i> Add Rule
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Rule List -->
+                    <div class="col-12">
+                        <div class="form-section mb-0">
+                            <div class="form-section-header">
+                                <div class="section-icon"><i class="bi bi-list-task"></i></div>
+                                <div>
+                                    <h6>Danh sách Rule</h6>
+                                    <p>Các luật đang được cấu hình trên thiết bị</p>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Tên Rule</th>
+                                            <th>Loại Trigger</th>
+                                            <th>Kích hoạt</th>
+                                            <th>Notify</th>
+                                            <th class="text-end">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ruleTableBody">
+                                        <!-- Render by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Config & Preview -->
+                    <div class="col-lg-8" id="configSection" style="display:none;">
+                        <form id="ruleForm" class="needs-validation" novalidate>
+                            <input type="hidden" id="ruleId" name="ruleId" value="">
+
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-sliders"></i></div>
+                                    <div>
+                                        <h6>Cấu hình Rule</h6>
+                                        <p>Thiết lập điều kiện và thông số cho luật</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="ruleName">Rule Name <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="ruleName" name="ruleName"
+                                                required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="ruleType">Loại Trigger</label>
+                                            <select class="form-select" id="ruleType" name="ruleType">
+                                                <option value="0">Threshold</option>
+                                                <option value="1">Rate Of Change (Delta)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check form-switch mt-2 d-flex align-items-center">
+                                                <input class="form-check-input" type="checkbox" id="enableRule"
+                                                    name="enable" value="1" checked>
+                                                <label class="form-check-label fw-500 ms-2" for="enableRule">Enable
+                                                    Rule</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <!-- Threshold UI -->
+                                    <div id="thresholdUI">
+                                        <h6 class="mb-3 text-primary"><i class="bi bi-1-circle me-1"></i>Điều kiện #1
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="sensor1">Sensor</label>
+                                                <select class="form-select sensor-select" id="sensor1"
+                                                    name="sensor1"></select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="operator1">Operator</label>
+                                                <select class="form-select" id="operator1" name="operator1">
+                                                    <option value="0">&gt; (Greater than)</option>
+                                                    <option value="1">&lt; (Less than)</option>
+                                                    <option value="2">&gt;= (Greater or equal)</option>
+                                                    <option value="3">&lt;= (Less or equal)</option>
+                                                    <option value="4">== (Equal)</option>
+                                                    <option value="5">!= (Not equal)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="value1">Value</label>
+                                                <input type="number" step="any" class="form-control" id="value1"
+                                                    name="value1" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4 mb-3">
+                                            <div class="form-check form-switch d-flex align-items-center">
+                                                <input class="form-check-input" type="checkbox" id="enableCondition2"
+                                                    name="enableCondition2" value="1">
+                                                <label class="form-check-label fw-500 ms-2"
+                                                    for="enableCondition2">Enable Condition #2</label>
+                                            </div>
+                                        </div>
+
+                                        <div id="condition2UI" style="display:none;">
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="logicOperator">Logic Operator</label>
+                                                    <select class="form-select" id="logicOperator" name="logicOperator">
+                                                        <option value="0">AND</option>
+                                                        <option value="1">OR</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <h6 class="mb-3 text-primary"><i class="bi bi-2-circle me-1"></i>Điều kiện
+                                                #2</h6>
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="sensor2">Sensor 2</label>
+                                                    <select class="form-select sensor-select" id="sensor2"
+                                                        name="sensor2"></select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="operator2">Operator 2</label>
+                                                    <select class="form-select" id="operator2" name="operator2">
+                                                        <option value="0">&gt; (Greater than)</option>
+                                                        <option value="1">&lt; (Less than)</option>
+                                                        <option value="2">&gt;= (Greater or equal)</option>
+                                                        <option value="3">&lt;= (Less or equal)</option>
+                                                        <option value="4">== (Equal)</option>
+                                                        <option value="5">!= (Not equal)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="value2">Value 2</label>
+                                                    <input type="number" step="any" class="form-control" id="value2"
+                                                        name="value2">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delta UI -->
+                                    <div id="deltaUI" style="display:none;">
+                                        <h6 class="mb-3 text-primary"><i class="bi bi-graph-up-arrow me-1"></i>Rate Of
+                                            Change</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="deltaSensor">Sensor</label>
+                                                <select class="form-select sensor-select" id="deltaSensor"
+                                                    name="sensor1"></select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="deltaOperator">Operator</label>
+                                                <select class="form-select" id="deltaOperator" name="operator1">
+                                                    <option value="0">&gt; (Greater than)</option>
+                                                    <option value="1">&lt; (Less than)</option>
+                                                    <option value="2">&gt;= (Greater or equal)</option>
+                                                    <option value="3">&lt;= (Less or equal)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label" for="deltaValue">Delta Value</label>
+                                                <input type="number" step="any" class="form-control" id="deltaValue"
+                                                    name="value1">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <!-- Debounce / Time Window -->
+                                    <div class="mb-3" id="debounceContainer">
+                                        <div class="form-check form-switch mb-3 d-flex align-items-center"
+                                            id="enableDebounceSwitch">
+                                            <input class="form-check-input" type="checkbox" id="enableDebounce"
+                                                name="enableDebounce" value="1">
+                                            <label class="form-check-label fw-500 ms-2" for="enableDebounce">Enable
+                                                Debounce</label>
+                                        </div>
+                                        <div class="row g-3" id="debounceUI" style="display:none;">
+                                            <div class="col-md-6">
+                                                <label class="form-label" id="debounceLabel"
+                                                    for="debounceValue">Duration</label>
+                                                <input type="number" class="form-control" id="debounceValue"
+                                                    name="debounceValue" min="1">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" id="debounceUnitLabel"
+                                                    for="debounceUnit">Unit</label>
+                                                <select class="form-select" id="debounceUnit" name="debounceUnit">
+                                                    <option value="0">Millisecond</option>
+                                                    <option value="1">Second</option>
+                                                    <option value="2">Minute</option>
+                                                    <option value="3">Hour</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Notify Action -->
+                            <div class="form-section mb-4">
+                                <div class="form-section-header">
+                                    <div class="section-icon"><i class="bi bi-bell-fill"></i></div>
+                                    <div>
+                                        <h6>Notify Action</h6>
+                                        <p>Hành động khi luật được kích hoạt</p>
+                                    </div>
+                                </div>
+                                <div class="form-section-body">
+                                    <div class="row">
+                                        <div class="col-12 d-flex gap-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="notifyAction"
+                                                    id="notifyMqtt" value="0" checked>
+                                                <label class="form-check-label" for="notifyMqtt">MQTT</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="notifyAction"
+                                                    id="notifyFtp" value="1">
+                                                <label class="form-check-label" for="notifyFtp">FTP Log</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="notifyAction"
+                                                    id="notifyBoth" value="2">
+                                                <label class="form-check-label" for="notifyBoth">Both</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 justify-content-end">
+                                <button type="button" class="btn btn-secondary" id="btnCancel">
+                                    <i class="bi bi-x-circle me-1"></i>Hủy
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-floppy-fill me-2"></i>Save Rule
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="col-lg-4" id="previewSection" style="display:none;">
+                        <div class="form-section h-100">
+                            <div class="form-section-header">
+                                <div class="section-icon" style="background:linear-gradient(135deg,#1a2332,#243447)"><i
+                                        class="bi bi-eye-fill" style="color:#3a9ad9"></i></div>
+                                <div>
+                                    <h6>Preview Logic</h6>
+                                    <p>Mô tả luật trực quan</p>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="rule-logic-preview" id="rulePreviewText">
+                                    <!-- Dynamic text -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <footer class="page-footer">
+                <div class="footer-copy">&copy; 2024 <strong>DataLogger System</strong>. All rights reserved.</div>
+                <div class="footer-version"><span class="version-badge">v2.4.1</span></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+        let globalSensors = [];
+        let globalRules = [];
+
+        const operatorMap = { 0: '>', 1: '<', 2: '>=', 3: '<=', 4: '==', 5: '!=' };
+        const debounceUnitMap = { 0: 'Millisecond', 1: 'Second', 2: 'Minute', 3: 'Hour' };
+        const logicOperatorMap = { 0: 'AND', 1: 'OR' };
+
+        function updatePreview() {
+            const ruleType = $('#ruleType').val();
+            const enable = $('#enableRule').is(':checked');
+            if (!enable) {
+                $('#rulePreviewText').html('<span style="color:#9ca3af">Rule is disabled.</span>');
+                return;
+            }
+
+            let previewHtml = '';
+
+            const notifyVal = $('input[name="notifyAction"]:checked').val();
+            let actionText = 'MQTT Notify';
+            if (notifyVal == '1') actionText = 'FTP Log';
+            else if (notifyVal == '2') actionText = 'MQTT & FTP';
+
+            if (ruleType === '0') {
+                // Threshold
+                const s1 = $('#sensor1 option:selected').text();
+                const op1 = operatorMap[$('#operator1').val()] || '...';
+                const val1 = $('#value1').val() || '...';
+
+                previewHtml += `<span class="keyword">IF</span><br>`;
+                previewHtml += `<span class="sensor">${s1}</span> <span class="operator">${op1}</span> <span class="value">${val1}</span><br>`;
+
+                if ($('#enableCondition2').is(':checked')) {
+                    const logic = logicOperatorMap[$('#logicOperator').val()] || 'AND';
+                    const s2 = $('#sensor2 option:selected').text();
+                    const op2 = operatorMap[$('#operator2').val()] || '...';
+                    const val2 = $('#value2').val() || '...';
+
+                    previewHtml += `<br><span class="keyword">${logic}</span><br>`;
+                    previewHtml += `<span class="sensor">${s2}</span> <span class="operator">${op2}</span> <span class="value">${val2}</span><br>`;
+                }
+
+                if ($('#enableDebounce').is(':checked')) {
+                    const dbVal = $('#debounceValue').val() || '...';
+                    const dbUnit = debounceUnitMap[$('#debounceUnit').val()] || '...';
+                    previewHtml += `<br><span class="keyword">FOR</span> <span class="value">${dbVal}</span> <span class="sensor">${dbUnit}</span><br>`;
+                }
+
+                previewHtml += `<br><span class="keyword">THEN</span> <span class="action">${actionText}</span>`;
+            } else {
+                // Delta
+                const s1 = $('#deltaSensor option:selected').text();
+                const op1 = operatorMap[$('#deltaOperator').val()] || '...';
+                const val1 = $('#deltaValue').val() || '...';
+                const timeWin = $('#debounceValue').val() || '...';
+                const timeUnit = debounceUnitMap[$('#debounceUnit').val()] || '...';
+
+                previewHtml += `<span class="keyword">IF</span><br>`;
+                previewHtml += `<span class="keyword">ABS(</span><span class="sensor">${s1}</span> - <span class="sensor">Prev_${s1}</span><span class="keyword">)</span> / <span class="value">${timeWin}</span> <span class="sensor">${timeUnit}</span> <span class="operator">${op1}</span> <span class="value">${val1}</span><br>`;
+                previewHtml += `<br><span class="keyword">THEN</span> <span class="action">${actionText}</span>`;
+            }
+
+            $('#rulePreviewText').html(previewHtml);
+        }
+
+        function toggleRuleType() {
+            const ruleType = $('#ruleType').val();
+            if (ruleType === '0') {
+                $('#thresholdUI').show();
+                $('#deltaUI').hide();
+
+                // Name attributes assignment for submission
+                $('#sensor1, #operator1, #value1').attr('name', function (_, name) { return this.id; });
+                $('#deltaSensor, #deltaOperator, #deltaValue').removeAttr('name');
+
+                $('#value1').prop('required', true);
+                $('#deltaValue').prop('required', false);
+
+                $('#enableDebounceSwitch').show();
+                $('#debounceLabel').text('Duration');
+                $('#debounceUI').toggle($('#enableDebounce').is(':checked'));
+
+            } else {
+                $('#thresholdUI').hide();
+                $('#deltaUI').show();
+
+                $('#sensor1, #operator1, #value1').removeAttr('name');
+                $('#deltaSensor').attr('name', 'sensor1');
+                $('#deltaOperator').attr('name', 'operator1');
+                $('#deltaValue').attr('name', 'value1');
+
+                $('#value1').prop('required', false);
+                $('#deltaValue').prop('required', true);
+
+                $('#enableDebounceSwitch').hide();
+                $('#debounceLabel').text('Time Window');
+                $('#debounceUI').show(); // Always show for Delta
+                $('#debounceValue').prop('required', true);
+            }
+            updatePreview();
+        }
+
+        function renderSensorOptions() {
+            let options = '';
+            globalSensors.forEach(s => {
+                options += `<option value="${s.id}">${s.name}</option>`;
+            });
+            $('.sensor-select').html(options);
+        }
+
+        function renderRules() {
+            let tbody = '';
+            if (!globalRules || globalRules.length === 0) {
+                tbody = `<tr><td colspan="6" class="text-center text-muted py-3">Chưa có rule nào được cấu hình</td></tr>`;
+            } else {
+                globalRules.forEach((rule, idx) => {
+                    const ruleTypeStr = rule.ruleType == 0 ? 'Threshold' : 'Delta';
+                    const enableBadge = rule.enable == 1
+                        ? '<span class="badge bg-success">Yes</span>'
+                        : '<span class="badge bg-secondary">No</span>';
+
+                    let notifyStr = 'MQTT';
+                    if (rule.notifyAction == 1) notifyStr = 'FTP Log';
+                    else if (rule.notifyAction == 2) notifyStr = 'Both';
+
+                    tbody += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td class="fw-500 text-primary">${rule.name}</td>
+                            <td><span class="badge bg-light text-dark border">${ruleTypeStr}</span></td>
+                            <td>${enableBadge}</td>
+                            <td>${notifyStr}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-primary btn-edit-rule me-1" data-id="${rule.id}"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-delete-rule" data-id="${rule.id}"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            $('#ruleTableBody').html(tbody);
+        }
+
+        function editRule(id) {
+            const rule = globalRules.find(r => r.id == id);
+            if (!rule) return;
+
+            $('#ruleForm')[0].reset();
+
+            // Populate form
+            $('#ruleId').val(rule.id);
+            $('#ruleName').val(rule.name);
+            $('#enableRule').prop('checked', rule.enable == 1);
+            $('#ruleType').val(rule.ruleType);
+
+            if (rule.ruleType == 0) {
+                $('#sensor1').val(rule.sensor1 !== undefined ? rule.sensor1 : (globalSensors[0] ? globalSensors[0].id : ''));
+                $('#operator1').val(rule.operator1 !== undefined ? rule.operator1 : 0);
+                $('#value1').val(rule.value1 !== undefined ? rule.value1 : '');
+
+                if (rule.enableCondition2 == 1) {
+                    $('#enableCondition2').prop('checked', true).trigger('change');
+                    $('#logicOperator').val(rule.logicOperator !== undefined ? rule.logicOperator : 0);
+                    $('#sensor2').val(rule.sensor2 !== undefined ? rule.sensor2 : (globalSensors[0] ? globalSensors[0].id : ''));
+                    $('#operator2').val(rule.operator2 !== undefined ? rule.operator2 : 0);
+                    $('#value2').val(rule.value2 !== undefined ? rule.value2 : '');
+                } else {
+                    $('#enableCondition2').prop('checked', false).trigger('change');
+                }
+
+                if (rule.enableDebounce == 1) {
+                    $('#enableDebounce').prop('checked', true).trigger('change');
+                    $('#debounceValue').val(rule.debounceValue !== undefined ? rule.debounceValue : '');
+                    $('#debounceUnit').val(rule.debounceUnit !== undefined ? rule.debounceUnit : 1);
+                } else {
+                    $('#enableDebounce').prop('checked', false).trigger('change');
+                }
+
+            } else {
+                $('#deltaSensor').val(rule.sensor1 !== undefined ? rule.sensor1 : (globalSensors[0] ? globalSensors[0].id : ''));
+                $('#deltaOperator').val(rule.operator1 !== undefined ? rule.operator1 : 0);
+                $('#deltaValue').val(rule.value1 !== undefined ? rule.value1 : '');
+                $('#debounceValue').val(rule.debounceValue !== undefined ? rule.debounceValue : '');
+                $('#debounceUnit').val(rule.debounceUnit !== undefined ? rule.debounceUnit : 1);
+            }
+
+            if (rule.notifyAction !== undefined) {
+                $(`input[name="notifyAction"][value="${rule.notifyAction}"]`).prop('checked', true);
+            }
+
+            toggleRuleType();
+            $('#configSection, #previewSection').slideDown();
+            $('html, body').animate({ scrollTop: $('#configSection').offset().top - 80 }, 300);
+        }
+
+        function updatedata(xmlData) {
+            var dataString = getXMLValue(xmlData, 'ruleEngine');
+            // dataString = `
+            //     {
+            //         "sensors": [
+            //             { "id": 1, "name": "Nhiệt_độ_Lò_1" },
+            //             { "id": 2, "name": "Áp_suất_Bơm" },
+            //             { "id": 3, "name": "Flowmeter_1" },
+            //             { "id": 4, "name": "Mức_Bồn_A" },
+            //             { "id": 5, "name": "Nhiệt_độ_Kho_Lạnh" },
+            //             { "id": 6, "name": "Dòng_Điện_Tổng" }
+            //         ],
+
+            //         "rules": [
+            //             {
+            //                 "id": 1,
+            //                 "name": "HighTemp",
+            //                 "enable": 1,
+            //                 "ruleType": 0,
+            //                 "sensor1": 1,
+            //                 "operator1": 0,
+            //                 "value1": 50,
+            //                 "enableCondition2": 0,
+            //                 "logicOperator": 0,
+            //                 "sensor2": 0,
+            //                 "operator2": 0,
+            //                 "value2": 0,
+            //                 "enableDebounce": 1,
+            //                 "debounceValue": 3,
+            //                 "debounceUnit": 2,
+            //                 "notifyAction": 0
+            //             },
+            //             {
+            //                 "id": 2,
+            //                 "name": "PressureDropRate",
+            //                 "enable": 1,
+            //                 "ruleType": 1,
+            //                 "sensor1": 2,
+            //                 "operator1": 0,
+            //                 "value1": 5,
+            //                 "enableCondition2": 0,
+            //                 "logicOperator": 0,
+            //                 "sensor2": 0,
+            //                 "operator2": 0,
+            //                 "value2": 0,
+            //                 "enableDebounce": 1,
+            //                 "debounceValue": 10,
+            //                 "debounceUnit": 1,
+            //                 "notifyAction": 1
+            //             },
+            //             {
+            //                 "id": 3,
+            //                 "name": "TankLevelLow",
+            //                 "enable": 1,
+            //                 "ruleType": 0,
+            //                 "sensor1": 4,
+            //                 "operator1": 1,
+            //                 "value1": 20,
+            //                 "enableCondition2": 0,
+            //                 "logicOperator": 0,
+            //                 "sensor2": 0,
+            //                 "operator2": 0,
+            //                 "value2": 0,
+            //                 "enableDebounce": 0,
+            //                 "debounceValue": 0,
+            //                 "debounceUnit": 1,
+            //                 "notifyAction": 2
+            //             },
+            //             {
+            //                 "id": 4,
+            //                 "name": "ColdStorageAlarm",
+            //                 "enable": 1,
+            //                 "ruleType": 0,
+            //                 "sensor1": 5,
+            //                 "operator1": 2,
+            //                 "value1": -10,
+            //                 "enableCondition2": 0,
+            //                 "logicOperator": 0,
+            //                 "sensor2": 0,
+            //                 "operator2": 0,
+            //                 "value2": 0,
+            //                 "enableDebounce": 1,
+            //                 "debounceValue": 5,
+            //                 "debounceUnit": 2,
+            //                 "notifyAction": 0
+            //             },
+            //             {
+            //                 "id": 5,
+            //                 "name": "HighCurrentAndPressure",
+            //                 "enable": 1,
+            //                 "ruleType": 0,
+            //                 "sensor1": 6,
+            //                 "operator1": 0,
+            //                 "value1": 100,
+            //                 "enableCondition2": 1,
+            //                 "logicOperator": 0,
+            //                 "sensor2": 2,
+            //                 "operator2": 0,
+            //                 "value2": 6,
+            //                 "enableDebounce": 1,
+            //                 "debounceValue": 30,
+            //                 "debounceUnit": 1,
+            //                 "notifyAction": 2
+            //             }
+            //         ]
+            //     }
+            // `;
+
+            try {
+                const data = JSON.parse(dataString);
+                globalSensors = data.sensors || [];
+                globalRules = data.rules || [];
+
+                // Only render options once unless there are new sensors (simple check)
+                if ($('.sensor-select option').length === 0) {
+                    renderSensorOptions();
+                }
+
+                renderRules();
+            } catch (e) {
+                console.error("Lỗi parse Rule JSON", e);
+            }
+        }
+
+        setTimeout("newAJAXCommand('xml/rule-engine.xml', updatedata, true)", 500);
+
+        $(document).ready(function () {
+            // Initiate AJAX polling (mock for now or real if firmware supports)
+            newAJAXCommand('xml/rule-engine.xml', updatedata, false);
+
+            $('#btnAddRule').on('click', function () {
+                $('#ruleForm')[0].reset();
+                $('#ruleId').val(''); // empty means new rule
+                $('#enableCondition2').prop('checked', false).trigger('change');
+                $('#enableDebounce').prop('checked', false).trigger('change');
+
+                // Set default action
+                $('#notifyMqtt').prop('checked', true);
+
+                toggleRuleType();
+                $('#configSection, #previewSection').slideDown();
+                $('html, body').animate({ scrollTop: $('#configSection').offset().top - 80 }, 300);
+            });
+
+            $('#btnCancel').on('click', function () {
+                $('#configSection, #previewSection').slideUp();
+                $('#ruleForm')[0].reset();
+                $('#ruleForm').removeClass('was-validated');
+            });
+
+            $(document).on('click', '.btn-edit-rule', function () {
+                const id = $(this).data('id');
+                editRule(id);
+            });
+
+            $(document).on('click', '.btn-delete-rule', function () {
+                var ruleId = $(this).data('id');
+                if (confirm("Bạn có chắc muốn xóa Rule này?")) {
+                    var params = "action=delete&ruleId=" + encodeURIComponent(ruleId);
+                    var btn = $(this);
+                    var origHtml = btn.html();
+                    btn.html('<span class="spinner-border spinner-border-sm"></span>').prop('disabled', true);
+
+                    var http = new XMLHttpRequest();
+                    http.open("POST", "rule-engine.html", true);
+                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http.onreadystatechange = function () {
+                        if (http.readyState == 4) {
+                            btn.html(origHtml).prop('disabled', false);
+                            if (http.status == 200) {
+                                showToast('Xóa Rule thành công!', 'success');
+                                btn.closest('tr').remove();
+                            } else {
+                                showToast('Lỗi khi xóa Rule!', 'error');
+                            }
+                        }
+                    };
+                    http.send(params);
+                }
+            });
+
+            $('#ruleType').on('change', toggleRuleType);
+
+            $('#enableCondition2').on('change', function () {
+                $('#condition2UI').toggle(this.checked);
+                if (this.checked) {
+                    $('#sensor2, #operator2, #value2, #logicOperator').attr('name', function (_, name) { return this.id; });
+                    $('#value2').prop('required', true);
+                } else {
+                    $('#sensor2, #operator2, #value2, #logicOperator').removeAttr('name');
+                    $('#value2').prop('required', false);
+                    $('#value2').removeClass('is-invalid is-valid');
+                }
+                updatePreview();
+            });
+
+            $('#enableDebounce').on('change', function () {
+                $('#debounceUI').toggle(this.checked);
+                if (this.checked) {
+                    $('#debounceValue, #debounceUnit').attr('name', function (_, name) { return this.id; });
+                    $('#debounceValue').prop('required', true);
+                } else {
+                    $('#debounceValue, #debounceUnit').removeAttr('name');
+                    $('#debounceValue').prop('required', false);
+                    $('#debounceValue').removeClass('is-invalid is-valid');
+                }
+                updatePreview();
+            });
+
+            // Live preview updates
+            $('#ruleForm').on('input change', 'input, select', function () {
+                updatePreview();
+            });
+
+            // Submit POST
+            $('#ruleForm').on('submit', function (e) {
+                e.preventDefault();
+                if (!this.checkValidity()) {
+                    e.stopPropagation();
+                    $(this).addClass('was-validated');
+                    return;
+                }
+
+                // Force disabled state for name attributes of hidden sections to avoid submitting them
+                if ($('#ruleType').val() === '0') {
+                    if (!$('#enableCondition2').is(':checked')) {
+                        $('#sensor2, #operator2, #value2, #logicOperator').removeAttr('name');
+                    }
+                    if (!$('#enableDebounce').is(':checked')) {
+                        $('#debounceValue, #debounceUnit').removeAttr('name');
+                    }
+                } else {
+                    // For Delta, these are automatically active from toggleRuleType
+                    $('#debounceValue, #debounceUnit').attr('name', function (_, name) { return this.id; });
+                }
+
+                var actionType = $('#ruleId').val() ? 'update' : 'add';
+                var params = "action=" + actionType + "&" + $(this).serialize();
+
+                // Add unchecked checkbox values if needed
+                if (!$('#enableRule').is(':checked')) params += '&enable=0';
+                if ($('#ruleType').val() === '0') {
+                    if (!$('#enableCondition2').is(':checked')) params += '&enableCondition2=0';
+                    if (!$('#enableDebounce').is(':checked')) params += '&enableDebounce=0';
+                }
+
+                var btn = $(this).find('button[type="submit"]');
+                var origText = btn.html();
+                btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Đang lưu...').prop('disabled', true);
+
+                var http = new XMLHttpRequest();
+                http.open("POST", "rule-engine.html", true);
+                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                http.onreadystatechange = function () {
+                    if (http.readyState == 4) {
+                        btn.html(origText).prop('disabled', false);
+                        if (http.status == 200) {
+                            showToast('Lưu Rule thành công!', 'success');
+                            $('#configSection, #previewSection').slideUp();
+                        } else {
+                            showToast('Lỗi khi lưu Rule!', 'danger');
+                        }
+                    }
+                };
+                http.send(params);
+            });
+        });
+    </script>
+</body>
+
+</html>

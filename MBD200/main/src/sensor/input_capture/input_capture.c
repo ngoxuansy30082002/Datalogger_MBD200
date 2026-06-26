@@ -31,6 +31,7 @@ static IC_HW_STATE _hwState[INPUT_CAPTURE_HW_CHANNEL];
 static IC_STATE _states = IC_INIT;
 static uint32_t _timerFreq = 0;
 static uint16_t _timerPeriod = 0xFFFF;
+static uint8_t _dataRestore[16];
 
 static void _captureCallbackHandler(uintptr_t context) {
     uint8_t hwIdx = (uint8_t) context; // 0: ICAP4, 1: ICAP6
@@ -136,9 +137,52 @@ static double _calculatorAdvancedScaling(double value, uint8_t thisIc) {
     return outValue;
 }
 
+static void _printToHMI(uint8_t thisChannel) {
+    for (uint8_t i = 0; i < gAppCfg.hmi.numEntry; i++) {
+        uint8_t idxHMI = gAppCfg.hmi.sensorIdx[i] - 1;
+        SENSOR_ENTRY_CONFIG *sEntry = &gSensorCfg.entry[idxHMI];
+
+        if (!sEntry->enable)
+            continue;
+
+        if (sEntry->type == SENSOR_INPUT_CAPTURE &&
+                sEntry->indexOfType == thisChannel) {
+            uint8_t status = 0;
+
+            int8_t stt = SensorGeneral_calculateSensorStatusInput(idxHMI);
+            if (stt == 0) status = 0;
+            else if (stt == 1) status = 1;
+            else if (stt == 2) status = 2;
+            else {
+                if (sEntry->calibrate)
+                    status = 1;
+                else {
+                    stt = SensorGeneral_calculateSensorStatusAuto(sEntry->type, thisChannel);
+                    if (stt == -1)
+                        continue;
+
+                    status = stt;
+                }
+            }
+
+            HMIDwin_TriggerSendStatus(i, status);
+            HMIDwin_TriggerSendValue(i, HMI_DATA_FLOAT, (float) inputCaptureDt.entry[thisChannel].value);
+        }
+    };
+}
+
+static void _framReadCallbackHandler(int type, int rlst) {
+    if (type == FRAM_DATA_COUNTER && rlst == FRAM_RES_SUCCESS) {
+        memcpy((uint8_t*) & inputCaptureDt.entry[1].value, &_dataRestore[0], sizeof (double));
+        memcpy((uint8_t*) & inputCaptureDt.entry[3].value, &_dataRestore[8], sizeof (double));
+    }
+}
+
 void InputCapture_Initialize(void) {
     memset(_hwState, 0, sizeof (_hwState));
     memset(&inputCaptureDt, 0, sizeof (INPUT_CAPTURE_DATA));
+    for (uint8_t i = 0; i < MAX_INPUT_CAPTURE; i++)
+        inputCaptureDt.entry[i].status = STATUS_GOOD;
 
     if (_icPlib.freqGet != NULL) _timerFreq = _icPlib.freqGet();
     if (_icPlib.periodGet != NULL) _timerPeriod = _icPlib.periodGet();
@@ -154,6 +198,8 @@ void InputCapture_Initialize(void) {
 }
 
 void InputCapture_Task(void) {
+    static uint32_t hmiTick = 0;
+    static uint32_t saveTick = 0;
 
 #define NEXT_STATE(nextState)  \
     do { _states = (nextState); } while(0)
@@ -168,13 +214,28 @@ void InputCapture_Task(void) {
 
         case IC_RESTORE:
         {
-            // channelData[1].counter = Read_FRAM(ADDR_COUNTER_CH1);
+            bool res = Fram_LoadBlockData(FRAM_DATA_COUNTER, _dataRestore, sizeof (_dataRestore), _framReadCallbackHandler);
             NEXT_STATE(IC_RUNNING);
             break;
         }
 
         case IC_RUNNING:
         {
+            if (TIME_IS_EXPIRED(hmiTick, 1000)) {
+                hmiTick = TICK_NOW();
+                for (uint8_t i = 0; i < MAX_INPUT_CAPTURE; i++)
+                    _printToHMI(i);
+            }
+
+            if (gInCaptureCfg.entry[1].enable || gInCaptureCfg.entry[3].enable) {
+                if (TIME_IS_EXPIRED(saveTick, 30000)) {
+                    saveTick = TICK_NOW();
+                    memcpy(&_dataRestore[0], (uint8_t*) & inputCaptureDt.entry[1].value, sizeof (double));
+                    memcpy(&_dataRestore[8], (uint8_t*) & inputCaptureDt.entry[3].value, sizeof (double));
+                    Fram_SaveBlockData(FRAM_DATA_COUNTER, _dataRestore, sizeof (_dataRestore), NULL);
+                }
+            }
+
             for (uint8_t i = 0; i < MAX_INPUT_CAPTURE; i++) {
                 const INPUT_CAPTURE_CHANNEL_CONFIG * thisIcCfg = &gInCaptureCfg.entry[i];
 
@@ -190,12 +251,12 @@ void InputCapture_Task(void) {
                 uint8_t hwIdx = (i == 0 || i == 1) ? 0 : 1; // 0,1 use IC4; 2,3 use IC6
 
                 if (_hwState[hwIdx].newDataReady) {
-                    LOG_DEBUG("%s - %s: IC new data", __TAG__, __func__);
                     if (i == 1 || i == 3) {
                         inputCaptureDt.entry[i].counter = _hwState[hwIdx].pulseCount;
                         float rawVal = (float) inputCaptureDt.entry[i].counter * thisIcCfg->valPerPulse;
                         inputCaptureDt.entry[i].value = _calculatorAdvancedScaling(rawVal, i);
                         inputCaptureDt.entry[i].status = STATUS_GOOD;
+
                     } else if (i == 0 || i == 2) {
                         if (_hwState[hwIdx].sampleCount > 0) {
                             uint32_t sumDelta = 0;

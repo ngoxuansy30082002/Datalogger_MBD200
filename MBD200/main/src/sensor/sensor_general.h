@@ -14,6 +14,12 @@
 
 #define FILE_QUEUE_SIZE              10
 
+/* ===================== Rule Engine Runtime ===================== */
+#define RULE_SCAN_INTERVAL_MS    100U     /* Period of rule scan         */
+#define RULE_DELTA_DEFAULT_MS    3000U    /* Default window for DELTA    */
+#define RULE_DELTA_HISTORY_SIZE  16U      /* Ring buffer per rule        */
+#define RULE_NOTIFY_REARM_MS     30000U   /* Anti-spam: min gap          */
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -30,6 +36,12 @@ extern "C" {
         LOG_FILE_WAIT_UPLINK,
         LOG_FILE_HANDLE_ERROR
     } LOG_FILE_STATE;
+
+    typedef enum {
+        FTP_STS_ERROR = -1,
+        FTP_STS_IDENTIFYING = 0,
+        FTP_STS_GOOD,
+    } FTP_STATUS;
 
     typedef struct {
 
@@ -56,8 +68,31 @@ extern "C" {
         int size;
     } LOG_FILE_QUEUE;
 
+    typedef struct {
+        /* Threshold debounce tracking */
+        bool conditionActive;
+        uint32_t conditionStartMs;
+
+        /* Delta ring buffer (samples value1's sensor) */
+        float histVal [RULE_DELTA_HISTORY_SIZE];
+        uint32_t histTick[RULE_DELTA_HISTORY_SIZE];
+        uint8_t histHead;
+        uint8_t histCount;
+
+        /* Anti-spam */
+        uint32_t lastNotifyMs;
+    } RULE_RUNTIME_STATE;
+
+    typedef struct {
+        FTP_STATUS ftpStatus;
+    } SENSOR_GENERAL_DATA;
+
+    extern SENSOR_GENERAL_DATA ssGeneralDt;
+
     void SensorGeneral_Initialize(void);
     void SensorGeneral_Task(void);
+    int8_t SensorGeneral_calculateSensorStatusInput(uint8_t i);
+    int8_t SensorGeneral_calculateSensorStatusAuto(SENSOR_TYPE type, uint8_t index);
 
     const char* FileMgr_GetUploadFileName(void);
     const char* FileMgr_GetUploadFileData(void);

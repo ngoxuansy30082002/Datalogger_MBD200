@@ -49,41 +49,24 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "crypto/crypto.h"
-#include "peripheral/icap/plib_icap6.h"
-#include "peripheral/icap/plib_icap4.h"
-#include "peripheral/spi/spi_master/plib_spi6_master.h"
 #include "driver/memory/drv_memory.h"
+#include "peripheral/spi/spi_master/plib_spi6_master.h"
 #include "peripheral/spi/spi_master/plib_spi5_master.h"
-#include "driver/ethmac/drv_ethmac.h"
-#include "driver/sdspi/drv_sdspi.h"
 #include "system/time/sys_time.h"
-#include "peripheral/uart/plib_uart6.h"
 #include "peripheral/coretimer/plib_coretimer.h"
-#include "peripheral/uart/plib_uart4.h"
-#include "peripheral/uart/plib_uart1.h"
-#include "peripheral/uart/plib_uart2.h"
-#include "peripheral/tmr/plib_tmr3.h"
 #include "peripheral/spi/spi_master/plib_spi2_master.h"
+#include "bootloader/bootloader_udp.h"
 #include "peripheral/spi/spi_master/plib_spi1_master.h"
 #include "system/int/sys_int.h"
 #include "system/ports/sys_ports.h"
 #include "system/cache/sys_cache.h"
 #include "system/dma/sys_dma.h"
+#include "system/reset/sys_reset.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
-#include "library/tcpip/tcpip.h"
-#include "system/sys_time_h2_adapter.h"
-#include "system/sys_random_h2_adapter.h"
-#include "peripheral/clk/plib_clk.h"
-#include "peripheral/gpio/plib_gpio.h"
-#include "peripheral/cache/plib_cache.h"
-#include "peripheral/evic/plib_evic.h"
-#include "peripheral/dmac/plib_dmac.h"
 #include "driver/miim/drv_miim.h"
 #include "driver/ethphy/drv_ethphy.h"
 #include "driver/ethphy/drv_extphy_lan8740.h"
-#include "driver/sst26/drv_sst26.h"
-#include "wolfssl/wolfcrypt/port/pic32/crypt_wolfcryptcb.h"
 #include "peripheral/i2c/master/plib_i2c2_master.h"
 #include "net_pres/pres/net_pres.h"
 #include "net_pres/pres/net_pres_encryptionproviderapi.h"
@@ -96,8 +79,30 @@
 #include "system/fs/fat_fs/file_system/ffconf.h"
 #include "system/fs/fat_fs/hardware_access/diskio.h"
 #include "system/fs/mpfs/mpfs.h"
+#include "peripheral/icap/plib_icap6.h"
+#include "peripheral/icap/plib_icap4.h"
+#include "driver/ethmac/drv_ethmac.h"
+#include "driver/sdspi/drv_sdspi.h"
+#include "peripheral/uart/plib_uart6.h"
+#include "peripheral/nvm/plib_nvm.h"
+#include "peripheral/uart/plib_uart4.h"
+#include "peripheral/uart/plib_uart1.h"
+#include "peripheral/uart/plib_uart2.h"
+#include "peripheral/tmr/plib_tmr3.h"
+#include "library/tcpip/tcpip.h"
+#include "system/sys_time_h2_adapter.h"
+#include "system/sys_random_h2_adapter.h"
+#include "peripheral/clk/plib_clk.h"
+#include "peripheral/gpio/plib_gpio.h"
+#include "peripheral/cache/plib_cache.h"
+#include "peripheral/evic/plib_evic.h"
+#include "peripheral/wdt/plib_wdt.h"
+#include "peripheral/dmac/plib_dmac.h"
+#include "driver/sst26/drv_sst26.h"
+#include "wolfssl/wolfcrypt/port/pic32/crypt_wolfcryptcb.h"
 #include "system/console/sys_console.h"
 #include "system/console/src/sys_console_uart_definitions.h"
+#include "app.h"
 
 #include "console_logs/debug_uart.h"
 #include "generic_types.h"
@@ -108,6 +113,7 @@
 #include "storage/external_flash/extflash_manager.h"
 #include "storage/fram/fram.h"
 #include "storage/sd_card/sd_card.h"
+#include "storage/internal_flash/internal_flash.h"
 #include "rtc/rtc.h"
 #include "hmi/hmi_dwin.h"
 #include "sensor/sensor_general.h"
@@ -122,14 +128,13 @@
 #include "sim/core/sim_basic.h"
 #include "sim/core/sim_net.h"
 #include "sim/service/sim_mqtt.h" 
-#include "ethernet/eth_net.h"
-#include "ethernet/tcp_mqtt.h"
 #include "digital_io/led_indicate.h"
 #include "digital_io/digital_output.h"
 #include "ethernet/eth_ntp.h"
 #include "ethernet/eth_ftp.h"
-
-
+#include "ethernet/eth_mqtt.h"
+#include "ethernet/eth_http.h"
+#include "fota.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -262,18 +267,18 @@ typedef struct
     SYS_MODULE_OBJ drvSDSPI0;
 
     SYS_MODULE_OBJ  sysTime;
-    SYS_MODULE_OBJ  drvMemory0;
     SYS_MODULE_OBJ  sysConsole0;
-
-
-    SYS_MODULE_OBJ  tcpip;
 
    SYS_MODULE_OBJ  drvMiim_0;
 
+    SYS_MODULE_OBJ  netPres;
+
+    SYS_MODULE_OBJ  drvMemory0;
+
+    SYS_MODULE_OBJ  tcpip;
+
     SYS_MODULE_OBJ  drvSST26;
     SYS_MODULE_OBJ  sysDebug;
-
-    SYS_MODULE_OBJ  netPres;
 
 
 } SYSTEM_OBJECTS;

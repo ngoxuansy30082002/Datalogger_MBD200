@@ -3,15 +3,15 @@
   <executable name="dist/default/production/Datalogger_MBD200.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
-      <length>2098304</length>                 
-      <used>445352</used>                     
-      <free>1652952</free>                     
+      <length>979584</length>                 
+      <used>523728</used>                     
+      <free>455856</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>524288</length>                 
-      <used>114546</used>                     
-      <free>409742</free>                     
+      <used>141034</used>                     
+      <free>383254</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

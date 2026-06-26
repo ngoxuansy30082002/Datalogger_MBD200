@@ -1,0 +1,73 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: fw-mongodb
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fw-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fw-backend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/firmware_manager
+      - STORAGE_PATH=/app/storage
+      - LOG_PATH=/app/logs
+      - CERT_PATH=/app/certs
+    volumes:
+      - fw_storage:/app/storage
+      - fw_logs:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - fw-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
+  # Frontend (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fw-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - fw-network
+
+volumes:
+  mongo_data:
+    driver: local
+  fw_storage:
+    driver: local
+  fw_logs:
+    driver: local
+
+networks:
+  fw-network:
+    driver: bridge
